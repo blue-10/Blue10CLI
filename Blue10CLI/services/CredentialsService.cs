@@ -47,7 +47,7 @@ namespace Blue10CLI.services
                 
                 
             }
-            return null;
+            return apiKey;
         }
 
         public static string ReadPassword()

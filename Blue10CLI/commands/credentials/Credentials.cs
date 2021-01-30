@@ -1,5 +1,4 @@
 ﻿using System.CommandLine;
-using Blue10CLI.services;
 
 namespace Blue10CLI.commands.credentials
 {
@@ -10,36 +9,6 @@ namespace Blue10CLI.commands.credentials
             Add(set);
             Add(show);
             Add(clear);
-        }
-    }
-    
-    public class Set : Command
-    {
-        private readonly CredentialsService _creds;
-
-        public Set(CredentialsService creds) : base("set", "Sets new Api Key and overrides the old one")
-        {
-            _creds = creds;
-        }
-    }
-    
-    public class Show : Command
-    {
-        private readonly CredentialsService _creds;
-
-        public Show(CredentialsService creds) : base("show", "Shows current api key")
-        {
-            _creds = creds;
-        }
-    }
-    
-    public class Clear : Command
-    {
-        private readonly CredentialsService _creds;
-
-        public Clear(CredentialsService creds) : base("clear", "Clears current saved api key")
-        {
-            _creds = creds;
         }
     }
 }
