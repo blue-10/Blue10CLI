@@ -5,16 +5,19 @@ namespace Blue10CLI.commands
 {
     public class Vendor : Command
     {
-        private readonly VendorService _service;
-
-        public Vendor(VendorService service) : base("vendor", "creates lists and manages vendors in the environments")
+        public Vendor(
+            CreateVendor createVendor,
+            ListVendors listVendors,
+            ShowVendor showVendor,
+            SyncVendors syncVendors,
+            DeleteVendor deleteVendor
+            ) : base("vendor", "creates lists and manages vendors in the environments")
         {
-            _service = service;
-            Add(new CreateVendor(service));
-            Add(new ListVendors(service));
-            Add(new ShowVendor(service));
-            Add(new SyncVendors(service));
-            Add(new DeleteVendor(service));
+            Add(createVendor);
+            Add(listVendors);
+            Add(showVendor);
+            Add(syncVendors);
+            Add(deleteVendor);
         }
     }
 
@@ -22,6 +25,7 @@ namespace Blue10CLI.commands
     {
         public CreateVendor(VendorService vendorService) : base("create", "Creates new vendor in the system")
         {
+            vendorService.Create();
         }
     }
 

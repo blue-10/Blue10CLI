@@ -1,9 +1,4 @@
 ﻿using System.CommandLine;
-using System.CommandLine.IO;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using Blue10CLI.commands;
 using Blue10CLI.services;
@@ -17,16 +12,35 @@ namespace Blue10CLI
     class Program
     {
         /// <summary>
-        /// DragonFruit simple example program
+        /// Bla
         /// </summary>
-        /// <param name="verbose">Show verbose output</param>
-        /// <param name="flavor">Which flavor to use</param>
-        /// <param name="count">How many smoothies?</param>
         static async Task Main(params string[] args)
         {
-            var key = (await File.ReadAllLinesAsync(".credentials")).First();
-            using IHost host = CreateHostBuilder(args,key).Build();
-            await host.RunAsync();
+            var key = CredentialsService.EnsureApiKey();
+            if (string.IsNullOrWhiteSpace(key)) return;
+            
+            var serviceProvider = new ServiceCollection()
+                .AddSingleton<Root>()
+                .AddSingleton<Vendor>()
+                .AddSingleton<VendorService>()
+                .AddSingleton<Invoice>()
+                .AddSingleton<InvoiceService>()
+                .AddLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole();
+                    logging.AddFile("blue10_cli.log", append: true);
+                    logging.SetMinimumLevel(LogLevel.Error);
+                })
+                .BuildServiceProvider();
+
+            var logger = serviceProvider.GetService<ILoggerFactory>()
+                .CreateLogger<Program>();
+            logger.LogInformation("Starting application");
+
+            //do the actual work here
+            var root = serviceProvider.GetService<Root>();
+            await root.InvokeAsync(args);
         }
 
         static IHostBuilder CreateHostBuilder(string[] args,string key) =>
@@ -40,9 +54,20 @@ namespace Blue10CLI
                 })
                 .ConfigureServices((_, services) => services
                     //Dependencies
-                    //.AddBlue10(key)
+                    .AddBlue10(key)
                     //Business Services
+                        .AddSingleton<CreateInvoice>()
+                        .AddSingleton<ShowInvoice>()
+                        .AddSingleton<ListInvoices>()
+                        .AddSingleton<PullInvoices>()
+                        .AddSingleton<DeleteInvoice>()
                     .AddSingleton<InvoiceService>()
+                        
+                        .AddSingleton<CreateVendor>()
+                        .AddSingleton<ShowVendor>()
+                        .AddSingleton<ListVendors>()
+                        .AddSingleton<SyncVendors>()
+                        .AddSingleton<DeleteVendor>()
                     .AddSingleton<VendorService>()
                     //Commands
                     .AddSingleton<Root>()
@@ -53,10 +78,10 @@ namespace Blue10CLI
 
     public class Root : RootCommand
     {
-        public Root(InvoiceService invoiceService, VendorService vendorService)
+        public Root(Vendor vendor, Invoice invoice)
         {
-            Add(new Vendor(vendorService));
-            Add(new Invoice(invoiceService));
+            Add(vendor);
+            Add(invoice);
         }
     }
 

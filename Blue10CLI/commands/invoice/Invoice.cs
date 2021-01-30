@@ -5,17 +5,20 @@ namespace Blue10CLI.commands
 {
     public class Invoice : Command
     {
-        private readonly InvoiceService _service;
-
-        public Invoice(InvoiceService service) : base("invoice", "creates lists and manages invoices")
+        public Invoice(
+            CreateInvoice createinvoice,
+            ListInvoices listinvoices,
+            ShowInvoice showinvoice,
+            DeleteInvoice deleteinvoice,
+            PullInvoices pullinvoices
+        ) : base("invoice", "creates lists and manages invoices")
         {
-            _service = service;
             //Basic
-            Add(new CreateInvoice(service));
-            Add(new ListInvoices(service));
-            Add(new ShowInvoice(service));
-            Add(new DeleteInvoice(service));
-            Add(new PullInvoices(service));
+            Add(createinvoice);
+            Add(listinvoices);
+            Add(showinvoice);
+            Add(deleteinvoice);
+            Add(pullinvoices);
         }
     }
 #region Basic
@@ -23,6 +26,7 @@ namespace Blue10CLI.commands
     {
         public CreateInvoice(InvoiceService service) : base("create", "Creates new Invoice in the system")
         {
+            
         }
     }
 
