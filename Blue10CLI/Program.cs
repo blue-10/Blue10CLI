@@ -14,7 +14,6 @@ namespace Blue10CLI
         {
             var key = CredentialsService.EnsureApiKey();
             if (string.IsNullOrWhiteSpace(key)) return;
-            
             var serviceProvider = new ServiceCollection()
                 .AddBlue10(key)
                 
@@ -47,10 +46,7 @@ namespace Blue10CLI
 
             var logger = serviceProvider.GetService<ILoggerFactory>()
                 .CreateLogger<Program>();
-            
-            
             logger.LogDebug("Starting application");
-
             //do the actual work here
             var root = serviceProvider.GetService<Root>();
             await root.InvokeAsync(args);
