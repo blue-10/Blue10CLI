@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.Threading.Tasks;
 using Blue10CLI.commands;
+using Blue10CLI.commands.credentials;
 using Blue10CLI.services;
 using Blue10SDK.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +16,7 @@ namespace Blue10CLI
             var key = CredentialsService.EnsureApiKey();
             if (string.IsNullOrWhiteSpace(key)) return;
             var serviceProvider = new ServiceCollection()
-                .AddBlue10(key)
+                .AddBlue10(key,"https://api.blue10.com/v2/")
                 
                 //Business Services
                 .AddSingleton<InvoiceService>()
@@ -33,6 +34,14 @@ namespace Blue10CLI
                     .AddSingleton<ListVendors>()
                     .AddSingleton<SyncVendors>()
                     .AddSingleton<DeleteVendor>()
+                
+                .AddSingleton<CredentialsService>()
+                .AddSingleton<Credentials>()
+                    .AddSingleton<CheckCredentials>()
+                    .AddSingleton<ShowCredentials>()
+                    .AddSingleton<ClearCredentials>()
+                    .AddSingleton<SetCredentials>()
+
                 //Commands
                 .AddSingleton<Root>()
                 .AddLogging(logging =>

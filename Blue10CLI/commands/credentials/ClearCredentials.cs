@@ -3,11 +3,11 @@ using Blue10CLI.services;
 
 namespace Blue10CLI.commands.credentials
 {
-    public class Show : Command
+    public class ClearCredentials : Command
     {
         private readonly CredentialsService _creds;
 
-        public Show(CredentialsService creds) : base("show", "Shows current api key")
+        public ClearCredentials(CredentialsService creds) : base("clear", "Clears current saved api key")
         {
             _creds = creds;
         }

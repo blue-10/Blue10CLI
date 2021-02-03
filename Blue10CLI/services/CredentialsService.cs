@@ -7,7 +7,7 @@ namespace Blue10CLI.services
     {
         internal const string BLUE10_API_KEY_TARGET = "Blue10ApiKey";
         
-        CredentialsService() {}
+        public CredentialsService() {}
         
         public string? GetApiKey()
         {
