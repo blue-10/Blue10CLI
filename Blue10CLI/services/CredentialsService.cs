@@ -31,23 +31,14 @@ namespace Blue10CLI.services
         
         internal static string? EnsureApiKey()
         {
-            var cm = new Credential {Target = CredentialsService.BLUE10_API_KEY_TARGET};
+            var cm = new Credential {Target = BLUE10_API_KEY_TARGET};
             cm.Load();
             var apiKey = cm?.Password;
-            if (string.IsNullOrWhiteSpace(apiKey))
-            {
-                Console.WriteLine("Missing Blue10 API key, please insert here:");
-                var key =ReadPassword();
-                if (Guid.TryParse(key, out _))
-                {
-                    SetCredential(BLUE10_API_KEY_TARGET, key);
-                    return key;
-                }
-                Console.WriteLine("Not a valid blue10 api key.Please follow the format = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'");
-                
-                
-            }
-            return apiKey;
+            if (!string.IsNullOrWhiteSpace(apiKey)) return apiKey;
+            Console.WriteLine("Missing Blue10 API key, please insert here:");
+            var key =ReadPassword();
+            SetCredential(BLUE10_API_KEY_TARGET, key);
+            return key;
         }
 
         public static string ReadPassword()

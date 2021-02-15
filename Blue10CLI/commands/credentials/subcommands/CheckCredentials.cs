@@ -45,7 +45,7 @@ namespace Blue10CLI.commands.credentials
             }
             catch (Blue10ApiException apie) when (apie.Message.Contains("authentication required"))
             {
-                _logger.LogError($"Your API : \"{apiKey}\" key is invalid, please contact Blue10 to receive a valid API Key and use the 'credentials set'  command to update your credentials");
+                _logger.LogError($"Your API : \"{apiKey}\" key is invalid, ple" + $"ase contact Blue10 to receive a valid API Key and use the 'credentials set'  command to update your credentials");
             }
             catch (Blue10ApiException apie)
             {

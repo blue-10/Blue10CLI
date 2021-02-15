@@ -47,7 +47,6 @@ namespace Blue10CLI.commands
             FileInfo? output
             )
         {
-            
             var resultObject = await _vendorService.Create(code, countryCode, currency, iban, blocked, defaultLedger, defaultPaymentTerm, defaultVat, defaultVatScenario);
             await format.HandleOutput(resultObject,output);
         }
