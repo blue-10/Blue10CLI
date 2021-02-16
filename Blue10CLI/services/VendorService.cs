@@ -52,13 +52,7 @@ namespace Blue10CLI.services
                 Iban = iban.ToList(),
                 Id = Guid.NewGuid()
             };
-            
-            
-            
-            //Todo validate the result begore returning result
-            //await _blue10.AddVendorAsync(newVendor);
-            _logger.LogInformation($"Created vendor with Id {0}",newVendor.Id);
-            return newVendor;
+            return await _blue10.AddVendorAsync(newVendor);;
         }
     }
 }

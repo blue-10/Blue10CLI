@@ -1,23 +1,19 @@
-﻿using System.Collections.Generic;
-using System.CommandLine;
+﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.XPath;
-using Blue10CLI.commands.credentials;
 using Blue10CLI.services;
 using Microsoft.Extensions.Logging;
-using Administration = Blue10CLI.models.Administration;
 
 namespace Blue10CLI.commands
 {
-    public class ListAdministrations : Command
+    public class ListCompanies : Command
     {
-        private readonly AdministrationService _service;
-        private readonly ILogger<ListAdministrations> _logger;
+        private readonly CompanyService _service;
+        private readonly ILogger<ListCompanies> _logger;
 
-        public ListAdministrations(AdministrationService service,ILogger<ListAdministrations> logger) : base("list", "Lists all known Administrations (Companies) in a blue10 environment")
+        public ListCompanies(CompanyService service,ILogger<ListCompanies> logger) : base("list", "Lists all known Administrations (Companies) in a blue10 environment")
         {
             _service = service;
             _logger = logger;
@@ -30,20 +26,10 @@ namespace Blue10CLI.commands
 
         private async Task ListAdministrationsHandler( string query, EFormatType format, FileInfo? outputFile)
         {
-            var resultObject = await _service.ListAdministrations();
-            var administrations = resultObject.Select(company => 
-                new Administration
-                {
-                    Id = company.Id,
-                    AdministrationCode = company.AdministrationCode,
-                    LoginStatus = company.LoginStatus,
-                    AdministrationVatNumber = company.AdministrationVatNumber,
-                    AdministrationCurrencyCode = company.AdministrationCurrencyCode
-                })
-                .ToList();
+            var resultObject = await _service.ListCompanies();
             try
             {
-                await format.HandleOutput(administrations, outputFile, query);
+                await format.HandleOutput(resultObject, outputFile, query);
             }
             catch (XPathException xpe)
             {

@@ -21,11 +21,8 @@ namespace Blue10CLI
                 //Business Services
                 .AddSingleton<InvoiceService>()
                 .AddSingleton<Invoice>()
-                    .AddSingleton<CreateInvoice>()
-                    .AddSingleton<ShowInvoice>()
-                    .AddSingleton<ListInvoices>()
+                    .AddSingleton<PeekInvoice>()
                     .AddSingleton<PullInvoices>()
-                    .AddSingleton<DeleteInvoice>()
                 
                 .AddSingleton<VendorService>()
                 .AddSingleton<Vendor>()        
@@ -35,12 +32,9 @@ namespace Blue10CLI
                     .AddSingleton<SyncVendors>()
                     .AddSingleton<DeleteVendor>()
                 
-                .AddSingleton<AdministrationService>()
-                .AddSingleton<Administration>()        
-                    .AddSingleton<CreateAdministration>()
-                    .AddSingleton<ShowAdministration>()
-                    .AddSingleton<ListAdministrations>()
-                    .AddSingleton<DeleteAdministration>()
+                .AddSingleton<CompanyService>()
+                .AddSingleton<Administration>()
+                    .AddSingleton<ListCompanies>()
                 
                 .AddSingleton<CredentialsService>()
                 .AddSingleton<Credentials>()
