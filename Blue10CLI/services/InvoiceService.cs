@@ -25,9 +25,8 @@ namespace Blue10CLI.services
         public async Task<IList<DocumentAction>> GetNewPostInvoiceAction()
         {
             var documentActions = await _blue10.GetDocumentActionsAsync();
-            //TODO check if these are the correct statusses
             var res = documentActions
-                .Where(x => x.Action == EDocumentAction.match_purchase_order)
+                .Where(x => x.Action == EDocumentAction.post_purchase_invoice)
                 //.Where(x => !x.Status.Equals("Done",StringComparison.OrdinalIgnoreCase))
                 //.Where(x=> x.Status.Equals("New",StringComparison.OrdinalIgnoreCase) || x.Status.Equals("WaitingForErp",StringComparison.OrdinalIgnoreCase))
                 //.OrderBy(x => x.CreationTime)
