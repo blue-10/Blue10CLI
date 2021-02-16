@@ -5,7 +5,7 @@ using Blue10SDK.Models;
 
 namespace Blue10CLI.models
 {
-    public class ShortInvoice
+    public class InvoiceSummary
     {
         public Guid Id { get; set; }
         public string InvoiceNr { get; set; }
@@ -13,7 +13,9 @@ namespace Blue10CLI.models
         public string Vendor { get; set; }
         public DateTime InvoiceDate { get; set; }
         
-        public ShortInvoice(PurchaseInvoice invoice)
+        
+        public InvoiceSummary(){}
+        public InvoiceSummary(PurchaseInvoice invoice)
         {
             Id = invoice.Id;
             InvoiceNr = invoice.InvoiceNumber;

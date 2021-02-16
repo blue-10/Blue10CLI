@@ -42,10 +42,10 @@ namespace Blue10CLI.services
             return invoiceActions.Select(x=>x.PurchaseInvoice).ToList();
         }
         
-        public async Task<IList<ShortInvoice>> PeekInvoices()
+        public async Task<IList<InvoiceSummary>> PeekInvoices()
         {
             var res = await GetInvoicesToBePosted();
-            return res.Select(x => new ShortInvoice(x)).ToList();
+            return res.Select(x => new InvoiceSummary(x)).ToList();
         }
         public async Task<(PurchaseInvoice,byte[])> PullInvoice(DocumentAction action)
         {
