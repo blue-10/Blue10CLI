@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Blue10SDK;
+using Blue10SDK.Exceptions;
 using Blue10SDK.Models;
 using DevLab.JmesPath;
 using Microsoft.Extensions.Logging;
@@ -27,7 +28,8 @@ namespace Blue10CLI.services
         public async Task<IList<Vendor>> List(string companyId) => 
             await _blue10.GetVendorsAsync(companyId);
 
-        public async Task<Vendor> Create(
+        public async Task<Vendor?> Create(
+            string administrationCode,
             string code,
             string countryCode,
             string currency,
@@ -35,24 +37,34 @@ namespace Blue10CLI.services
             bool blocked,
             string defaultLedger,
             string defaultPaymentTerm,
-            string defaultVat,
-            string defaultVatScenario
+            string defaultVat
+            
                 )
         {
             var newVendor = new Vendor
             {
+                Name = code,
                 AdministrationCode = code,
                 Blocked = blocked,
                 CountryCode = countryCode,
                 DefaultLedgerCode = defaultLedger,
                 DefaultPaymentTermCode = defaultPaymentTerm,
                 DefaultVatCode = defaultVat,
-                DefaultVatScenarioCode = defaultVatScenario,
+                //DefaultVatScenarioCode = defaultVatScenario,
                 CurrencyCode = currency,
                 Iban = iban.ToList(),
-                Id = Guid.NewGuid()
-            };
-            return await _blue10.AddVendorAsync(newVendor);;
+                Id = Guid.NewGuid(),
+                IdCompany = administrationCode};
+            try
+            {
+                return await _blue10.AddVendorAsync(newVendor);
+
+            }
+            catch (Blue10ApiException b10apie)
+            { 
+                //_logger.LogError(b10apie.Message);
+                return null;
+            }
         }
     }
 }

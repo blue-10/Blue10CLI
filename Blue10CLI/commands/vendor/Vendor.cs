@@ -14,9 +14,9 @@ namespace Blue10CLI.commands
         {
             Add(createVendor);
             Add(listVendors);
-            Add(showVendor);
-            Add(syncVendors);
-            Add(deleteVendor);
+            //Add(showVendor);
+            //Add(syncVendors);
+            //Add(deleteVendor);
         }
     }
 }

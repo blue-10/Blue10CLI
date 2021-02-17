@@ -50,7 +50,7 @@ namespace Blue10CLI
                     logging.ClearProviders();
                     logging.AddConsole();
                     logging.AddFile("blue10_cli.log", append: true);
-                    logging.SetMinimumLevel(LogLevel.Information);
+                    logging.SetMinimumLevel(LogLevel.Error);
                 })
                 .BuildServiceProvider();
 

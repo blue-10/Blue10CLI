@@ -1,6 +1,9 @@
 ﻿using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.IO;
+using System.Threading.Tasks;
+using System.Xml.XPath;
 using Blue10CLI.services;
 using Blue10SDK;
 using Blue10SDK.Exceptions;
@@ -20,10 +23,15 @@ namespace Blue10CLI.commands.credentials
             _creds = creds;
             _blue10 = blue10;
             _logger = logger;
-            Handler = CommandHandler.Create(CheckConnection);
+            
+            Add(new Option<string?>(new []{"-q","--query"}, () => null,"A query used to filter out results. NOTE: Dependant on output format. If output is 'json', this is a JMESPath query to filter results. https://jmespath.org/. If output is 'xml', this is an XPATH string. https://www.w3schools.com/xml/xpath_intro.asp"));
+            Add(new Option<EFormatType>(new []{"-f","--format"}, () => EFormatType.JSON, "Output format."));
+            Add(new Option<FileInfo?>(new []{"-o","--output"}, () => null, "Enter path to write output of this command to file. Default output is console only"));
+            
+            Handler = CommandHandler.Create<string, EFormatType, FileInfo?>(CheckConnection);
         }
 
-        private void CheckConnection()
+        private async Task CheckConnection(string query, EFormatType format, FileInfo? outputFile)
         {
             var apiKey = _creds.GetApiKey();
             try
@@ -35,21 +43,21 @@ namespace Blue10CLI.commands.credentials
                         "Please contact Blue10 to receive an API key for your account and use the 'credentials set'  command to update your credentials");
                     return;
                 }
-
                 //Get Me test
                 var me = _blue10.GetMeAsync().GetAwaiter().GetResult();
-                if (me != null)
-                {
-                    _logger.LogInformation($"Successfully connected to {me?.EnvironmentName!}");
-                }
+                await format.HandleOutput(me, outputFile, query);
             }
             catch (Blue10ApiException apie) when (apie.Message.Contains("authentication required"))
             {
-                _logger.LogError($"Your API : \"{apiKey}\" key is invalid, ple" + $"ase contact Blue10 to receive a valid API Key and use the 'credentials set'  command to update your credentials");
+                _logger.LogError($"Your API : \"{apiKey}\" key is invalid, please contact Blue10 to receive a valid API Key and use the 'credentials set'  command to update your credentials");
             }
             catch (Blue10ApiException apie)
             {
                 _logger.LogError(apie.Message);
+            }
+            catch (XPathException xpe)
+            {
+                _logger.LogError("Filter '{0}' is not a valid XPATH",query,xpe.Message);
             }
             catch (Exception e)
             {
