@@ -6,12 +6,13 @@ namespace Blue10CLI.commands
     {
         public Invoice(
             PeekInvoice peekinvoice,
-            PullInvoices pullinvoices
+            PullInvoices pullinvoices,
+            SignInvoice signinvoice
         ) : base("invoice", "creates lists and manages invoices")
         {
-            //Basic
             Add(peekinvoice);
             Add(pullinvoices);
+            Add(signinvoice);
         }
     }
 
