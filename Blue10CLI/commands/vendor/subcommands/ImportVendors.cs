@@ -17,7 +17,7 @@ namespace Blue10CLI.commands
             "Imports vendors from file and adds or updates each vendor found to the blue 10 environment")
         {
             _vendorService = vendorService;
-            Add(new Option<FileInfo?>(new[] {"-f", "--import-file"}, () => null,
+            Add(new Option<FileInfo?>(new[] {"-l", "--load-file"}, () => null,
                     "Path to import file. File should have the same structure as the result of the 'vendor list' command  ")
                 {IsRequired = true});
             Add(new Option<EFormatType>(new[] {"-i", "--input-format"}, () => EFormatType.JSON,
