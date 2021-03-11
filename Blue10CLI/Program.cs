@@ -23,6 +23,7 @@ namespace Blue10CLI
                 .AddSingleton<Invoice>()
                     .AddSingleton<PeekInvoice>()
                     .AddSingleton<PullInvoices>()
+                    .AddSingleton<SignInvoice>()
                 
                 .AddSingleton<VendorService>()
                 .AddSingleton<Vendor>()        
