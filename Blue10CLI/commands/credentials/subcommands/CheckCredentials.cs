@@ -44,7 +44,7 @@ namespace Blue10CLI.commands.credentials
                     return;
                 }
                 //Get Me test
-                var me = _blue10.GetMeAsync().GetAwaiter().GetResult();
+                var me = await _blue10.GetMeAsync();//.GetAwaiter().GetResult();
                 await format.HandleOutput(me, outputFile, query);
             }
             catch (Blue10ApiException apie) when (apie.Message.Contains("authentication required"))
