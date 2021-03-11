@@ -17,7 +17,7 @@ namespace Blue10CLI.commands
 
         
         
-        public SignInvoice(InvoiceService service, ILogger<PullInvoices> logger) : base("pull", "Peek invoices to be posted")
+        public SignInvoice(InvoiceService service, ILogger<PullInvoices> logger) : base("sign", "Sign-off invoices with a ledger entry number")
         {
             _service = service;
             _logger = logger;
