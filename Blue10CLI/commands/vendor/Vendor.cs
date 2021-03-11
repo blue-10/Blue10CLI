@@ -8,15 +8,14 @@ namespace Blue10CLI.commands
             CreateVendor createVendor,
             ListVendors listVendors,
             ShowVendor showVendor,
-            SyncVendors syncVendors,
+            ImportVendors importVendors,
             DeleteVendor deleteVendor
             ) : base("vendor", "creates lists and manages vendors in the environments")
         {
             Add(createVendor);
             Add(listVendors);
-            //Add(showVendor);
-            //Add(syncVendors);
-            //Add(deleteVendor);
+            Add(importVendors);
+            
         }
     }
 }

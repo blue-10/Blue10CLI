@@ -24,7 +24,7 @@ After you have downloaded the DotNet SDK, clone the source locally, using `git c
 After you have the source locally, open a windows terminal and navigate to the directory holding `Blue10CLI.csproj` and run the command:
 
 ```
-dotnet publish -r -c Release win-x64 -p:PublishSingleFile=true --self-contained true -o <OutputDirectory>
+dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o <OutputDirectory>
 ```
 
 Replace `<OutputDirectory>` with the directory you want the binary to be built. You can ommit the `-o` paramater , then the binary can be found in the `.\bin\Release\net5.0-windows\win-x64\publish` directory

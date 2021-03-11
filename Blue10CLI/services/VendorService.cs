@@ -38,8 +38,8 @@ namespace Blue10CLI.services
             string defaultLedger,
             string defaultPaymentTerm,
             string defaultVat
-            
-                )
+
+        )
         {
             var newVendor = new Vendor
             {
@@ -54,15 +54,24 @@ namespace Blue10CLI.services
                 CurrencyCode = currency,
                 Iban = iban.ToList(),
                 Id = Guid.NewGuid(),
-                IdCompany = administrationCode};
+                IdCompany = administrationCode
+            };
+
+            return await PushVendor(newVendor);
+        }
+
+    
+
+        public async Task<Blue10SDK.Models.Vendor?> PushVendor(Blue10SDK.Models.Vendor vendor)
+        {
             try
             {
-                return await _blue10.AddVendorAsync(newVendor);
+                return await _blue10.AddVendorAsync(vendor);
 
             }
             catch (Blue10ApiException b10apie)
             { 
-                //_logger.LogError(b10apie.Message);
+                _logger.LogError(b10apie.Message);
                 return null;
             }
         }

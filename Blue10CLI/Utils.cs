@@ -40,6 +40,32 @@ namespace Blue10CLI
     }
 
 
+    internal static class Read
+    {
+        internal static IList<T> CsvRecords<T>(string origin, string separator)
+        {
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                NewLine = Environment.NewLine,
+                Delimiter = separator
+            };
+
+            using var reader = new StringReader(origin);
+            using var csv = new CsvReader(reader,config);
+            return csv.GetRecords<T>().ToList();
+        }
+        
+        internal static IList<T> XmlRecords<T>(string input)
+        {
+            using var reader = new StringReader(input);
+            
+            var serializer = new XmlSerializer(typeof(IList<T>), new XmlRootAttribute($"ArrayOf{typeof(T).Name}"));
+
+            var res = serializer.Deserialize(reader) as IList<T>;
+            return res ?? new List<T>();
+        }
+    }
+    
     public static class Output
     {
     
@@ -119,6 +145,29 @@ namespace Blue10CLI
                 await File.WriteAllTextAsync(file.FullName, resultString);
             }
         }
+        
+        
+        public static async Task HandleOutputToFilePath<T>(this EFormatType format, T input, string filepath, string? query = null)
+        {
+            string? resultString;
+            if (input is IList inputEnumerable)
+            {
+                resultString = format.Format(inputEnumerable);
+            }
+            else
+            {
+                resultString = format.Format(new[] {input});
+            }
+
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                resultString = format.Filter(resultString, query!);
+            }
+
+            Console.WriteLine(resultString);
+            await File.WriteAllTextAsync(filepath, resultString);
+        }
+        
 
         public class StringWriterWithEncoding : StringWriter
         {
@@ -138,26 +187,7 @@ namespace Blue10CLI
             serializer1.Serialize(stringwriter, input);
             var xmlString = stringwriter.ToString();
             return xmlString;
-            /*var removeDefaultXmlNamespaces = true;
-            var omitXmlDeclaration = true;
-            var encoding = Encoding.UTF8;
-                
-                 
-                
-            XmlSerializerNamespaces? namespaces = (removeDefaultXmlNamespaces ? new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty }) : null);
- 
-            var settings                = new XmlWriterSettings();
-            settings.Indent             = true;
-            settings.OmitXmlDeclaration = omitXmlDeclaration;
-            settings.CheckCharacters    = false;
- 
-            using (var stream = new StringWriterWithEncoding(encoding))
-            using (var writer = XmlWriter.Create(stream, settings))
-            {
-                var serializer = new XmlSerializer(input?.GetType()!);
-                serializer.Serialize(writer, input, namespaces);
-                return stream.ToString();
-            }*/
+           
         }
 
         private static string ConvertToCsv<T>(T origin, string separator)
@@ -176,5 +206,8 @@ namespace Blue10CLI
                 csv.WriteRecords(new[] {origin});
             return wr.ToString();
         }
+        
+        
+     
     }
 }

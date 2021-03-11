@@ -16,7 +16,7 @@ namespace Blue10CLI
             var key = CredentialsService.EnsureApiKey();
             if (string.IsNullOrWhiteSpace(key)) return;
             var serviceProvider = new ServiceCollection()
-                .AddBlue10(key,"https://b10imdev-weu-api.azurewebsites.net")
+                .AddBlue10(key,"https://api.blue10.com")
                 
                 //Business Services
                 .AddSingleton<InvoiceService>()
@@ -29,7 +29,7 @@ namespace Blue10CLI
                     .AddSingleton<CreateVendor>()
                     .AddSingleton<ShowVendor>()
                     .AddSingleton<ListVendors>()
-                    .AddSingleton<SyncVendors>()
+                    .AddSingleton<ImportVendors>()
                     .AddSingleton<DeleteVendor>()
                 
                 .AddSingleton<CompanyService>()
@@ -50,7 +50,7 @@ namespace Blue10CLI
                     logging.ClearProviders();
                     logging.AddConsole();
                     logging.AddFile("blue10_cli.log", append: true);
-                    logging.SetMinimumLevel(LogLevel.Error);
+                    logging.SetMinimumLevel(LogLevel.Warning);
                 })
                 .BuildServiceProvider();
 

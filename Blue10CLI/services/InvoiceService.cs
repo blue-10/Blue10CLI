@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Blue10CLI.models;
 using Blue10SDK;
@@ -27,11 +28,6 @@ namespace Blue10CLI.services
             var documentActions = await _blue10.GetDocumentActionsAsync();
             var res = documentActions
                 .Where(x => x.Action == EDocumentAction.post_purchase_invoice)
-                //.Where(x => !x.Status.Equals("Done",StringComparison.OrdinalIgnoreCase))
-                //.Where(x=> x.Status.Equals("New",StringComparison.OrdinalIgnoreCase) || x.Status.Equals("WaitingForErp",StringComparison.OrdinalIgnoreCase))
-                //.OrderBy(x => x.CreationTime)
-                //.GroupBy(x => x.PurchaseInvoice.Id)
-                //.Select(x => x.First())
                 .ToList();
             return res;
         }
@@ -54,11 +50,27 @@ namespace Blue10CLI.services
 
             //Todo check what should be done 
             action.Result = "Success";
-            action.Status = "Done";
+            action.Status = "done";
             var updateResult = await _blue10.EditDocumentActionAsync(action);
             
             return (invoice,data);
             
+        }
+
+        public async Task<object> UpdateBookingNr(Guid invoiceId, string bookingNr)
+        {
+            var post_invoice_actions = await GetNewPostInvoiceAction();
+            var target = post_invoice_actions.FirstOrDefault(x => x.PurchaseInvoice.Id == invoiceId);
+            if (target is null)
+            {
+                return "No invoice action for an invoice with this id has been found";
+            }
+
+            else
+            {
+                target.Status = "Done";
+                return _blue10.EditDocumentActionAsync(target);
+            }
         }
     }
 }
