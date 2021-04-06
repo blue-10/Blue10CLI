@@ -1,0 +1,13 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/modules.xml
+/projectSettingsUpdater.xml
+/.idea.Blue10CLI.iml
+/contentModel.xml
+# Datasource local storage ignored files
+/../../../../../../../:\dev\Blue10CLI\Blue10CLI\.idea\.idea.Blue10CLI.dir\.idea/dataSources/
+/dataSources.local.xml
+# Editor-based HTTP Client requests
+/httpRequests/

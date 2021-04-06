@@ -23,10 +23,10 @@ namespace Blue10CLI.commands
             Handler = CommandHandler.Create<string,string,EFormatType,FileInfo?>(ListVendorsHandler);
         }
 
-        private async Task ListVendorsHandler(string? adminsitration, string? query, EFormatType format, FileInfo? outputFile)
+        private async Task ListVendorsHandler(string? adminsitration, string? query, EFormatType format, FileInfo? output)
         {
             var resultObject = await _vendorService.List(adminsitration);
-            await format.HandleOutput(resultObject,outputFile,query);
+            await format.HandleOutput(resultObject,output,query);
         }
     }
 }

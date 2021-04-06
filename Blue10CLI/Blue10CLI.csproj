@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <PackageReference Include="Blue10SDK" Version="0.1.6" />
-    <PackageReference Include="CredentialManagement" Version="1.0.2" />
     <PackageReference Include="CsvHelper" Version="22.0.0" />
     <PackageReference Include="FluentValidation" Version="9.4.0" />
     <PackageReference Include="IbanNet.FluentValidation" Version="4.3.0" />
@@ -25,6 +24,8 @@
     <PackageReference Include="NReco.Logging.File" Version="1.1.1" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20574.7" />
     <PackageReference Include="System.CommandLine.Hosting" Version="0.3.0-alpha.20574.7" />
+    <PackageReference Include="System.CommandLine.Parser" Version="0.1.1" />
+    <PackageReference Include="System.CommandLine.Rendering" Version="0.3.0-alpha.20574.7" />
     <PackageReference Include="System.Security.Permissions" Version="5.0.0" />
   </ItemGroup>
 

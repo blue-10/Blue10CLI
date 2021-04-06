@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using Blue10CLI.models;
 using Blue10SDK;
@@ -36,7 +35,8 @@ namespace Blue10CLI.services
         public async Task<IList<PurchaseInvoice>> GetInvoicesToBePosted()
         {
             var invoiceActions = await GetNewPostInvoiceAction();
-            return invoiceActions.Select(x=>x.PurchaseInvoice).ToList();
+            var fRes =invoiceActions.Select(x=>x.PurchaseInvoice).ToList();
+            return fRes;
         }
         
         public async Task<IList<InvoiceSummary>> PeekInvoices()
@@ -62,7 +62,6 @@ namespace Blue10CLI.services
             {
                 return "No invoice action for an invoice with this id has been found";
             }
-
             else
             {
                 target.Status = "Done";

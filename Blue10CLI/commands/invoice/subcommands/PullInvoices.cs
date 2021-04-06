@@ -26,7 +26,7 @@ namespace Blue10CLI.commands
             Handler = CommandHandler.Create<string?,EFormatType,DirectoryInfo?>(PullInvoiceHandler);
         }
         
-        public async Task PullInvoiceHandler(string? query,EFormatType format, DirectoryInfo outputDirectory)
+        public async Task PullInvoiceHandler(string? query,EFormatType format, DirectoryInfo output)
         {
 
             var invoiceActions = await _service.GetNewPostInvoiceAction();
@@ -35,7 +35,7 @@ namespace Blue10CLI.commands
             {
                 var ( purchaseInvoice, data) = await _service.PullInvoice(invoiceAction);
 
-                var outPutFile = outputDirectory?.FullName + purchaseInvoice.Id;
+                var outPutFile = output?.FullName + purchaseInvoice.Id;
 
                 var extension = format switch
                 {

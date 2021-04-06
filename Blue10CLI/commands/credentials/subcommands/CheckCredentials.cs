@@ -31,7 +31,7 @@ namespace Blue10CLI.commands.credentials
             Handler = CommandHandler.Create<string, EFormatType, FileInfo?>(CheckConnection);
         }
 
-        private async Task CheckConnection(string query, EFormatType format, FileInfo? outputFile)
+        private async Task CheckConnection(string query, EFormatType format, FileInfo? output)
         {
             var apiKey = _creds.GetApiKey();
             try
@@ -45,7 +45,7 @@ namespace Blue10CLI.commands.credentials
                 }
                 //Get Me test
                 var me = await _blue10.GetMeAsync();//.GetAwaiter().GetResult();
-                await format.HandleOutput(me, outputFile, query);
+                await format.HandleOutput(me, output, query);
             }
             catch (Blue10ApiException apie) when (apie.Message.Contains("authentication required"))
             {
