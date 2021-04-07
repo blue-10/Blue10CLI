@@ -1,12 +1,12 @@
-﻿using System.CommandLine;
-using Blue10CLI.commands;
+﻿using Blue10CLI.commands;
 using Blue10CLI.commands.credentials;
+using System.CommandLine;
 
 namespace Blue10CLI
 {
     public class Root : RootCommand
     {
-        public Root(Vendor vendor, Invoice invoice, Administration administratration
+        public Root(VendorCommand vendor, Invoice invoice, Administration administratration
             , Credentials credentials)
         {
             Add(vendor);

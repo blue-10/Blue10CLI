@@ -1,11 +1,11 @@
-﻿using System.CommandLine;
-using System.Threading.Tasks;
-using Blue10CLI.commands;
+﻿using Blue10CLI.commands;
 using Blue10CLI.commands.credentials;
 using Blue10CLI.services;
 using Blue10SDK.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.CommandLine;
+using System.Threading.Tasks;
 
 namespace Blue10CLI
 {
@@ -16,27 +16,27 @@ namespace Blue10CLI
             var key = CredentialsService.EnsureApiKey();
             if (string.IsNullOrWhiteSpace(key)) return;
             var serviceProvider = new ServiceCollection()
-                .AddBlue10(key,"https://b10imdev-weu-api.azurewebsites.net")
-                
+                .AddBlue10(key, "https://b10imdev-weu-api.azurewebsites.net")
+
                 //Business Services
                 .AddSingleton<InvoiceService>()
                 .AddSingleton<Invoice>()
                     .AddSingleton<PeekInvoice>()
                     .AddSingleton<PullInvoices>()
                     .AddSingleton<SignInvoice>()
-                
+
                 .AddSingleton<VendorService>()
-                .AddSingleton<Vendor>()        
+                .AddSingleton<VendorCommand>()
                     .AddSingleton<CreateVendor>()
                     .AddSingleton<ShowVendor>()
                     .AddSingleton<ListVendors>()
-                    .AddSingleton<ImportVendors>()
+                    .AddSingleton<SyncVendorsCommand>()
                     .AddSingleton<DeleteVendor>()
-                
+
                 .AddSingleton<CompanyService>()
                 .AddSingleton<Administration>()
                     .AddSingleton<ListCompanies>()
-                
+
                 .AddSingleton<CredentialsService>()
                 .AddSingleton<Credentials>()
                     .AddSingleton<CheckCredentials>()

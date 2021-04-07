@@ -380,3 +380,9 @@ _UpgradeReport_Files/
 Thumbs.db
 Desktop.ini
 .DS_Store
+/Blue10CLI/api_key.auth
+/Blue10CLI/listVendors.xml
+/Blue10CLI/listVendors.tsv
+/Blue10CLI/listVendors.ssv
+/Blue10CLI/listVendors.json
+/Blue10CLI/listVendors.csv
