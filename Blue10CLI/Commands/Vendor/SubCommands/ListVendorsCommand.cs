@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Blue10CLI.commands
 {
-    public class ListVendors : Command
+    public class ListVendorsCommand : Command
     {
         private VendorService _vendorService;
 
-        public ListVendors(VendorService vendorService) : base("list", "Lists all known vendors in environment")
+        public ListVendorsCommand(VendorService vendorService) : base("list", "Lists all known vendors in environment")
         {
 
             _vendorService = vendorService;

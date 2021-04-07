@@ -8,12 +8,12 @@ using System.Xml.XPath;
 
 namespace Blue10CLI.commands
 {
-    public class ListCompanies : Command
+    public class ListCompaniesCommand : Command
     {
         private readonly CompanyService _service;
-        private readonly ILogger<ListCompanies> _logger;
+        private readonly ILogger<ListCompaniesCommand> _logger;
 
-        public ListCompanies(CompanyService service, ILogger<ListCompanies> logger) : base("list", "Lists all known Administrations (Companies) in a Blue10 environment")
+        public ListCompaniesCommand(CompanyService service, ILogger<ListCompaniesCommand> logger) : base("list", "Lists all known Administrations (Companies) in a Blue10 environment")
         {
             _service = service;
             _logger = logger;

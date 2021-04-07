@@ -5,11 +5,11 @@ namespace Blue10CLI.commands
     public class VendorCommand : Command
     {
         public VendorCommand(
-            CreateVendor createVendor,
-            ListVendors listVendors,
-            ShowVendor showVendor,
+            CreateVendorCommand createVendor,
+            ListVendorsCommand listVendors,
+            ShowVendorCommand showVendor,
             SyncVendorsCommand syncVendors,
-            DeleteVendor deleteVendor
+            DeleteVendorCommand deleteVendor
             ) : base("vendor", "creates lists and manages vendors in the environments")
         {
             Add(createVendor);

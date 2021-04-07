@@ -11,13 +11,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Blue10CLI.commands.credentials
 {
-    public class CheckCredentials : Command
+    public class CheckCredentialsCommand : Command
     {
         private readonly CredentialsService _creds;
         private readonly IBlue10AsyncClient _blue10;
-        private readonly ILogger<CheckCredentials> _logger;
+        private readonly ILogger<CheckCredentialsCommand> _logger;
 
-        public CheckCredentials(CredentialsService creds, IBlue10AsyncClient blue10,ILogger<CheckCredentials> logger) : base("check",
+        public CheckCredentialsCommand(CredentialsService creds, IBlue10AsyncClient blue10,ILogger<CheckCredentialsCommand> logger) : base("check",
             "checks if you can connect to blue10 ")
         {
             _creds = creds;

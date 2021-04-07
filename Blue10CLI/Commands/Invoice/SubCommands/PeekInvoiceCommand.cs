@@ -9,12 +9,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Blue10CLI.commands
 {
-    public class PeekInvoice : Command
+    public class PeekInvoiceCommand : Command
     {
         private readonly InvoiceService _service;
-        private readonly ILogger<PeekInvoice> _logger;
+        private readonly ILogger<PeekInvoiceCommand> _logger;
 
-        public PeekInvoice(InvoiceService service, ILogger<PeekInvoice> logger) : base("peek", "Peek invoices to be posted")
+        public PeekInvoiceCommand(InvoiceService service, ILogger<PeekInvoiceCommand> logger) : base("peek", "Peek invoices to be posted")
         {
             _service = service;
             _logger = logger;

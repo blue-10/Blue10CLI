@@ -6,8 +6,8 @@ namespace Blue10CLI
 {
     public class Root : RootCommand
     {
-        public Root(VendorCommand vendor, Invoice invoice, Administration administratration
-            , Credentials credentials)
+        public Root(VendorCommand vendor, InvoiceCommand invoice, AdministrationCommand administratration
+            , CredentialsCommand credentials)
         {
             Add(vendor);
             Add(invoice);
