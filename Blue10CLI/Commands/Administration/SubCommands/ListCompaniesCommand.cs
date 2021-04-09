@@ -24,12 +24,12 @@ namespace Blue10CLI.commands
             Handler = CommandHandler.Create<string, EFormatType, FileInfo?>(ListAdministrationsHandler);
         }
 
-        private async Task ListAdministrationsHandler(string query, EFormatType format, FileInfo? outputFile)
+        private async Task ListAdministrationsHandler(string query, EFormatType format, FileInfo? output)
         {
             var resultObject = await _service.ListCompanies();
             try
             {
-                await format.HandleOutput(resultObject, outputFile, query);
+                await format.HandleOutput(resultObject, output, query);
             }
             catch (XPathException xpe)
             {

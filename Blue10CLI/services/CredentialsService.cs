@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using CredentialManagement;
 using Microsoft.Extensions.Logging;
 
 namespace Blue10CLI.services
@@ -45,10 +44,11 @@ namespace Blue10CLI.services
             {
                 try
                 {
-                    StorageSolution = EStorageSolution.WindowsCredentialsManagement;
-                    var cm = new Credential {Target = BLUE10_API_KEY_TARGET};
-                    cm.Load();
-                    return cm?.Password;
+                    //StorageSolution = EStorageSolution.WindowsCredentialsManagement;
+                   // var cm = new Credential {Target = BLUE10_API_KEY_TARGET};
+                   // cm.Load();
+                    // cm?.Password;
+                    return null;
                 }
                 catch(Exception e)
                 {
@@ -107,8 +107,9 @@ namespace Blue10CLI.services
             {
                 try
                 {
-                    var cm = new Credential {Target = BLUE10_API_KEY_TARGET};
-                    return cm.Delete();
+                   //var cm = new Credential {Target = BLUE10_API_KEY_TARGET};
+                    //return cm.Delete();
+                    return false;
                 }
                 catch (Exception e)
                 {
@@ -116,12 +117,9 @@ namespace Blue10CLI.services
                     return false;
                 }
             }
-        } 
+        }
 
-        private static bool SaveCredentialsInWindowsCredentialsManager(string taget, string secret) =>
-            new Credential
-                    {Target = BLUE10_API_KEY_TARGET, Password = secret, PersistanceType = PersistanceType.LocalComputer}
-                .Save();
+        private static bool SaveCredentialsInWindowsCredentialsManager(string taget, string secret) => false;//new Credential {Target = BLUE10_API_KEY_TARGET, Password = secret, PersistanceType = PersistanceType.LocalComputer}.Save();
 
         internal static string? EnsureApiKey()
         {
@@ -153,9 +151,9 @@ namespace Blue10CLI.services
                 Console.WriteLine("No Authentication file found, using Windows credentials management to store credentials");
                 try
                 {
-                    var cm = new Credential {Target = BLUE10_API_KEY_TARGET};
-                    cm.Load();
-                    var apiKey = cm?.Password;
+                    var cm = BLUE10_API_KEY_TARGET;// new Credential {Target = BLUE10_API_KEY_TARGET};
+                   // cm.Load();
+                   var apiKey = BLUE10_API_KEY_TARGET;
                     if (!string.IsNullOrWhiteSpace(apiKey)) return apiKey;
                     Console.WriteLine("Missing Blue10 API key, please insert here:");
                     var key = ReadPassword();
