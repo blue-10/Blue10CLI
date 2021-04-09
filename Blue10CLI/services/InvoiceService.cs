@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using Blue10CLI.models;
+﻿using Blue10CLI.models;
 using Blue10SDK;
 using Blue10SDK.Models;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Blue10CLI.services
 {
     public class InvoiceService
     {
-        
+
         private readonly ILogger<VendorService> _logger;
         private readonly IBlue10AsyncClient _blue10;
 
@@ -28,17 +27,17 @@ namespace Blue10CLI.services
         {
             var documentActions = await _blue10.GetDocumentActionsAsync();
             var res = documentActions
-                .Where(x => x.Action == EDocumentAction.post_purchase_invoice)
+                .Where(x => x.Action == EDocumentAction.post_purchase_invoice || x.Action == EDocumentAction.post_block_purchase_invoice)
                 .ToList();
             return res;
         }
-        
+
         public async Task<IList<PurchaseInvoice>> GetInvoicesToBePosted()
         {
             var invoiceActions = await GetNewPostInvoiceAction();
-            return invoiceActions.Select(x=>x.PurchaseInvoice).ToList();
+            return invoiceActions.Select(x => x.PurchaseInvoice).ToList();
         }
-        
+
         public async Task<IList<InvoiceSummary>> PeekInvoices()
         {
             var res = await GetInvoicesToBePosted();
@@ -46,12 +45,12 @@ namespace Blue10CLI.services
         }
 
         public static HttpClient _http = new HttpClient();
-        
-        public async Task<(PurchaseInvoice,byte[])> PullInvoice(DocumentAction action)
+
+        public async Task<(PurchaseInvoice, byte[])> PullInvoice(DocumentAction action)
         {
             var invoice = await _blue10.GetPurchaseInvoiceAsync(action.PurchaseInvoice.Id);
             var data = await _blue10.GetPurchaseInvoiceOriginalAsync(action.PurchaseInvoice.Id);
-            return (invoice,data);
+            return (invoice, data);
         }
 
         public async Task<object> UpdateBookingNr(Guid invoiceId, string bookingNr)
@@ -70,21 +69,17 @@ namespace Blue10CLI.services
             }
         }
 
-        public async Task<DocumentAction?> SignInvoice(DocumentAction action, string ledgerCode)
+        public async Task<DocumentAction?> SignInvoice(DocumentAction pInvoiceAction, string pLedgerCode)
         {
-            //Todo check what should be done 
-            action.Result = "success";
-            action.Status = "done";
-            action.PurchaseInvoice.AdministrationCode = ledgerCode;
-            var updateResult = await _blue10.EditDocumentActionAsync(action);
-            if (updateResult != null)
-            {
-                return action;
-            }
+            pInvoiceAction.Status = "done";
+            pInvoiceAction.PurchaseInvoice.AdministrationCode = pLedgerCode;
+
+            var fUpdateResult = await _blue10.EditDocumentActionAsync(pInvoiceAction);
+
+            if (fUpdateResult != null)
+                return pInvoiceAction;
             else
-            {
                 return null;
-            }
         }
     }
 }

@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31019.35
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blue10CLI", "Blue10CLI.csproj", "{AFD6DAA0-B3A7-41B7-91AC-A48F0E017FBE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blue10CLI.Tests", "..\Blue10CLI.Tests\Blue10CLI.Tests.csproj", "{9F1F1419-308B-4346-A2D9-AAE3358E30C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blue10CLI.Tests", "..\Blue10CLI.Tests\Blue10CLI.Tests.csproj", "{9F1F1419-308B-4346-A2D9-AAE3358E30C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
