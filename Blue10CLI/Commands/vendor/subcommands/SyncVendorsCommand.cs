@@ -1,4 +1,4 @@
-﻿using Blue10CLI.services;
+﻿using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using Newtonsoft.Json;
 using System;
@@ -12,9 +12,9 @@ namespace Blue10CLI.commands
 {
     public class SyncVendorsCommand : Command
     {
-        private readonly VendorService _vendorService;
+        private readonly IVendorService _vendorService;
 
-        public SyncVendorsCommand(VendorService vendorService) : base("sync",
+        public SyncVendorsCommand(IVendorService vendorService) : base("sync",
             Descriptions.SyncDescription)
         {
             _vendorService = vendorService;

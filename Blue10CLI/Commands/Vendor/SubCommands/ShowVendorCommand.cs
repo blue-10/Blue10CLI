@@ -1,11 +1,11 @@
-﻿using System.CommandLine;
-using Blue10CLI.services;
+﻿using Blue10CLI.Services.Interfaces;
+using System.CommandLine;
 
 namespace Blue10CLI.commands
 {
     public class ShowVendorCommand : Command
     {
-        public ShowVendorCommand(VendorService vendorService) : base("show", "Shows a single vendor and it's details")
+        public ShowVendorCommand(IVendorService vendorService) : base("show", "Shows a single vendor and it's details")
         {
         }
     }

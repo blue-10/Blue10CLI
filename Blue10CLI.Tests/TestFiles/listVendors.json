@@ -1,0 +1,59 @@
+[
+  {
+    "Name": "KPN",
+    "VatNumber": "",
+    "CountryCode": "NL",
+    "Iban": [
+      "NL45RABO6143537119"
+    ],
+    "CurrencyCode": "EUR",
+    "VendorCustomerCode": "",
+    "DefaultLedgerCode": "",
+    "DefaultVatCode": "",
+    "DefaultVatScenarioCode": "",
+    "DefaultPaymentTermCode": "",
+    "Blocked": false,
+    "Id": "0611e62c-ea19-4ec4-924b-acd200bfe25d",
+    "AdministrationCode": "B10Api",
+    "IdCompany": "B10Api",
+    "LastUpdateDate": "2021-02-17T11:38:37.907Z"
+  },
+  {
+    "Name": "MKB Brandstof",
+    "VatNumber": "NL1814948030B01",
+    "CountryCode": "NL",
+    "Iban": [
+      "NL75ABNA0626347610"
+    ],
+    "CurrencyCode": "EUR",
+    "VendorCustomerCode": "",
+    "DefaultLedgerCode": "",
+    "DefaultVatCode": "",
+    "DefaultVatScenarioCode": "",
+    "DefaultPaymentTermCode": "",
+    "Blocked": false,
+    "Id": "23099de6-19bc-4aed-b6eb-a6d700be8cea",
+    "AdministrationCode": "10030",
+    "IdCompany": "B10Api",
+    "LastUpdateDate": "2019-11-19T07:43:37.1Z"
+  },
+  {
+    "Name": "19383639237923087342",
+    "VatNumber": "",
+    "CountryCode": "NL",
+    "Iban": [
+      "NL45RABO6143537119"
+    ],
+    "CurrencyCode": "EUR",
+    "VendorCustomerCode": "",
+    "DefaultLedgerCode": "",
+    "DefaultVatCode": "",
+    "DefaultVatScenarioCode": "",
+    "DefaultPaymentTermCode": "",
+    "Blocked": false,
+    "Id": "42b1db44-90b4-490e-8ba2-ad0200e54f20",
+    "AdministrationCode": "19383639237923087342",
+    "IdCompany": "B10Api",
+    "LastUpdateDate": "2021-04-06T13:54:53.343Z"
+  }
+]

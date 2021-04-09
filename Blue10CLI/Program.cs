@@ -1,6 +1,7 @@
 ﻿using Blue10CLI.commands;
 using Blue10CLI.commands.credentials;
 using Blue10CLI.services;
+using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -25,7 +26,7 @@ namespace Blue10CLI
                     .AddSingleton<PullInvoicesCommand>()
                     .AddSingleton<SignInvoiceCommand>()
 
-                .AddSingleton<VendorService>()
+                .AddSingleton<IVendorService, VendorService>()
                 .AddSingleton<VendorCommand>()
                     .AddSingleton<CreateVendorCommand>()
                     .AddSingleton<ShowVendorCommand>()

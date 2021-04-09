@@ -1,4 +1,4 @@
-﻿using Blue10CLI.services;
+﻿using Blue10CLI.Services.Interfaces;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
@@ -8,9 +8,9 @@ namespace Blue10CLI.commands
 {
     public class ListVendorsCommand : Command
     {
-        private VendorService _vendorService;
+        private IVendorService _vendorService;
 
-        public ListVendorsCommand(VendorService vendorService) : base("list", "Lists all known vendors in environment")
+        public ListVendorsCommand(IVendorService vendorService) : base("list", "Lists all known vendors in environment")
         {
 
             _vendorService = vendorService;
@@ -34,7 +34,7 @@ namespace Blue10CLI.commands
             Handler = CommandHandler.Create<string, string, EFormatType, FileInfo?>(ListVendorsHandler);
         }
 
-        private async Task ListVendorsHandler(string? administration, string? query, EFormatType format, FileInfo? output)
+        private async Task ListVendorsHandler(string administration, string? query, EFormatType format, FileInfo? output)
         {
             var resultObject = await _vendorService.List(administration);
             await format.HandleOutput(resultObject, output, query);

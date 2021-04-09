@@ -1,4 +1,5 @@
 ﻿using Blue10CLI.models;
+using Blue10CLI.Services.Interfaces;
 using Blue10SDK;
 using Blue10SDK.Exceptions;
 using Blue10SDK.Models;
@@ -10,11 +11,10 @@ using System.Threading.Tasks;
 
 namespace Blue10CLI.services
 {
-    public class VendorService
+    public class VendorService : IVendorService
     {
         private readonly ILogger<VendorService> _logger;
         private readonly IBlue10AsyncClient _blue10;
-
 
         public VendorService(ILogger<VendorService> logger, IBlue10AsyncClient blue10)
         {
