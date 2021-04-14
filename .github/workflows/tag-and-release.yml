@@ -3,7 +3,7 @@ name: Bump version tag and release zipped .exe
 on:
   push:
     branches:
-      - master
+      - automatic-releases-and-semver
 
 jobs:
   bump_version_tag:
