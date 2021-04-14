@@ -1,0 +1,13 @@
+name: Release zipped .exe
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    name: Release
+    runs-on: windows-latest
+    steps:
+      
