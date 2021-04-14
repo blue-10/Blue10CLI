@@ -6,11 +6,16 @@ namespace Blue10CLI
 {
     public class Root : RootCommand
     {
-        public Root(VendorCommand vendor, InvoiceCommand invoice, AdministrationCommand administratration
-            , CredentialsCommand credentials)
+        public Root(
+            VendorCommand vendor,
+            InvoiceCommand invoice,
+            GLAccountCommand glaccount,
+            AdministrationCommand administratration,
+            CredentialsCommand credentials)
         {
             Add(vendor);
             Add(invoice);
+            Add(glaccount);
             Add(credentials);
             Add(administratration);
             Add(new Option<bool>("--debug", "Run command in debug mode to view detailed logs"));

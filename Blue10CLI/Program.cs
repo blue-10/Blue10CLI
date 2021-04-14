@@ -17,8 +17,9 @@ namespace Blue10CLI
             var key = CredentialsService.EnsureApiKey();
             if (string.IsNullOrWhiteSpace(key)) return;
             var serviceProvider = new ServiceCollection()
-                .AddBlue10(key,"https://api.blue10.com/v2/")
-                
+                //.AddBlue10(key, "https://api.blue10.com/v2/")
+                .AddBlue10(key, "https://b10imdev-weu-api.azurewebsites.net/")
+
                 //Business Services
                 .AddSingleton<InvoiceService>()
                 .AddSingleton<InvoiceCommand>()
@@ -33,6 +34,11 @@ namespace Blue10CLI
                     .AddSingleton<ListVendorsCommand>()
                     .AddSingleton<SyncVendorsCommand>()
                     .AddSingleton<DeleteVendorCommand>()
+
+                .AddSingleton<IGLAccountService, GLAccountService>()
+                .AddSingleton<GLAccountCommand>()
+                    .AddSingleton<ListGLAccountsCommand>()
+                    .AddSingleton<SyncGLAccountsCommand>()
 
                 .AddSingleton<CompanyService>()
                 .AddSingleton<AdministrationCommand>()
