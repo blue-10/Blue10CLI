@@ -1,79 +1,107 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using Blue10CLI.models;
+using Blue10CLI.Services.Interfaces;
 using Blue10SDK;
 using Blue10SDK.Exceptions;
 using Blue10SDK.Models;
-using DevLab.JmesPath;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Blue10CLI.services
 {
-    public class VendorService
+    public class VendorService : IVendorService
     {
         private readonly ILogger<VendorService> _logger;
         private readonly IBlue10AsyncClient _blue10;
-        
-        
+
         public VendorService(ILogger<VendorService> logger, IBlue10AsyncClient blue10)
         {
             _logger = logger;
             _blue10 = blue10;
         }
 
-        public async Task<IList<Vendor>> List(string companyId) => 
-            await _blue10.GetVendorsAsync(companyId);
+        public async Task<IList<Vendor>> List(string companyId) =>
+            await _blue10.GetVendorsAsync(companyId); // try catch?
 
         public async Task<Vendor?> Create(
-            string administrationCode,
-            string code,
-            string countryCode,
-            string currency,
-            IEnumerable<string> iban,
-            bool blocked,
-            string defaultLedger,
-            string defaultPaymentTerm,
-            string defaultVat
-
-        )
+            string pName,
+            string pVatNumber,
+            string pCountryCode,
+            IEnumerable<string> pIban,
+            string pCurrencyCode,
+            string pVendorCustomerCode,
+            string pDefaultLedgerCode,
+            string pDefaultVatCode,
+            string pDefaultVatScenarioCode,
+            string pDefaultPaymentTermCode,
+            bool pBlocked,
+            string pAdministrationCode,
+            string pIdCompany)
         {
-            var newVendor = new Vendor
+
+            var fCreateVendor = new Vendor
             {
-                Name = code,
-                AdministrationCode = code,
-                Blocked = blocked,
-                CountryCode = countryCode,
-                DefaultLedgerCode = defaultLedger,
-                DefaultPaymentTermCode = defaultPaymentTerm,
-                DefaultVatCode = defaultVat,
-                //DefaultVatScenarioCode = defaultVatScenario,
-                CurrencyCode = currency,
-                Iban = iban.ToList(),
+                Name = pName,
+                VatNumber = pVatNumber,
+                CountryCode = pCountryCode,
+                Iban = pIban.ToList(),
+                CurrencyCode = pCurrencyCode,
+                VendorCustomerCode = pVendorCustomerCode,
+                DefaultLedgerCode = pDefaultLedgerCode,
+                DefaultVatCode = pDefaultVatCode,
+                DefaultVatScenarioCode = pDefaultVatScenarioCode,
+                DefaultPaymentTermCode = pDefaultPaymentTermCode,
+                Blocked = pBlocked,
+
                 Id = Guid.NewGuid(),
-                IdCompany = administrationCode
+                AdministrationCode = pAdministrationCode,
+                IdCompany = pIdCompany
             };
 
-            return await PushVendor(newVendor);
+            var fVendorResultModel = await TryVendorTask(_blue10.AddVendorAsync(fCreateVendor));
+            _logger.LogError(fVendorResultModel.ErrorMessage);
+            return fVendorResultModel.Vendor;
         }
 
-    
+        public async Task<VendorResultModel> CreateOrUpdate(
+            Vendor pVendor)
+        {
+            var fErrors = Validate(pVendor);
+            if (fErrors.Count > 0)
+                return new VendorResultModel(null, string.Join(", ", fErrors));
 
-        public async Task<Blue10SDK.Models.Vendor?> PushVendor(Blue10SDK.Models.Vendor vendor)
+
+            if (pVendor.Id != Guid.Empty)
+                return await TryVendorTask(_blue10.EditVendorAsync(pVendor));
+
+            pVendor.Id = Guid.NewGuid();
+            return await TryVendorTask(_blue10.AddVendorAsync(pVendor));
+        }
+
+        private async Task<VendorResultModel> TryVendorTask(Task<Vendor> pTask)
         {
             try
             {
-                return await _blue10.AddVendorAsync(vendor);
-
+                var fVendor = await pTask;
+                return new VendorResultModel(fVendor, null);
             }
             catch (Blue10ApiException b10apie)
-            { 
-                _logger.LogError(b10apie.Message);
-                return null;
+            {
+                return new VendorResultModel(null, b10apie.Message);
             }
+        }
+
+        // Validation in ApiVendor
+        private List<string> Validate(Vendor pVendor)
+        {
+            var fErrors = new List<string>();
+            if (string.IsNullOrWhiteSpace(pVendor.AdministrationCode)) fErrors.Add("AdministrationCode is empty");
+            if (string.IsNullOrWhiteSpace(pVendor.IdCompany)) fErrors.Add("IdCompany is empty");
+            if (string.IsNullOrWhiteSpace(pVendor.Name)) fErrors.Add("Name is empty");
+
+            return fErrors;
         }
     }
 }

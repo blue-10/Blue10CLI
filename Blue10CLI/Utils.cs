@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using DevLab.JmesPath;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,12 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.XPath;
-using CsvHelper;
-using CsvHelper.Configuration;
-using DevLab.JmesPath;
 
 namespace Blue10CLI
 {
@@ -51,24 +50,25 @@ namespace Blue10CLI
             };
 
             using var reader = new StringReader(origin);
-            using var csv = new CsvReader(reader,config);
+            using var csv = new CsvReader(reader, config);
             return csv.GetRecords<T>().ToList();
         }
-        
+
         internal static IList<T> XmlRecords<T>(string input)
         {
             using var reader = new StringReader(input);
-            
-            var serializer = new XmlSerializer(typeof(IList<T>), new XmlRootAttribute($"ArrayOf{typeof(T).Name}"));
+
+            // Must be List<T> instead of IList<T>, otherwise it will throw exception
+            var serializer = new XmlSerializer(typeof(List<T>), new XmlRootAttribute($"ArrayOf{typeof(T).Name}"));
 
             var res = serializer.Deserialize(reader) as IList<T>;
             return res ?? new List<T>();
         }
     }
-    
+
     public static class Output
     {
-    
+
 
         public static string Format<T>(this EFormatType format, T input) where T : IEnumerable
         {
@@ -82,7 +82,7 @@ namespace Blue10CLI
                 _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
             };
         }
-        
+
         public static string Filter(this EFormatType format, string inputString, string query)
         {
             return format switch
@@ -101,28 +101,28 @@ namespace Blue10CLI
             using var xmlReader = new StringReader(xmlString);
             var xPathDocument = new XPathDocument(xmlReader);
             var xPathNav = xPathDocument.CreateNavigator();
-            
+
             var resList = new List<string>();
             var res = xPathNav.Select(xPathQuery);
-            
+
             foreach (dynamic bla in res)
             {
-                resList.Add( bla.OuterXml ?? "");
+                resList.Add(bla.OuterXml ?? "");
             }
-            return string.Join('\n',resList);
+            return string.Join('\n', resList);
         }
 
         private static string FilterWithJmesPath(string jsonString, string jmesPath)
         {
-            JmesPath filterer = new ();
+            JmesPath filterer = new();
             return filterer.Transform(jsonString, jmesPath);
         }
 
 
-        public static string ConvertToJson<T>(T subject, string jmesPath = "[]") => 
-            JsonSerializer.Serialize(subject, new JsonSerializerOptions {WriteIndented = true});
+        public static string ConvertToJson<T>(T subject, string jmesPath = "[]") =>
+            JsonSerializer.Serialize(subject, new JsonSerializerOptions { WriteIndented = true });
 
-        public static async Task HandleOutput<T>(this EFormatType format, T input, FileInfo? file, string? query = null)
+        public static async Task HandleOutput<T>(this EFormatType format, T input, FileInfo? file, string? query = null) // Null exception
         {
             string? resultString;
             if (input is IList inputEnumerable)
@@ -131,7 +131,7 @@ namespace Blue10CLI
             }
             else
             {
-                resultString = format.Format(new[] {input});
+                resultString = format.Format(new[] { input });
             }
 
             if (!string.IsNullOrWhiteSpace(query))
@@ -145,8 +145,8 @@ namespace Blue10CLI
                 await File.WriteAllTextAsync(file.FullName, resultString);
             }
         }
-        
-        
+
+
         public static async Task HandleOutputToFilePath<T>(this EFormatType format, T input, string filepath, string? query = null)
         {
             string? resultString;
@@ -156,7 +156,7 @@ namespace Blue10CLI
             }
             else
             {
-                resultString = format.Format(new[] {input});
+                resultString = format.Format(new[] { input });
             }
 
             if (!string.IsNullOrWhiteSpace(query))
@@ -167,19 +167,19 @@ namespace Blue10CLI
             Console.WriteLine(resultString);
             await File.WriteAllTextAsync(filepath, resultString);
         }
-        
+
 
         public class StringWriterWithEncoding : StringWriter
         {
             public override Encoding Encoding => _encoding ?? base.Encoding;
-            private readonly Encoding _encoding; 
+            private readonly Encoding _encoding;
             public StringWriterWithEncoding() { }
             public StringWriterWithEncoding(Encoding encoding)
             {
                 _encoding = encoding;
             }
         }
-        
+
         private static string ConvertToXml<T>(T input)
         {
             using var stringwriter = new StringWriter();
@@ -187,7 +187,7 @@ namespace Blue10CLI
             serializer1.Serialize(stringwriter, input);
             var xmlString = stringwriter.ToString();
             return xmlString;
-           
+
         }
 
         private static string ConvertToCsv<T>(T origin, string separator)
@@ -203,11 +203,11 @@ namespace Blue10CLI
             if (origin is IEnumerable enumerable)
                 csv.WriteRecords(enumerable);
             else
-                csv.WriteRecords(new[] {origin});
+                csv.WriteRecords(new[] { origin });
             return wr.ToString();
         }
-        
-        
-     
+
+
+
     }
 }

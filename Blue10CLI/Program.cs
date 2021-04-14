@@ -1,11 +1,12 @@
-﻿using System.CommandLine;
-using System.Threading.Tasks;
-using Blue10CLI.commands;
+﻿using Blue10CLI.commands;
 using Blue10CLI.commands.credentials;
 using Blue10CLI.services;
+using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.CommandLine;
+using System.Threading.Tasks;
 
 namespace Blue10CLI
 {
@@ -20,29 +21,29 @@ namespace Blue10CLI
                 
                 //Business Services
                 .AddSingleton<InvoiceService>()
-                .AddSingleton<Invoice>()
-                    .AddSingleton<PeekInvoice>()
-                    .AddSingleton<PullInvoices>()
-                    .AddSingleton<SignInvoice>()
-                
-                .AddSingleton<VendorService>()
-                .AddSingleton<Vendor>()        
-                    .AddSingleton<CreateVendor>()
-                    .AddSingleton<ShowVendor>()
-                    .AddSingleton<ListVendors>()
-                    .AddSingleton<ImportVendors>()
-                    .AddSingleton<DeleteVendor>()
-                
+                .AddSingleton<InvoiceCommand>()
+                    .AddSingleton<PeekInvoiceCommand>()
+                    .AddSingleton<PullInvoicesCommand>()
+                    .AddSingleton<SignInvoiceCommand>()
+
+                .AddSingleton<IVendorService, VendorService>()
+                .AddSingleton<VendorCommand>()
+                    .AddSingleton<CreateVendorCommand>()
+                    .AddSingleton<ShowVendorCommand>()
+                    .AddSingleton<ListVendorsCommand>()
+                    .AddSingleton<SyncVendorsCommand>()
+                    .AddSingleton<DeleteVendorCommand>()
+
                 .AddSingleton<CompanyService>()
-                .AddSingleton<Administration>()
-                    .AddSingleton<ListCompanies>()
-                
+                .AddSingleton<AdministrationCommand>()
+                    .AddSingleton<ListCompaniesCommand>()
+
                 .AddSingleton<CredentialsService>()
-                .AddSingleton<Credentials>()
-                    .AddSingleton<CheckCredentials>()
-                    .AddSingleton<ShowCredentials>()
-                    .AddSingleton<ClearCredentials>()
-                    .AddSingleton<SetCredentials>()
+                .AddSingleton<CredentialsCommand>()
+                    .AddSingleton<CheckCredentialsCommand>()
+                    .AddSingleton<ShowCredentialsCommand>()
+                    .AddSingleton<ClearCredentialsCommand>()
+                    .AddSingleton<SetCredentialsCommand>()
 
                 //Commands
                 .AddSingleton<Root>()
