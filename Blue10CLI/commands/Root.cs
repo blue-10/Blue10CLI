@@ -10,12 +10,14 @@ namespace Blue10CLI
             VendorCommand vendor,
             InvoiceCommand invoice,
             GLAccountCommand glaccount,
+            VatCodeCommand vatcode,
             AdministrationCommand administratration,
             CredentialsCommand credentials)
         {
             Add(vendor);
             Add(invoice);
             Add(glaccount);
+            Add(vatcode);
             Add(credentials);
             Add(administratration);
             Add(new Option<bool>("--debug", "Run command in debug mode to view detailed logs"));

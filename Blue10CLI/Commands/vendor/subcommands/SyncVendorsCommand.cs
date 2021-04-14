@@ -81,14 +81,14 @@ namespace Blue10CLI.commands
             foreach (var fVendor in fVendors)
             {
                 var fResult = await _vendorService.CreateOrUpdate(fVendor);
-                if (fResult.Vendor == null)
+                if (fResult.Object == null)
                 {
                     fFailedList.Add(fVendor);
                     Console.WriteLine($"{fCount}/{fTotalVendors}: Failed syncing vendor '{fVendor.Name}' - {fResult.ErrorMessage}");
                 }
                 else
                 {
-                    fSuccessList.Add(fResult.Vendor);
+                    fSuccessList.Add(fResult.Object);
                     Console.WriteLine($"{fCount}/{fTotalVendors} Successfully synced vendor '{fVendor.Name}'");
                 }
                 fCount++;

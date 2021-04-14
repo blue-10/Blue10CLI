@@ -24,6 +24,6 @@ namespace Blue10CLI.Services.Interfaces
             string pAdministrationCode,
             string pIdCompany);
 
-        Task<VendorResultModel> CreateOrUpdate(Vendor pVendor);
+        Task<BaseResultModel<Vendor>> CreateOrUpdate(Vendor pVendor);
     }
 }

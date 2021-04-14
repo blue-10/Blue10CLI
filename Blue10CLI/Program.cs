@@ -40,6 +40,11 @@ namespace Blue10CLI
                     .AddSingleton<ListGLAccountsCommand>()
                     .AddSingleton<SyncGLAccountsCommand>()
 
+                .AddSingleton<IVatCodeService, VatCodeService>()
+                .AddSingleton<VatCodeCommand>()
+                    .AddSingleton<ListVatCodesCommand>()
+                    .AddSingleton<SyncVatCodesCommand>()
+
                 .AddSingleton<CompanyService>()
                 .AddSingleton<AdministrationCommand>()
                     .AddSingleton<ListCompaniesCommand>()
