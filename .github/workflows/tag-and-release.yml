@@ -1,4 +1,4 @@
-name: Bump version and release zipped .exe
+name: Bump version tag and release zipped .exe
 
 on:
   push:
@@ -6,20 +6,37 @@ on:
       - master
 
 jobs:
-  build:
+  bump_version_tag:
+    name: Bump version and push tag
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
       with:
         fetch-depth: '0'
-    - name: Bump version and push tag
+    - name: Execute action anothrNick/github-tag-action
       uses: anothrNick/github-tag-action@1.26.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
         DEFAULT_BUMP: patch
-  release:
-    name: Release
+  create_and_publish_release:
     runs-on: windows-latest
+    name: create-executable
     steps:
-      
+    - uses: actions/checkout@master
+    - name: Create exectuable
+      run: dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true
+    - name: Copy README
+      run: copy D:\a\Blue10CLI\Blue10CLI\README.md D:\a\Blue10CLI\Blue10CLI\Blue10CLI\bin\Release\net5.0-windows\win-x64\publish
+    - name: Create archive
+      uses: thedoctor0/zip-release@master
+      with:
+        directory: 'D:\a\Blue10CLI\Blue10CLI\Blue10CLI\bin\Release\net5.0-windows\win-x64\publish'
+        filename: 'release.zip'
+        type: 'zip'
+    - name: Upload archive as release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: 'D:\a\Blue10CLI\Blue10CLI\Blue10CLI\bin\Release\net5.0-windows\win-x64\publish\release.zip'
+        token: ${{ secrets.GITHUB_TOKEN }}
