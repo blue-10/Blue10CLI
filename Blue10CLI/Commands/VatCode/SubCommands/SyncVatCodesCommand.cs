@@ -10,19 +10,19 @@ using System.Threading.Tasks;
 
 namespace Blue10CLI.commands
 {
-    public class SyncGLAccountsCommand : Command
+    public class SyncVatCodesCommand : Command
     {
-        private readonly IGLAccountService _glaccountService;
+        private readonly IVatCodeService _vatCodeService;
 
-        public SyncGLAccountsCommand(IGLAccountService glaccountService) : base("sync",
-            Descriptions.SyncGLAccountDescription)
+        public SyncVatCodesCommand(IVatCodeService vatCodeService) : base("sync",
+            Descriptions.SyncVatCodeDescription)
         {
-            _glaccountService = glaccountService;
+            _vatCodeService = vatCodeService;
 
             Add(new Option<FileInfo?>(
                 new[] { "-i", "--input" },
                 () => null,
-                Descriptions.InputGLAccountDescription)
+                Descriptions.InputVatCodeDescription)
             { IsRequired = true });
             Add(new Option<EFormatType>(
                 new[] { "--input-format" },
@@ -38,29 +38,29 @@ namespace Blue10CLI.commands
                 () => EFormatType.JSON,
                 Descriptions.FormatDescription));
 
-            Handler = CommandHandler.Create<FileInfo, EFormatType, FileInfo?, EFormatType>(ImportGLAccountsHandler);
+            Handler = CommandHandler.Create<FileInfo, EFormatType, FileInfo?, EFormatType>(ImportVatCodesHandler);
         }
 
-        private async Task ImportGLAccountsHandler(
+        private async Task ImportVatCodesHandler(
             FileInfo input,
             EFormatType inputformat,
             FileInfo? output,
             EFormatType outputformat)
         {
             var fSyncFilePath = input.FullName;
-            var fGLAccountList = File.ReadAllText(fSyncFilePath);
+            var fVatCodeList = File.ReadAllText(fSyncFilePath);
 
-            IList<GLAccount> fGLAccounts;
+            IList<VatCode> fVatCodes;
 
             try
             {
-                fGLAccounts = inputformat switch
+                fVatCodes = inputformat switch
                 {
-                    EFormatType.JSON => JsonConvert.DeserializeObject<IList<GLAccount>>(fGLAccountList),
-                    EFormatType.CSV => Read.CsvRecords<GLAccount>(fGLAccountList, ","),
-                    EFormatType.TSV => Read.CsvRecords<GLAccount>(fGLAccountList, "\t"),
-                    EFormatType.SSV => Read.CsvRecords<GLAccount>(fGLAccountList, ";"),
-                    EFormatType.XML => Read.XmlRecords<GLAccount>(fGLAccountList),
+                    EFormatType.JSON => JsonConvert.DeserializeObject<IList<VatCode>>(fVatCodeList),
+                    EFormatType.CSV => Read.CsvRecords<VatCode>(fVatCodeList, ","),
+                    EFormatType.TSV => Read.CsvRecords<VatCode>(fVatCodeList, "\t"),
+                    EFormatType.SSV => Read.CsvRecords<VatCode>(fVatCodeList, ";"),
+                    EFormatType.XML => Read.XmlRecords<VatCode>(fVatCodeList),
                     _ => throw new ArgumentOutOfRangeException(nameof(inputformat), inputformat, null)
                 };
             }
@@ -69,27 +69,27 @@ namespace Blue10CLI.commands
                 || ex is CsvHelper.ReaderException
                 || ex is InvalidOperationException)
             {
-                Console.WriteLine("Invalid input file. Check if format of the file is correct and if Id values of GLAccounts are valid");
+                Console.WriteLine("Invalid input file. Check if format of the file is correct and if Id values of VATCodes are valid");
                 throw;
             }
 
-            var fSuccessList = new List<GLAccount>();
-            var fFailedList = new List<GLAccount>();
+            var fSuccessList = new List<VatCode>();
+            var fFailedList = new List<VatCode>();
 
             var fCount = 1;
-            var fTotalGLAccounts = fGLAccounts.Count;
-            foreach (var fGLAccount in fGLAccounts)
+            var fTotalVATCodes = fVatCodes.Count;
+            foreach (var fVatCode in fVatCodes)
             {
-                var fResult = await _glaccountService.CreateOrUpdate(fGLAccount);
+                var fResult = await _vatCodeService.CreateOrUpdate(fVatCode);
                 if (fResult.Object == null)
                 {
-                    fFailedList.Add(fGLAccount);
-                    Console.WriteLine($"{fCount}/{fTotalGLAccounts}: Failed syncing GLAccount '{fGLAccount.Name}' - {fResult.ErrorMessage}");
+                    fFailedList.Add(fVatCode);
+                    Console.WriteLine($"{fCount}/{fTotalVATCodes}: Failed syncing VATCode '{fVatCode.Name}' - {fResult.ErrorMessage}");
                 }
                 else
                 {
                     fSuccessList.Add(fResult.Object);
-                    Console.WriteLine($"{fCount}/{fTotalGLAccounts} Successfully synced GLAccount '{fGLAccount.Name}'");
+                    Console.WriteLine($"{fCount}/{fTotalVATCodes} Successfully synced VATCode '{fVatCode.Name}'");
                 }
                 fCount++;
             }
@@ -100,7 +100,7 @@ namespace Blue10CLI.commands
                 outputformat.HandleOutputToFilePath(fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
                 outputformat.HandleOutputToFilePath(fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
             }
-            Console.WriteLine($"{fSuccessList.Count}/{fTotalGLAccounts} GLAccounts have been successfully imported");
+            Console.WriteLine($"{fSuccessList.Count}/{fTotalVATCodes} VATCodes have been successfully imported");
         }
     }
 }

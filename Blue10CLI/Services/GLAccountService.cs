@@ -24,11 +24,11 @@ namespace Blue10CLI.services
         public async Task<IList<GLAccount>> List(string pCompanyId) =>
             await _blue10.GetGLAccountsAsync(pCompanyId); // try catch?
 
-        public async Task<GLAccountResultModel> CreateOrUpdate(GLAccount pGlAccount)
+        public async Task<BaseResultModel<GLAccount>> CreateOrUpdate(GLAccount pGlAccount)
         {
             var fErrors = Validate(pGlAccount);
             if (fErrors.Count > 0)
-                return new GLAccountResultModel(null, string.Join(", ", fErrors));
+                return new BaseResultModel<GLAccount>(null, string.Join(", ", fErrors));
 
 
             if (pGlAccount.Id != Guid.Empty)
@@ -38,16 +38,16 @@ namespace Blue10CLI.services
             return await TryVendorTask(_blue10.AddGLAccountAsync(pGlAccount));
         }
 
-        private async Task<GLAccountResultModel> TryVendorTask(Task<GLAccount> pTask)
+        private async Task<BaseResultModel<GLAccount>> TryVendorTask(Task<GLAccount> pTask)
         {
             try
             {
                 var fGlAccount = await pTask;
-                return new GLAccountResultModel(fGlAccount, null);
+                return new BaseResultModel<GLAccount>(fGlAccount, null);
             }
             catch (Blue10ApiException b10apie)
             {
-                return new GLAccountResultModel(null, b10apie.Message);
+                return new BaseResultModel<GLAccount>(null, b10apie.Message);
             }
         }
 

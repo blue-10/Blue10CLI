@@ -62,15 +62,15 @@ namespace Blue10CLI.services
 
             var fVendorResultModel = await TryVendorTask(_blue10.AddVendorAsync(fCreateVendor));
             _logger.LogError(fVendorResultModel.ErrorMessage);
-            return fVendorResultModel.Vendor;
+            return fVendorResultModel.Object;
         }
 
-        public async Task<VendorResultModel> CreateOrUpdate(
+        public async Task<BaseResultModel<Vendor>> CreateOrUpdate(
             Vendor pVendor)
         {
             var fErrors = Validate(pVendor);
             if (fErrors.Count > 0)
-                return new VendorResultModel(null, string.Join(", ", fErrors));
+                return new BaseResultModel<Vendor>(null, string.Join(", ", fErrors));
 
 
             if (pVendor.Id != Guid.Empty)
@@ -80,16 +80,16 @@ namespace Blue10CLI.services
             return await TryVendorTask(_blue10.AddVendorAsync(pVendor));
         }
 
-        private async Task<VendorResultModel> TryVendorTask(Task<Vendor> pTask)
+        private async Task<BaseResultModel<Vendor>> TryVendorTask(Task<Vendor> pTask)
         {
             try
             {
                 var fVendor = await pTask;
-                return new VendorResultModel(fVendor, null);
+                return new BaseResultModel<Vendor>(fVendor, null);
             }
             catch (Blue10ApiException b10apie)
             {
-                return new VendorResultModel(null, b10apie.Message);
+                return new BaseResultModel<Vendor>(null, b10apie.Message);
             }
         }
 

@@ -9,6 +9,6 @@ namespace Blue10CLI.Services.Interfaces
     {
         Task<IList<GLAccount>> List(string pCompanyId);
 
-        Task<GLAccountResultModel> CreateOrUpdate(GLAccount pGlAccount);
+        Task<BaseResultModel<GLAccount>> CreateOrUpdate(GLAccount pGlAccount);
     }
 }
