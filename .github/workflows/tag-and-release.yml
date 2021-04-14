@@ -29,15 +29,15 @@ jobs:
     - name: Create exectuable
       run: dotnet publish -c Release -r win-x64 -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true
     - name: Copy README
-      run: cp D:\a\Blue10CLI\Blue10CLI\README.md D:\a\Blue10CLI\Blue10CLI\Blue10CLI\bin\Release\net5.0\win-x64\publish
+      run: cp D:/a/Blue10CLI/Blue10CLI/README.md D:/a/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
     - name: Create archive
       uses: thedoctor0/zip-release@master
       with:
-        directory: 'D:\a\Blue10CLI\Blue10CLI\Blue10CLI\bin\Release\net5.0\win-x64\publish'
+        directory: 'D:/a/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish'
         filename: 'release.zip'
         type: 'zip'
     - name: Upload archive as release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'D:\a\Blue10CLI\Blue10CLI\Blue10CLI\bin\Release\net5.0\win-x64\publish\release.zip'
+        artifacts: 'D:/a/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/release.zip'
         token: ${{ secrets.GITHUB_TOKEN }}
