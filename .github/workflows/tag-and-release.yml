@@ -22,7 +22,7 @@ jobs:
         DEFAULT_BUMP: patch
   create_and_publish_release:
     needs: bump_version_tag
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     name: create-executable
     steps:
     - uses: actions/checkout@master
