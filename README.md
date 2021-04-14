@@ -85,6 +85,18 @@ Otherise contact Blue10 support and request a new API key and update your api ke
 
 # Using the CLI
 
+## Headless and Console modes:
+
+The Blue10CLI provides two variants of the CLI:
+- `Blue10CLI.exe`
+- `Blue10CLIHeadless.exe`
+
+They are two compilations of the same source, but the difference being that `Blue10CLI.exe` is built as a console application. This means that all self-documenting commands can be called manually through the command line and studied before implementing the headless variant. Developers can use the `Blue10CLI.exe` to test out and debug different commands.01de
+
+The `Blue10CLIHeadless.exe` variant is built as a windows application, this means that it can still be called through the system input or command line, but it will not open a terminal (or head) by itself. Developers should use `Blue10CLIHeadless.exe` when using a Blue10 as part of a script or external application to avoid console flicker.
+
+
+
 ## The help option.
 
 Run for following command 
@@ -107,6 +119,8 @@ Options:
 Commands:
   vendor            creates lists and manages vendors in the environments
   invoice           creates lists and manages invoices
+  glaccount         creates lists and manages GLAccounts in the environments
+  vatcode           creates lists and manages VatCodes in the environments
   credentials       Show and set API credentials
   administration    Manage administration(companies)
 ```
@@ -116,7 +130,7 @@ The help option is an always available option that you can add to any command to
 This is the *root command* of the blue 10 cli. From here you can see that we have several sub-commands. 
 We have already used the `credentials` sub-command to check if we have a good connection to a blue10 environment. 
 
-The current version of the blue10 cli provides 3 aditional sub-commands: `administration`, `vendor` and `invoice`. These can be used to manage different parts of your blue10 environment.
+The current version of the blue10 cli provides 5 aditional sub-commands: `administration`, `vendor`, `invoice`, `glaccount` and `vatcode`. These can be used to manage different parts of your blue10 environment.
 
 
 ## Administration 
@@ -214,6 +228,8 @@ Options:
 Commands:
   create    Creates new vendor in the system
   list      Lists all known vendors in environment
+  sync      Sync vendors from a file to the Blue10 environment. AdministrationCode and CompanyId is required for each vendor.
+            Updating existing vendors requires Id. Creating new vendors requires empty Id.
 ```
 
 
@@ -235,22 +251,22 @@ Usage:
   Blue10CLI vendor create [options]
 
 Options:
-  -c, --code <code> (REQUIRED)           Unique Identifyer if Vendor in administration
-  --country <country> (REQUIRED)         ISO 3166 two-letter country code of the Vendor's host country
-  --currency <currency> (REQUIRED)       ISO 4217 three-letter currency code to set default currency for vendor
-  --iban <iban> (REQUIRED)               list of IBANs associated with this vendor
-  -l, --ledger <ledger>                  [default: Documents from this vendor will be routed to this ledger, leave
-                                         empty to not associate]
-  -p, --payment <payment>                [default: Documents from this vendor will be associated with this payment
-                                         term, leave empty to not associate]
-  -v, --vat <vat>                        [default: Documents from this vendor will be associated with this VAT code,
-                                         leave empty to not associate]
-  -b, --blocked                          Block vendor upon creation, default false [default: False]
-  -f, --format <CSV|JSON|SSV|TSV|XML>    Output format. [default: JSON]
-  -o, --output <output>                  Enter path to write output of this command to file. Default output is console
-                                         only [default: ]
-  -?, -h, --help                         Show help and usage information
-
+  -c, --company-id <company-id> (REQUIRED)                      Company Id under which this vendor will be created
+  -a, --administration-code <administration-code> (REQUIRED)    Unique Identifyer if Vendor in administration
+  --country <country> (REQUIRED)                                ISO 3166 two-letter country code of the Vendor's host country
+  --currency <currency> (REQUIRED)                              ISO 4217 three-letter currency code to set default currency
+                                                                for vendor
+  --iban <iban> (REQUIRED)                                      list of IBANs associated with this vendor
+  -l, --ledger <ledger>                                         [default: Documents from this vendor will be routed to this
+                                                                ledger, leave empty to not associate]
+  -p, --payment <payment>                                       [default: Documents from this vendor will be associated with
+                                                                this payment term, leave empty to not associate]
+  -v, --vat <vat>                                               [default: Documents from this vendor will be associated with
+                                                                this VAT code, leave empty to not associate]
+  -f, --format <CSV|JSON|SSV|TSV|XML>                           Output format. [default: JSON]
+  -o, --output <output>                                         Enter path to write output of this command to file. Default
+                                                                output is console only [default: ]
+  -?, -h, --help                                                Show help and usage information
 ```
 
 You see that to create a vendor you need several pieces of vendor information. Options marked `(REQUIRED)` need to be enterred for the operation to be successfull. All other attributes are optional.
@@ -274,7 +290,6 @@ Run for following command
 You should see something like this:
 
 ```
-
 invoice:
   creates lists and manages invoices
 
@@ -286,14 +301,263 @@ Options:
 
 Commands:
   peek    Peek invoices to be posted
-  pull    Pull invoices to be posted
+  pull    Pull all invoices to be posted
+  sign    Sign-off invoice with a ledger entry number
+```
+
+### Peek
+The `peek` command retrieves a sumamry of all open invoices that are ready to be posted.
+
+Run for following command 
+
+```
+.\Blue10CLI.exe invoice peek -h
+```
+
+```
+peek:
+  Peek invoices to be posted
+
+Usage:
+  Blue10CLI invoice peek [options]
+
+Options:
+  -q, --query <query>                    A query used to filter out results. NOTE: Dependant on output format. If output is
+                                         'json', this is a JMESPath query to filter results. https://jmespath.org/. If output
+                                         is 'xml', this is an XPATH string. https://www.w3schools.com/xml/xpath_intro.asp
+                                         [default: ]
+  -f, --format <CSV|JSON|SSV|TSV|XML>    Output format. [default: JSON]
+  -o, --output <output>                  Enter path to write output of this command to file. Default output is console only
+  -?, -h, --help                         Show help and usage information
 ```
 
 
-the `peek` command retreives a sumamry of all open invoices that are ready to be posted.
+**NOTE:** *`invoice peek` is a **read** transaction: After 'peeking' the list of available invoices, the invoices in blue10 remain 'waiting for ERP'. This means that the handshake with the ERP is not complete*
 
-the `pull` command retreives the full invoice information and writes it to file together with the original pdf assigned to that file to a given directory.
+### Pull
 
+The `pull` command retrieves the full invoice information and writes it to file together with the original pdf assigned to that file to a given directory.
+
+Run for following command 
+
+```
+.\Blue10CLI.exe invoice pull -h
+```
+```
+pull:
+  Pull all invoices to be posted
+
+Usage:
+  Blue10CLI invoice pull [options]
+
+Options:
+  -q, --query <query>                    Aquery used to filter out results. NOTE: Dependant on output format. If output is
+                                         'json', this is a JMESPath query to filter results. https://jmespath.org/. If output
+                                         is 'xml', this is an XPATH string. https://www.w3schools.com/xml/xpath_intro.asp
+                                         [default: ]
+  -f, --format <CSV|JSON|SSV|TSV|XML>    Output format. [default: JSON]
+  -o, --output <output>                  Enter path to write output of this command to the filesystem. Default output will
+                                         create an 'invoices' directory in the root of the console [default: ./invoices/]
+  -?, -h, --help                         Show help and usage information
+```
+
+
+'pulling' the available invoices will create a text file in the chosen format passed through the `-f` command into the chosen *output directory* passed through the `-o` command. The file will be named with the pattern: `<invoiceid>.<format extension>`. In the same output directory  alongside the text file, the CLI will download and save, the original PDF document associated with the invoice and name it with the naming pattern `<invoiceid>.pdf`
+
+
+**NOTE:** *`invoice pull` is a **read** transaction: After 'pulling' the list of available invoices, the invoices in blue10 remain 'waiting for ERP'. This means that the handshake with the ERP is not complete*
+
+
+An example command would look as follows:
+```
+.\Blue10CLI.exe invoice pull -o InvoicePull -f JSON 
+```
+
+The above command pulls all invoices ready to be posted to the directory *InvoicePull*:
+
+The Result would be a 
+
+
+```
+C:/dev/
+│   Blue10CLI.exe
+|   ...
+│
+└───InvoicePull
+      ├ 12345a6b-78c9-01de-fg23-hi4j567k89lm.json
+      └ 12345a6b-78c9-01de-fg23-hi4j567k89lm.pdf
+```
+
+### Sign
+
+The `sign` command signs off a invoice with the given ledger entry number
+
+Run for following command 
+
+```
+.\Blue10CLI.exe invoice sign -h
+```
+You should see something like this:
+
+```
+sign:
+  Sign-off invoice with a ledger entry number
+
+Usage:
+  Blue10CLI invoice sign [options]
+
+Options:
+  -i, --invoice-id <invoice-id> (REQUIRED)                  The Id of the invoice to be signed off
+  -c, --ledger-entry-code <ledger-entry-code> (REQUIRED)    The ledger entry code assigned to the invoice by the ERP system
+  -f, --format <CSV|JSON|SSV|TSV|XML>                       Output format. [default: JSON]
+  -o, --output <output>                                     Enter path to write output of this command to file. Default
+                                                            output is console only [default: ]
+  -?, -h, --help                                            Show help and usage information
+```
+
+An example command would look as follows:
+```
+.\Blue10CLI.exe invoice sign -i 12345a6b-78c9-01de-fg23-hi4j567k89lm -c 10000 -f JSON -o SignResult.json
+```
+
+
+**NOTE:** *`invoice sign` is an **update** transaction: After 'signing' an invoice, the document in is no longer 'waiting for ERP' and is assigned a Ledger Entry number passed through by the `-c` option. This completes the invoice posting handshake*
+
+
+
+## GLAccount command
+
+Run for following command 
+
+```
+.\Blue10Cli.exe glaccount -h
+```
+You should see something like this:
+
+```
+glaccount:
+  creates lists and manages GLAccounts in the environments
+
+Usage:
+  Blue10CLI glaccount [options] [command]
+
+Options:
+  -?, -h, --help    Show help and usage information
+
+Commands:
+  list    Lists all known GLAccounts in administration
+  sync    Sync GLAccounts from a file to the Blue10 environment. AdministrationCode and CompanyId is required for each
+          GLAccount. Updating existing GLAccounts requires Id. Creating new GLAccounts requires empty Id.
+```
+
+
+Using the GlAccount command you can list all accounts in a current environment or sync teh GLAccounts from a file.
+
+To see how to get a list of GLAccounts run the following command:
+
+```
+.\Blue10Cli.exe glaccount list -h
+```
+
+You should see something like this:
+
+```
+list:
+  Lists all known GLAccounts in administration
+
+Usage:
+  Blue10CLI glaccount list [options]
+
+Options:
+  -a, -c, --administration, --company <administration>           The administration under which this GLAccounts exists
+  (REQUIRED)                                                     [default: ]
+  -q, --query <query>                                            A query used to filter out results. NOTE: Dependant on
+                                                                 output format. If output is 'json', this is a JMESPath
+                                                                 query to filter results. https://jmespath.org/. If output
+                                                                 is 'xml', this is an XPATH string.
+                                                                 https://www.w3schools.com/xml/xpath_intro.asp [default: ]
+  -f, --format <CSV|JSON|SSV|TSV|XML>                            Format of the output file. (JSON, XML...) [default: JSON]
+  -o, --output <output>                                          Enter path to write output of this command to file. Default
+                                                                 output is console only. [default: ]
+  -?, -h, --help                                                 Show help and usage information
+```
+
+You see that to list a set of GLAcocounts you need to include an administration. Administration is marked `(REQUIRED)` and is needed for the operation to be successfull. All other attributes are optional.
+
+For example to get a list of GLAccounts from an specific administration, run the following command: 
+
+```bash
+.\Blue10CLI.exe glaccount list -a B10Api -o GLAccountList.json -f JSON
+```
+
+Will create a list of GLAccounts from the administration B10Api. GLAccountList.json file be created with the results. (This you can use for the `sync` subcommand)
+
+## VatCode command
+
+Run for following command 
+
+```
+.\Blue10Cli.exe vatcode -h
+```
+You should see something like this:
+
+```
+vatcode:
+  creates lists and manages VatCodes in the environments
+
+Usage:
+  Blue10CLI vatcode [options] [command]
+
+Options:
+  -?, -h, --help    Show help and usage information
+
+Commands:
+  list    Lists all known VatCodes in administration
+  sync    Sync VatCodes from a file to the Blue10 environment. AdministrationCode and CompanyId is required for each VatCode.
+          Updating existing VatCodes requires Id. Creating new VatCodes requires empty Id.
+```
+
+
+Using the VatCode command you can list all accounts in a current environment or sync teh VatCode from a file.
+
+To see how to get a list of VatCode run the following command:
+
+```
+.\Blue10Cli.exe vatcode list -h
+```
+
+You should see something like this:
+
+```
+list:
+  Lists all known VatCodes in administration
+
+Usage:
+  Blue10CLI vatcode list [options]
+
+Options:
+  -a, -c, --administration, --company <administration>           The administration under which this VatCodes exists
+  (REQUIRED)                                                     [default: ]
+  -q, --query <query>                                            A query used to filter out results. NOTE: Dependant on
+                                                                 output format. If output is 'json', this is a JMESPath
+                                                                 query to filter results. https://jmespath.org/. If output
+                                                                 is 'xml', this is an XPATH string.
+                                                                 https://www.w3schools.com/xml/xpath_intro.asp [default: ]
+  -f, --format <CSV|JSON|SSV|TSV|XML>                            Format of the output file. (JSON, XML...) [default: JSON]
+  -o, --output <output>                                          Enter path to write output of this command to file. Default
+                                                                 output is console only. [default: ]
+  -?, -h, --help                                                 Show help and usage information
+```
+
+You see that to list a set of VatCodes you need to include an administration. Administration is marked `(REQUIRED)` and is needed for the operation to be successfull. All other attributes are optional.
+
+For example to get a list of VatCodes from an specific administration, run the following command: 
+
+```bash
+.\Blue10CLI.exe vatcode list -a B10Api -o VatCodelist.json -f JSON
+```
+
+Will create a list of VatCodes from the administration B10Api. VatCodelist.json file be created with the results. (This you can use for the `sync` subcommand)
 
 # Advanced
 
