@@ -10,19 +10,19 @@ using System.Threading.Tasks;
 
 namespace Blue10CLI.commands
 {
-    public class SyncVendorsCommand : Command
+    public class SyncGLAccountsCommand : Command
     {
-        private readonly IVendorService _vendorService;
+        private readonly IGLAccountService _glaccountService;
 
-        public SyncVendorsCommand(IVendorService vendorService) : base("sync",
-            Descriptions.SyncVendorDescription)
+        public SyncGLAccountsCommand(IGLAccountService glaccountService) : base("sync",
+            Descriptions.SyncGLAccountDescription)
         {
-            _vendorService = vendorService;
+            _glaccountService = glaccountService;
 
             Add(new Option<FileInfo?>(
                 new[] { "-i", "--input" },
                 () => null,
-                Descriptions.InputVendorDescription)
+                Descriptions.InputGLAccountDescription)
             { IsRequired = true });
             Add(new Option<EFormatType>(
                 new[] { "--input-format" },
@@ -38,29 +38,29 @@ namespace Blue10CLI.commands
                 () => EFormatType.JSON,
                 Descriptions.FormatDescription));
 
-            Handler = CommandHandler.Create<FileInfo, EFormatType, FileInfo?, EFormatType>(ImportVendorsHandler);
+            Handler = CommandHandler.Create<FileInfo, EFormatType, FileInfo?, EFormatType>(ImportGLAccountsHandler);
         }
 
-        private async Task ImportVendorsHandler(
+        private async Task ImportGLAccountsHandler(
             FileInfo input,
             EFormatType inputformat,
             FileInfo? output,
             EFormatType outputformat)
         {
             var fSyncFilePath = input.FullName;
-            var fVendorList = File.ReadAllText(fSyncFilePath);
+            var fGLAccountList = File.ReadAllText(fSyncFilePath);
 
-            IList<Vendor> fVendors;
+            IList<GLAccount> fGLAccounts;
 
             try
             {
-                fVendors = inputformat switch
+                fGLAccounts = inputformat switch
                 {
-                    EFormatType.JSON => JsonConvert.DeserializeObject<IList<Vendor>>(fVendorList),
-                    EFormatType.CSV => Read.CsvRecords<Vendor>(fVendorList, ","),
-                    EFormatType.TSV => Read.CsvRecords<Vendor>(fVendorList, "\t"),
-                    EFormatType.SSV => Read.CsvRecords<Vendor>(fVendorList, ";"),
-                    EFormatType.XML => Read.XmlRecords<Vendor>(fVendorList),
+                    EFormatType.JSON => JsonConvert.DeserializeObject<IList<GLAccount>>(fGLAccountList),
+                    EFormatType.CSV => Read.CsvRecords<GLAccount>(fGLAccountList, ","),
+                    EFormatType.TSV => Read.CsvRecords<GLAccount>(fGLAccountList, "\t"),
+                    EFormatType.SSV => Read.CsvRecords<GLAccount>(fGLAccountList, ";"),
+                    EFormatType.XML => Read.XmlRecords<GLAccount>(fGLAccountList),
                     _ => throw new ArgumentOutOfRangeException(nameof(inputformat), inputformat, null)
                 };
             }
@@ -69,27 +69,27 @@ namespace Blue10CLI.commands
                 || ex is CsvHelper.ReaderException
                 || ex is InvalidOperationException)
             {
-                Console.WriteLine("Invalid input file. Check if format of the file is correct and if Id values of vendors are valid");
+                Console.WriteLine("Invalid input file. Check if format of the file is correct and if Id values of GLAccounts are valid");
                 throw;
             }
 
-            var fSuccessList = new List<Vendor>();
-            var fFailedList = new List<Vendor>();
+            var fSuccessList = new List<GLAccount>();
+            var fFailedList = new List<GLAccount>();
 
             var fCount = 1;
-            var fTotalVendors = fVendors.Count;
-            foreach (var fVendor in fVendors)
+            var fTotalGLAccounts = fGLAccounts.Count;
+            foreach (var fGLAccount in fGLAccounts)
             {
-                var fResult = await _vendorService.CreateOrUpdate(fVendor);
-                if (fResult.Vendor == null)
+                var fResult = await _glaccountService.CreateOrUpdate(fGLAccount);
+                if (fResult.GLAccount == null)
                 {
-                    fFailedList.Add(fVendor);
-                    Console.WriteLine($"{fCount}/{fTotalVendors}: Failed syncing vendor '{fVendor.Name}' - {fResult.ErrorMessage}");
+                    fFailedList.Add(fGLAccount);
+                    Console.WriteLine($"{fCount}/{fTotalGLAccounts}: Failed syncing GLAccount '{fGLAccount.Name}' - {fResult.ErrorMessage}");
                 }
                 else
                 {
-                    fSuccessList.Add(fResult.Vendor);
-                    Console.WriteLine($"{fCount}/{fTotalVendors} Successfully synced vendor '{fVendor.Name}'");
+                    fSuccessList.Add(fResult.GLAccount);
+                    Console.WriteLine($"{fCount}/{fTotalGLAccounts} Successfully synced GLAccount '{fGLAccount.Name}'");
                 }
                 fCount++;
             }
@@ -100,7 +100,7 @@ namespace Blue10CLI.commands
                 outputformat.HandleOutputToFilePath(fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
                 outputformat.HandleOutputToFilePath(fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
             }
-            Console.WriteLine($"{fSuccessList.Count}/{fTotalVendors} vendors have been successfully imported");
+            Console.WriteLine($"{fSuccessList.Count}/{fTotalGLAccounts} GLAccounts have been successfully imported");
         }
     }
 }
