@@ -31,6 +31,7 @@ jobs:
     - uses: actions/checkout@master
     - name: Create exectuable
       run: |
+        cd /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
         dotnet publish Blue10CLI.csproj -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/cli
         dotnet publish Blue10CLIHeadless.csproj -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/headless
     - name: Copy README
