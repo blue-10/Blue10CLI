@@ -38,11 +38,11 @@ jobs:
     - name: Create ZIP archive
       run: |
         cd /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
-        zip release.zip *
+        zip Blue10CLI.zip *
     - name: Upload archive as release
       uses: ncipollo/release-action@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: ${{needs.bump_version_tag.outputs.new_tag}}
-        artifacts: '/home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/release.zip'
+        artifacts: '/home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/Blue10CLI.zip'
         prerelease: true
