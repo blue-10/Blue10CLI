@@ -3,7 +3,7 @@ name: Bump version tag and release zipped .exe
 on:
   push:
     branches:
-      - automatic-releases-and-semver
+      - master
 
 jobs:
   bump_version_tag:
@@ -30,15 +30,15 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Create exectuable
-      run: dotnet publish -c Release -r win-x64 -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true
+      run: |
+        dotnet publish -c Release -r win-x64 -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true
     - name: Copy README
-      run: cp /home/runner/work/Blue10CLI/Blue10CLI/README.md /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
+      run: |
+        cp /home/runner/work/Blue10CLI/Blue10CLI/README.md /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
     - name: Create ZIP archive
       run: |
         cd /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
-        ls
         zip release.zip *
-        ls
     - name: Upload archive as release
       uses: ncipollo/release-action@v1
       with:
