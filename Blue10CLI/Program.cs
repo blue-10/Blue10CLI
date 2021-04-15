@@ -1,10 +1,12 @@
 ﻿using Blue10CLI.commands;
 using Blue10CLI.commands.credentials;
+using Blue10CLI.Helpers;
 using Blue10CLI.services;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 using System.CommandLine;
 using System.Threading.Tasks;
 
@@ -14,10 +16,18 @@ namespace Blue10CLI
     {
         static async Task Main(params string[] args)
         {
-            var key = CredentialsService.EnsureApiKey();
-            if (string.IsNullOrWhiteSpace(key)) return;
+            // StartUp
+            AppConfiguration.GetSettings();
+            var fApiKey = CredentialsService.EnsureApiKey();
+            if (string.IsNullOrWhiteSpace(fApiKey))
+            {
+                Console.WriteLine("No Blue10 API Key found. Execution ended");
+                return;
+            }
+
+            // Setup serrvices
             var serviceProvider = new ServiceCollection()
-                .AddBlue10(key, "https://api.blue10.com/v2/")
+                .AddBlue10(fApiKey, AppConfiguration.Values.BaseUrl)
 
                 //Business Services
                 .AddSingleton<InvoiceService>()
@@ -55,7 +65,7 @@ namespace Blue10CLI
                     .AddSingleton<ClearCredentialsCommand>()
                     .AddSingleton<SetCredentialsCommand>()
 
-                //Commands
+                // Commands
                 .AddSingleton<Root>()
                 .AddLogging(logging =>
                 {
@@ -68,8 +78,8 @@ namespace Blue10CLI
 
             var logger = serviceProvider.GetService<ILoggerFactory>()
                 .CreateLogger<Program>();
-            //logger.LogDebug("Starting application");
-            //do the actual work here
+
+            // Start root command
             var root = serviceProvider.GetService<Root>();
             await root.InvokeAsync(args);
         }
