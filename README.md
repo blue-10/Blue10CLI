@@ -61,7 +61,8 @@ Missing Blue10 API key, please insert here:
 ****************************************************************
 ````
 
-This will enter your API key in windows secrets manager under the key `Blue10ApiKey`
+This will enter your API key in the AppConfiguration.json file. 
+_Note that if the file doesn't exist it will be created_
 
 To check if the api that you have entered is valid run the following command:
 

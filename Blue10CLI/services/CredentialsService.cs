@@ -1,23 +1,21 @@
-﻿using System;
-using System.IO;
+﻿using Blue10CLI.Helpers;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Blue10CLI.services
 {
     public class CredentialsService
     {
         private readonly ILogger<CredentialsService> _log;
-        internal const string BLUE10_API_KEY_TARGET = "Blue10ApiKey";
+
 
         internal enum EStorageSolution
         {
-            AuthFile,
+            AppConfiguration,
             WindowsCredentialsManagement
         }
 
-        internal static EStorageSolution StorageSolution;
-        internal static string ApiKey { get; set; }
-        internal const string AUTH_FILE = "api_key.auth";
+        internal static EStorageSolution StorageSolution = EStorageSolution.AppConfiguration;
 
         public CredentialsService(ILogger<CredentialsService> log)
         {
@@ -26,147 +24,42 @@ namespace Blue10CLI.services
 
         public string? GetApiKey()
         {
-            if (File.Exists(AUTH_FILE))
-            {
-                try
-                {
-                    ApiKey = File.ReadAllText(AUTH_FILE);
-                    StorageSolution = EStorageSolution.AuthFile;
-                    return ApiKey;
-                }
-                catch(Exception e)
-                {
-                    _log.LogError("Error writing reading apikey from Auth file",e);
-                    return null;
-                }
-            }
-            else
-            {
-                try
-                {
-                    //StorageSolution = EStorageSolution.WindowsCredentialsManagement;
-                   // var cm = new Credential {Target = BLUE10_API_KEY_TARGET};
-                   // cm.Load();
-                    // cm?.Password;
-                    return null;
-                }
-                catch(Exception e)
-                {
-                    _log.LogError("Error retrieving apikey from Windows credentials manager",e);
-                    return null;
-                }
-               
-            }
+            var fApiKey = AppConfiguration.Values.ApiKey;
+
+            if (string.IsNullOrWhiteSpace(fApiKey))
+                return null;
+
+            return fApiKey;
         }
 
         public bool SetApiKey(string apiKey)
         {
-            if (File.Exists(AUTH_FILE))
-            {
-                try
-                {
-                    File.WriteAllText(AUTH_FILE, apiKey);
-                    return true;
-                }
-                catch(Exception e)
-                {
-                    _log.LogError("Error writing api-key to file",e);
-                    return false;
-                }
-            }
-            else
-            {
-                try
-                {
-                    return SaveCredentialsInWindowsCredentialsManager(BLUE10_API_KEY_TARGET, apiKey);
-                }
-                catch(Exception e)
-                {
-                    _log.LogError("Error writing api-key to Windows credential management",e);
-                    return false;
-                }
-            }
-        } 
-            
-        public bool RemoveCredentials()
-        {
-            if (File.Exists(AUTH_FILE))
-            {
-                try
-                {
-                    File.WriteAllText(AUTH_FILE, string.Empty);
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    _log.LogError("Error removing credentials from auth-file", e);
-                    return false;
-                }
-            }
-            else
-            {
-                try
-                {
-                   //var cm = new Credential {Target = BLUE10_API_KEY_TARGET};
-                    //return cm.Delete();
-                    return false;
-                }
-                catch (Exception e)
-                {
-                    _log.LogError("Error removing credentials from windows credentials manager", e);
-                    return false;
-                }
-            }
+            AppConfiguration.Values.ApiKey = apiKey;
+            return AppConfiguration.SaveSettings();
         }
 
-        private static bool SaveCredentialsInWindowsCredentialsManager(string taget, string secret) => false;//new Credential {Target = BLUE10_API_KEY_TARGET, Password = secret, PersistanceType = PersistanceType.LocalComputer}.Save();
+        public bool RemoveCredentials()
+        {
+            AppConfiguration.Values.ApiKey = null;
+            return AppConfiguration.SaveSettings();
+        }
+
 
         internal static string? EnsureApiKey()
         {
-            if (File.Exists(AUTH_FILE))
-            {
-                try
-                {
-                    ApiKey = File.ReadAllText(AUTH_FILE);
-                    StorageSolution = EStorageSolution.AuthFile;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Could not read AuthFile");
-                    return null;
-                }
-                
-                if (string.IsNullOrWhiteSpace(ApiKey))
-                { 
-                    Console.WriteLine("Found Auth file but it was empty");
-                    return null;
-                }
-                else
-                {
-                    return ApiKey;
-                }
-            }
-            else
-            {
-                Console.WriteLine("No Authentication file found, using Windows credentials management to store credentials");
-                try
-                {
-                    var cm = BLUE10_API_KEY_TARGET;// new Credential {Target = BLUE10_API_KEY_TARGET};
-                   // cm.Load();
-                   var apiKey = BLUE10_API_KEY_TARGET;
-                    if (!string.IsNullOrWhiteSpace(apiKey)) return apiKey;
-                    Console.WriteLine("Missing Blue10 API key, please insert here:");
-                    var key = ReadPassword();
-                    SaveCredentialsInWindowsCredentialsManager(BLUE10_API_KEY_TARGET, key);
-                    return key;
-                }
-                catch (Exception e)
-                {
-                    //pass
-                    Console.WriteLine("Could not initiate windows credentials manager");
-                    return null;
-                }
-            }
+            if (!string.IsNullOrEmpty(AppConfiguration.Values.ApiKey))
+                return AppConfiguration.Values.ApiKey;
+
+            Console.WriteLine("Missing Blue10 API key, please insert here:");
+            var fApiKey = ReadPassword();
+
+            AppConfiguration.Values.ApiKey = fApiKey;
+            if (!AppConfiguration.SaveSettings())
+                Console.WriteLine("Something went wrong saving API Key to AppConfiguration.json");
+
+            Console.WriteLine("API Key has been saved to AppConfiguration.json");
+
+            return fApiKey;
         }
 
         public static string ReadPassword()
