@@ -15,5 +15,9 @@
         // GLAccount.Sync
         public const string SyncGLAccountDescription = "Sync GLAccounts from a file to the Blue10 environment. AdministrationCode and CompanyId is required for each GLAccount. Updating existing GLAccounts requires Id. Creating new GLAccounts requires empty Id.";
         public const string InputGLAccountDescription = "Path to the input file. File should have the same structure as the result of the 'glaccount list' command.";
+
+        // VATCode.Sync
+        public const string SyncVatCodeDescription = "Sync VatCodes from a file to the Blue10 environment. AdministrationCode and CompanyId is required for each VatCode. Updating existing VatCodes requires Id. Creating new VatCodes requires empty Id.";
+        public const string InputVatCodeDescription = "Path to the input file. File should have the same structure as the result of the 'vatcode list' command.";
     }
 }
