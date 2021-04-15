@@ -23,7 +23,7 @@ jobs:
   create_and_publish_release:
     needs: bump_version_tag
     runs-on: ubuntu-latest
-    name: create executable and zip
+    name: Create and publish release
     steps:
     - uses: actions/checkout@master
     - name: Create exectuable
