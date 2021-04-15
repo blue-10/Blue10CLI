@@ -40,5 +40,5 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: ${{needs.bump_version_tag.outputs.new_tag}}
-        artifacts: '/home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish'
+        artifacts: '/home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/release.zip'
         prerelease: true
