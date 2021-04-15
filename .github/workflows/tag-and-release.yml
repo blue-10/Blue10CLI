@@ -34,7 +34,7 @@ jobs:
     - name: Copy README
       run: cp /home/runner/work/Blue10CLI/Blue10CLI/README.md /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
     - name: Create ZIP archive
-      run: zip release.zip /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
+      run: zip -r release.zip /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
     - name: Upload archive as release
       uses: ncipollo/release-action@v1
       with:
