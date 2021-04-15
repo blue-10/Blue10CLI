@@ -3,7 +3,7 @@ name: Bump version tag and release zipped .exe
 on:
   push:
     branches:
-      - master
+      - automatic-releases-and-semver
 
 jobs:
   bump_version_tag:
@@ -23,20 +23,18 @@ jobs:
   create_and_publish_release:
     needs: bump_version_tag
     runs-on: ubuntu-latest
-    name: create-executable
+    name: create executable and zip
     steps:
     - uses: actions/checkout@master
     - name: Create exectuable
       run: dotnet publish -c Release -r win-x64 -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true
     - name: Copy README
       run: cp /home/runner/work/Blue10CLI/Blue10CLI/README.md /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
-    - name: Create archive
-      uses: actions/upload-artifact@v2
-      with:
-        name: publish-folder
-        path: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
+    - name: Create ZIP archive
+      run: zip release.zip /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
     - name: Upload archive as release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: '/home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish'
         token: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: true
+        artifacts: '/home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish'
