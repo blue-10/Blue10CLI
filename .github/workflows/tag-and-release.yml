@@ -31,14 +31,15 @@ jobs:
     - uses: actions/checkout@master
     - name: Create exectuable
       run: |
-        dotnet publish -c Release -r win-x64 -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true
+        dotnet publish Blue10CLI.csproj -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/cli
+        dotnet publish Blue10CLIHeadless.csproj -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/headless
     - name: Copy README
       run: |
         cp /home/runner/work/Blue10CLI/Blue10CLI/README.md /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
     - name: Create ZIP archive
       run: |
         cd /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
-        zip Blue10CLI.zip *
+        zip -r Blue10CLI.zip .
     - name: Upload archive as release
       uses: ncipollo/release-action@v1
       with:
