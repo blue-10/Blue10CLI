@@ -9,6 +9,8 @@ jobs:
   bump_version_tag:
     name: Bump version and push tag
     runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.create_tag.outputs.new_tag }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -37,6 +39,6 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        tag: ${{ bump_version_tag.steps.create_tag.outputs.new_tag }}
+        tag: ${{needs.bump_version_tag.outputs.new_tag}}
         artifacts: '/home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish'
         prerelease: true
