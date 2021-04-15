@@ -36,7 +36,8 @@ jobs:
     - name: Create ZIP archive
       run: |
         cd /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
-        zip -r release.zip
+        ls
+        zip release.zip *
         ls
     - name: Upload archive as release
       uses: ncipollo/release-action@v1
