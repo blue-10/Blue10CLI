@@ -1,7 +1,12 @@
-﻿using Blue10CLI.commands;
-using Blue10CLI.commands.credentials;
+﻿using Blue10CLI.Commands;
+using Blue10CLI.Commands.AdministrationCommands;
+using Blue10CLI.Commands.CredentialsCommands;
+using Blue10CLI.Commands.GLAccountCommands;
+using Blue10CLI.Commands.InvoiceCommands;
+using Blue10CLI.Commands.VatCodeCommands;
+using Blue10CLI.Commands.VendorCommands;
 using Blue10CLI.Helpers;
-using Blue10CLI.services;
+using Blue10CLI.Services;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,10 +44,8 @@ namespace Blue10CLI
                 .AddSingleton<IVendorService, VendorService>()
                 .AddSingleton<VendorCommand>()
                     .AddSingleton<CreateVendorCommand>()
-                    .AddSingleton<ShowVendorCommand>()
                     .AddSingleton<ListVendorsCommand>()
                     .AddSingleton<SyncVendorsCommand>()
-                    .AddSingleton<DeleteVendorCommand>()
 
                 .AddSingleton<IGLAccountService, GLAccountService>()
                 .AddSingleton<GLAccountCommand>()

@@ -1,6 +1,6 @@
 ﻿using System.CommandLine;
 
-namespace Blue10CLI.commands
+namespace Blue10CLI.Commands.VatCodeCommands
 {
     public class VatCodeCommand : Command
     {

@@ -1,6 +1,6 @@
 ﻿using System.CommandLine;
 
-namespace Blue10CLI.commands.credentials
+namespace Blue10CLI.Commands.AdministrationCommands
 {
     public class AdministrationCommand : Command
     {

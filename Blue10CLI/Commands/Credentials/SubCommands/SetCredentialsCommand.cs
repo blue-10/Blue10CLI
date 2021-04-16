@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Blue10CLI.Services;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using Blue10CLI.services;
 
-namespace Blue10CLI.commands.credentials
+namespace Blue10CLI.Commands.CredentialsCommands
 {
     public class SetCredentialsCommand : Command
     {
@@ -16,7 +16,7 @@ namespace Blue10CLI.commands.credentials
         }
 
         private void SetApiKey(string obj)
-        {            
+        {
             Console.WriteLine("Please insert your Blue10 API Key insert here:");
             _creds.SetApiKey(CredentialsService.ReadPassword());
         }

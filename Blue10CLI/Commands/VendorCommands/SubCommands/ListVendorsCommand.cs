@@ -4,7 +4,7 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Blue10CLI.commands
+namespace Blue10CLI.Commands.VendorCommands
 {
     public class ListVendorsCommand : Command
     {

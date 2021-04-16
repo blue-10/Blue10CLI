@@ -1,4 +1,4 @@
-﻿using Blue10CLI.services;
+﻿using Blue10CLI.Services;
 using Microsoft.Extensions.Logging;
 using System;
 using System.CommandLine;
@@ -6,7 +6,7 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Blue10CLI.commands
+namespace Blue10CLI.Commands.InvoiceCommands
 {
     public class PullInvoicesCommand : Command
     {
@@ -54,6 +54,5 @@ namespace Blue10CLI.commands
                 File.WriteAllBytes(fFilePath + ".pdf", fOriginalFileData);
             }
         }
-
     }
 }

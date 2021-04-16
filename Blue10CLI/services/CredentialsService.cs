@@ -1,14 +1,10 @@
 ﻿using Blue10CLI.Helpers;
-using Microsoft.Extensions.Logging;
 using System;
 
-namespace Blue10CLI.services
+namespace Blue10CLI.Services
 {
     public class CredentialsService
     {
-        private readonly ILogger<CredentialsService> _log;
-
-
         internal enum EStorageSolution
         {
             AppConfiguration,
@@ -16,11 +12,6 @@ namespace Blue10CLI.services
         }
 
         internal static EStorageSolution StorageSolution = EStorageSolution.AppConfiguration;
-
-        public CredentialsService(ILogger<CredentialsService> log)
-        {
-            _log = log;
-        }
 
         public string? GetApiKey()
         {
