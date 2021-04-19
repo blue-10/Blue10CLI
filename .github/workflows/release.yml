@@ -24,29 +24,29 @@ jobs:
   #      WITH_V: true
   #      DEFAULT_BUMP: patch
 
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    env:
-      dotnet-version: 5.0.x
-      url: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
+  #test:
+  #  name: Test
+  #  runs-on: ubuntu-latest
+  #  env:
+  #    dotnet-version: 5.0.x
+  #    url: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup .NET Core SDK ${{ env.dotnet-version }}
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: ${{ env.dotnet-version }}
-      - name: Install dependencies
-        run: dotnet restore
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-      - name: Test
-        run: dotnet test --no-restore --verbosity normal --no-build 
+  #  steps:
+  #    - name: Checkout code
+  #      uses: actions/checkout@v2
+  #    - name: Setup .NET Core SDK ${{ env.dotnet-version }}
+  #      uses: actions/setup-dotnet@v1
+  #      with:
+  #        dotnet-version: ${{ env.dotnet-version }}
+  #    - name: Install dependencies
+  #      run: dotnet restore
+  #    - name: Build
+  #      run: dotnet build --configuration Release --no-restore
+  #    - name: Test
+  #      run: dotnet test --no-restore --verbosity normal --no-build 
 
   build:
-    needs: [test]
+    #needs: [test]
     name: Build and release
     runs-on: ubuntu-latest
     env:
@@ -102,8 +102,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v1.0.0
-          release_name: Release ${{ github.ref }}
+          tag_name: v1.2.3.4
+          release_name: Release1234 #${{ github.ref }}
           draft: false
           prerelease: false
 
