@@ -52,6 +52,7 @@ jobs:
     env:
       dotnet-version: 5.0.x
       url: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
+      # DOTNET_ROOT: 
     strategy:
       matrix:
         dotnet-version: [ '5.0.x' ]
@@ -67,8 +68,8 @@ jobs:
       - name: Publish
         run: |
           cd  ${{ env.url }}
-          dotnet publish Blue10CLI.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o /publish/cli
-          dotnet publish Blue10CLIHeadless.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o /publish/headless
+          dotnet publish Blue10CLI.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o ./publish/cli
+          dotnet publish Blue10CLIHeadless.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o //publish/headless
           cp /home/runner/work/Blue10CLI/Blue10CLI/README.md /publish
           cd ~/publish
           dir
