@@ -47,7 +47,12 @@ jobs:
       - name: Test
         run: dotnet test --no-restore --verbosity normal --no-build
       - name: Publish
-        run: dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o published\${{Build.CurrentProject}}
+        run: |
+          dotnet publish Blue10CLI.csproj -c Release -r win-x64 -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/cli
+          dotnet publish Blue10CLIHeadless.csproj -c Release -r win-x64 -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/headless
+          cp /home/runner/work/Blue10CLI/Blue10CLI/README.md /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
+          cd /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
+          zip -r Blue10CLI.zip
 
       #- name: Upload dotnet publish as artifacts
       #  uses: actions/upload-artifact@v2
@@ -97,6 +102,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: published # ./my-artifact.zip
-          #asset_name: ${{steps.download.outputs.download-path}} #my-artifact.zip
-          #asset_content_type: application/zip
+          asset_path: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/Blue10CLI.zip # ./my-artifact.zip
+          asset_name: Blue10CLI.zip
+          asset_content_type: application/zip
