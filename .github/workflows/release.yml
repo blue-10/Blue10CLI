@@ -67,8 +67,8 @@ jobs:
       - name: Publish
         run: |
           mkdir publish #lightweightubunt
-          # dotnet publish Blue10CLI.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish/cli
-          # dotnet publish Blue10CLIHeadless.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish/headless
+          dotnet publish Blue10CLI/Blue10CLI.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o publish/cli
+          dotnet publish  Blue10CLI/Blue10CLIHeadless.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o /publish/headless
           
           cp README.md publish #bin/Release/net5.0/win-x64/publish
           #cd  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish
