@@ -6,23 +6,23 @@ on:
       - UpdateReleaseYaml
 
 jobs:
-  #bump_version_tag:
-  #  name: Bump version and push tag
-  #  runs-on: ubuntu-latest
-  #  outputs:
-  #    new_tag: ${{ steps.create_tag.outputs.new_tag }}
-  #  steps:
-  #  - name: Checkout
-  #    uses: actions/checkout@v2
-  #    with:
-  #      fetch-depth: '0'
-  #  - name: Execute action anothrNick/github-tag-action
-  #    id: create_tag
-  #    uses: anothrNick/github-tag-action@1.26.0
-  #    env:
-  #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #      WITH_V: true
-  #      DEFAULT_BUMP: patch
+  bump_version_tag:
+    name: Bump version and push tag
+    runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.create_tag.outputs.new_tag }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+    - name: Execute action anothrNick/github-tag-action
+      id: create_tag
+      uses: anothrNick/github-tag-action@1.26.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        DEFAULT_BUMP: patch
 
   test:
     name: Test
@@ -30,9 +30,6 @@ jobs:
     env:
       dotnet-version: 5.0.x
       url: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
-    strategy:
-      matrix:
-        dotnet-version: [ '5.0.x' ]
 
     steps:
       - name: Checkout code
@@ -49,7 +46,7 @@ jobs:
         run: dotnet test --no-restore --verbosity normal --no-build 
 
   build:
-    needs: [Test]
+    needs: [test, bump_version_tag]
     name: Build and release
     runs-on: ubuntu-latest
     env:
@@ -106,7 +103,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          #tag_name: ${{needs.bump_version_tag.outputs.new_tag}}
+          tag_name: ${{needs.bump_version_tag.outputs.new_tag}}
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
