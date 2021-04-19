@@ -71,7 +71,6 @@ jobs:
           dotnet publish Blue10CLIHeadless.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/headless
           cp /home/runner/work/Blue10CLI/Blue10CLI/README.md /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
           cd /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
-          dir
           zip -r Blue10CLI.zip .
 
       #- name: Upload dotnet publish as artifacts
@@ -103,7 +102,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{needs.bump_version_tag.outputs.new_tag}}
+          tag_name: v1.0.0
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
