@@ -66,13 +66,13 @@ jobs:
         run: dotnet restore
       - name: Publish
         run: |
-          mkdir publish #lightweightubunt
+         # mkdir publish #lightweightubunt
           # dotnet publish Blue10CLI.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish/cli
           # dotnet publish Blue10CLIHeadless.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish/headless
           
-          cp README.md publish #bin/Release/net5.0/win-x64/publish
+          #cp README.md publish #bin/Release/net5.0/win-x64/publish
           #cd  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish
-          zip -r Blue10CLI.zip publish
+          zip Blue10CLI README.md
 
       #- name: Upload dotnet publish as artifacts
       #  uses: actions/upload-artifact@v2
