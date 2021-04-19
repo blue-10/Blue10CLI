@@ -66,7 +66,6 @@ jobs:
         run: dotnet restore
       - name: Publish
         run: |
-          ls -R
           cd ${{ github.workspace }}/Blue10CLI/ #lightwiegt
           mkdir publish #lightweightubunt
           cd  ${{ env.url }}
@@ -81,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Blue10CLI #-${{ matrix.dotnet-version }}
-          path:  ${{ github.workspace }}/publish #Blue10CLI/bin/Release/net5.0/win-x64/publish/
+          path:  ${{ github.workspace }}/Blue10CLI/publish #Blue10CLI/bin/Release/net5.0/win-x64/publish/
       
 
 
