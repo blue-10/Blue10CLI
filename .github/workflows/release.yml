@@ -72,8 +72,10 @@ jobs:
           
           cp README.md publish #bin/Release/net5.0/win-x64/publish
           #cd  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish
+          cd publish
+          zip -r Blue10CLI *
+          mv Blue10CLI.zip ../
 
-          zip -r Blue10CLI publish/*
 
       #- name: Upload dotnet publish as artifacts
       #  uses: actions/upload-artifact@v2
