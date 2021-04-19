@@ -72,7 +72,7 @@ jobs:
           
           #cp README.md publish #bin/Release/net5.0/win-x64/publish
           #cd  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish
-          zip blue10cli README.md
+          zip Blue10cli README.md
 
       #- name: Upload dotnet publish as artifacts
       #  uses: actions/upload-artifact@v2
@@ -124,6 +124,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./blue10cli.zip
-          asset_name: blue10cli.zip
+          asset_path: ./Blue10cli.zip
+          asset_name: Blue10cli.zip
           asset_content_type: application/zip
