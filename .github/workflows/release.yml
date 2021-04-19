@@ -46,7 +46,7 @@ jobs:
         run: dotnet test --no-restore --verbosity normal --no-build 
 
   build:
-    needs: [test, bump_version_tag]
+    needs: [test]
     name: Build and release
     runs-on: ubuntu-latest
     env:
@@ -122,6 +122,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/Blue10CLI.zip # ./my-artifact.zip
+          asset_path: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/ # ./my-artifact.zip
           asset_name: Blue10CLI.zip
           asset_content_type: application/zip
