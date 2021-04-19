@@ -47,7 +47,7 @@ jobs:
       - name: Test
         run: dotnet test --no-restore --verbosity normal --no-build
       - name: Publish
-        run: dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o published\$(Build.CurrentProject)
+        run: dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o published\${{Build.CurrentProject}}
 
       #- name: Upload dotnet publish as artifacts
       #  uses: actions/upload-artifact@v2
