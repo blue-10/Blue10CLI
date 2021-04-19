@@ -52,9 +52,9 @@ jobs:
     env:
       dotnet-version: 5.0.x
       url: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
-    strategy:
-      matrix:
-        dotnet-version: [ '5.0.x' ]
+    #strategy:
+    #  matrix:
+    #    dotnet-version: [ '5.0.x' ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -66,13 +66,14 @@ jobs:
         run: dotnet restore
       - name: Publish
         run: |
-          cd ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/ #lightwiegt
+          ls -R
+          cd ${{ github.workspace }}/Blue10CLI/ #lightwiegt
           mkdir publish #lightweightubunt
           cd  ${{ env.url }}
           # dotnet publish Blue10CLI.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish/cli
           # dotnet publish Blue10CLIHeadless.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish/headless
           
-          cp  ${{ github.workspace }}/README.md  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish
+          cp  ${{ github.workspace }}/README.md  ${{ github.workspace }}/Blue10CLI/ #bin/Release/net5.0/win-x64/publish
           #cd  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish
           #zip -r Blue10CLI.zip .
 
@@ -80,7 +81,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Blue10CLI #-${{ matrix.dotnet-version }}
-          path:  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish/
+          path:  ${{ github.workspace }}/publish #Blue10CLI/bin/Release/net5.0/win-x64/publish/
       
 
 
