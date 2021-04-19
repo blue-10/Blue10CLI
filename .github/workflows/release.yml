@@ -49,6 +49,7 @@ jobs:
         run: dotnet test --no-restore --verbosity normal --no-build 
 
   build:
+    needs: [Test]
     name: Build and release
     runs-on: ubuntu-latest
     env:
@@ -74,7 +75,7 @@ jobs:
           cp /home/runner/work/Blue10CLI/Blue10CLI/README.md /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
           cd /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
           dir
-          zip -r Blue10CLI.zip
+          zip -r Blue10CLI.zip .
 
       #- name: Upload dotnet publish as artifacts
       #  uses: actions/upload-artifact@v2
