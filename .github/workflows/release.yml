@@ -51,19 +51,19 @@ jobs:
     runs-on: ubuntu-latest
     env:
       dotnet-version: 5.0.x
-      url: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
+      # url: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
     #strategy:
     #  matrix:
     #    dotnet-version: [ '5.0.x' ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Setup .NET Core SDK ${{ env.dotnet-version }}
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: ${{ env.dotnet-version }}
-      - name: Install dependencies
-        run: dotnet restore
+      #- name: Setup .NET Core SDK ${{ env.dotnet-version }}
+      #  uses: actions/setup-dotnet@v1
+      #  with:
+      #    dotnet-version: ${{ env.dotnet-version }}
+      #- name: Install dependencies
+      #  run: dotnet restore
       - name: Publish
         run: |
          # mkdir publish #lightweightubunt
@@ -72,7 +72,7 @@ jobs:
           
           #cp README.md publish #bin/Release/net5.0/win-x64/publish
           #cd  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish
-          zip Blue10CLI README.md
+          zip blue10cli README.md
 
       #- name: Upload dotnet publish as artifacts
       #  uses: actions/upload-artifact@v2
@@ -96,7 +96,7 @@ jobs:
   #  name: Release
   #  runs-on: ubuntu-latest
   #  steps:
-      - uses: actions/checkout@v2
+      #- uses: actions/checkout@v2
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
