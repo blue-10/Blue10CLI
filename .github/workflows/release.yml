@@ -24,39 +24,35 @@ jobs:
         WITH_V: true
         DEFAULT_BUMP: patch
 
-  #test:
-  #  name: Test
-  #  runs-on: ubuntu-latest
-  #  env:
-  #    dotnet-version: 5.0.x
-  #    url: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    env:
+      dotnet-version: 5.0.x
+      url: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
 
-  #  steps:
-  #    - name: Checkout code
-  #      uses: actions/checkout@v2
-  #    - name: Setup .NET Core SDK ${{ env.dotnet-version }}
-  #      uses: actions/setup-dotnet@v1
-  #      with:
-  #        dotnet-version: ${{ env.dotnet-version }}
-  #    - name: Install dependencies
-  #      run: dotnet restore
-  #    - name: Build
-  #      run: dotnet build --configuration Release --no-restore
-  #    - name: Test
-  #      run: dotnet test --no-restore --verbosity normal --no-build 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup .NET Core SDK ${{ env.dotnet-version }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.dotnet-version }}
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal --no-build 
 
   build:
-    needs: [bump_version_tag]
+    needs: [bump_version_tag, Test]
     name: Build and release
     runs-on: ubuntu-latest
     env:
       dotnet-version: 5.0.x
-      # url: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
-    #strategy:
-    #  matrix:
-    #    dotnet-version: [ '5.0.x' ]
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v2
       - name: Setup .NET SDK ${{ env.dotnet-version }}
         uses: actions/setup-dotnet@v1
@@ -64,7 +60,7 @@ jobs:
           dotnet-version: ${{ env.dotnet-version }}
       - name: Install dependencies
         run: dotnet restore
-      - name: Publish
+      - name: Publish adn zip
         run: |
           mkdir publish 
           dotnet publish Blue10CLI/Blue10CLI.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o publish/cli
@@ -73,18 +69,13 @@ jobs:
           cd publish
           zip -r Blue10CLI *
           mv Blue10CLI.zip ../
-  #release:
-  #  name: Release
-  #  runs-on: ubuntu-latest
-  #  steps:
-      #- uses: actions/checkout@v2
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{needs.bump_version_tag.outputs.part}}
+          tag_name: ${{needs.bump_version_tag.outputs.new_tag}}
           release_name: ${{needs.bump_version_tag.outputs.new_tag}}-Master-${{ github.run_id }}-${{ github.run_number }}
           draft: false
           prerelease: false
