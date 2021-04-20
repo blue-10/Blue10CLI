@@ -87,7 +87,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{needs.bump_version_tag.outputs.new_tag}}
-          release_name: ${{needs.bump_version_tag.outputs.new_tag}}-${{ github.re f }}
+          release_name: ${{needs.bump_version_tag.outputs.new_tag}}-${{ github.ref }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
