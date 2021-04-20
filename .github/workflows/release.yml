@@ -6,23 +6,25 @@ on:
       - UpdateReleaseYaml
 
 jobs:
-  #bump_version_tag:
-  #  name: Bump version and push tag
-  #  runs-on: ubuntu-latest
-  #  outputs:
-  #    new_tag: ${{ steps.create_tag.outputs.new_tag }}
-  #  steps:
-  #  - name: Checkout
-  #    uses: actions/checkout@v2
-  #    with:
-  #      fetch-depth: '0'
-  #  - name: Execute action anothrNick/github-tag-action
-  #    id: create_tag
-  #    uses: anothrNick/github-tag-action@1.26.0
-  #    env:
-  #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #      WITH_V: true
-  #      DEFAULT_BUMP: patch
+  bump_version_tag:
+    name: Get Version number
+    runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.create_tag.outputs.new_tag }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+    - name: Read version from file
+      id: create_tag
+      run: | 
+        NEW_TAG = ca version.txt
+        echo "::set-output name=new_tag::$NEW_TAG"
+
+        # Get version
+        # Update version if not rerun
+        # Save new version
 
   #test:
   #  name: Test
@@ -46,7 +48,7 @@ jobs:
   #      run: dotnet test --no-restore --verbosity normal --no-build 
 
   build:
-    #needs: [test]
+    needs: [bump_version_tag]
     name: Build and release
     runs-on: ubuntu-latest
     env:
@@ -66,35 +68,13 @@ jobs:
         run: dotnet restore
       - name: Publish
         run: |
-          mkdir publish #lightweightubunt
+          mkdir publish 
           dotnet publish Blue10CLI/Blue10CLI.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o publish/cli
           dotnet publish  Blue10CLI/Blue10CLIHeadless.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o publish/headless
-          
-          cp README.md publish #bin/Release/net5.0/win-x64/publish
-          #cd  ${{ github.workspace }}/Blue10CLI/bin/Release/net5.0/win-x64/publish
+          cp README.md publish 
           cd publish
           zip -r Blue10CLI *
           mv Blue10CLI.zip ../
-
-
-      #- name: Upload dotnet publish as artifacts
-      #  uses: actions/upload-artifact@v2
-      #  with:
-      #    name: Blue10CLI #-${{ matrix.dotnet-version }}
-      #    path:  ${{ github.workspace }}/Blue10CLI/publish #Blue10CLI/bin/Release/net5.0/win-x64/publish/
-      
-
-
-      #- name: Build project # This would actually build your project, using zip for an example artifact
-      #  run: |
-      #    zip --junk-paths my-artifact README.md
-      #    cd /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
-      #    dotnet publish Blue10CLI.csproj -c Release -r win-x64 -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/cli
-      #    dotnet publish Blue10CLIHeadless.csproj -c Release -r win-x64 -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish/headless
-      #    cp /home/runner/work/Blue10CLI/Blue10CLI/README.md /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
-      #    cd /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/bin/Release/net5.0/win-x64/publish
-      #    zip -r Blue10CLI.zip
-
   #release:
   #  name: Release
   #  runs-on: ubuntu-latest
@@ -106,20 +86,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v1.2.3.4
-          release_name: Release1234 #${{ github.ref }}
+          tag_name: ${{needs.bump_version_tag.outputs.new_tag}}
+          release_name: ${{needs.bump_version_tag.outputs.new_tag}}-${{ github.re f }}
           draft: false
           prerelease: false
-
-      #- name: Get artifacts
-      #  #env:
-      #  #  DOTNET_ROOT: /home/runner/.dotnet/
-      #  id: artifacts
-      #  uses: actions/download-artifact@v2
-      #  with:
-      #      name: Blue10CLI
-      #      path:  ~/download/path
-
       - name: Upload Release Asset
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
