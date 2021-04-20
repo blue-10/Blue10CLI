@@ -25,7 +25,7 @@ jobs:
         DEFAULT_BUMP: patch
 
   test:
-    name: Test
+    name: Test build
     runs-on: ubuntu-latest
     env:
       dotnet-version: 5.0.x
