@@ -30,7 +30,6 @@ jobs:
     env:
       dotnet-version: 5.0.x
       url: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
