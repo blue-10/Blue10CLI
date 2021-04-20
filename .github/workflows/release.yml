@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - Master
+      - master
 
 jobs:
   bump_version_tag:
