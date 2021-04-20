@@ -6,7 +6,7 @@ on:
       - UpdateReleaseYaml
 
 jobs:
-    bump_version_tag:
+  bump_version_tag:
     name: Bump version and push tag
     runs-on: ubuntu-latest
     outputs:
