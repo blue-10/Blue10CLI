@@ -84,7 +84,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{needs.bump_version_tag.outputs.new_tag}}
+          tag_name: ${{needs.bump_version_tag.outputs.part}}
           release_name: ${{needs.bump_version_tag.outputs.new_tag}}-Master-${{ github.run_id }}-${{ github.run_number }}
           draft: false
           prerelease: false
