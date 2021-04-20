@@ -61,7 +61,8 @@ namespace Blue10CLI.services
             };
 
             var fVendorResultModel = await TryVendorTask(_blue10.AddVendorAsync(fCreateVendor));
-            _logger.LogError(fVendorResultModel.ErrorMessage);
+            if (!string.IsNullOrEmpty(fVendorResultModel.ErrorMessage))
+                _logger.LogError(fVendorResultModel.ErrorMessage);
             return fVendorResultModel.Object;
         }
 

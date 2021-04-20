@@ -22,9 +22,9 @@ namespace Blue10CLI.commands
             Add(new Option<string>("--currency", "ISO 4217 three-letter currency code to set default currency for vendor") { IsRequired = true });
             Add(new Option<string[]>("--iban", "list of IBANs associated with this vendor") { IsRequired = true });
 
-            Add(new Option<string>(new[] { "-l", "--ledger" }, () => "Documents from this vendor will be routed to this ledger, leave empty to not associate"));
-            Add(new Option<string>(new[] { "-p", "--payment" }, () => "Documents from this vendor will be associated with this payment term, leave empty to not associate"));
-            Add(new Option<string>(new[] { "-v", "--vat" }, () => "Documents from this vendor will be associated with this VAT code, leave empty to not associate"));
+            Add(new Option<string>(new[] { "-l", "--ledger" }, () => string.Empty, "Documents from this vendor will be routed to this ledger, leave empty to not associate"));
+            Add(new Option<string>(new[] { "-p", "--payment" }, () => string.Empty, "Documents from this vendor will be associated with this payment term, leave empty to not associate"));
+            Add(new Option<string>(new[] { "-v", "--vat" }, () => string.Empty, "Documents from this vendor will be associated with this VAT code, leave empty to not associate"));
             //Add(new Option<bool>(new []{"-b","--blocked"}, () => false, "Block vendor upon creation, default false"));
 
             Add(new Option<EFormatType>(new[] { "-f", "--format" }, () => EFormatType.JSON, "Output format."));
