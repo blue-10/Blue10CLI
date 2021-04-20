@@ -45,62 +45,62 @@ jobs:
   #    - name: Test
   #      run: dotnet test --no-restore --verbosity normal --no-build 
 
-  build:
-    needs: [bump_version_tag]
-    name: Build and release
-    runs-on: ubuntu-latest
-    env:
-      dotnet-version: 5.0.x
-      # url: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
-    #strategy:
-    #  matrix:
-    #    dotnet-version: [ '5.0.x' ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup .NET SDK ${{ env.dotnet-version }}
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: ${{ env.dotnet-version }}
-      - name: Install dependencies
-        run: dotnet restore
-      - name: Publish
-        run: |
-          mkdir publish 
-          dotnet publish Blue10CLI/Blue10CLI.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o publish/cli
-          dotnet publish  Blue10CLI/Blue10CLIHeadless.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o publish/headless
-          cp README.md publish 
-          cd publish
-          zip -r Blue10CLI *
-          mv Blue10CLI.zip ../
-  #release:
-  #  name: Release
+  #build:
+  #  needs: [bump_version_tag]
+  #  name: Build and release
   #  runs-on: ubuntu-latest
+  #  env:
+  #    dotnet-version: 5.0.x
+  #    # url: /home/runner/work/Blue10CLI/Blue10CLI/Blue10CLI/
+  #  #strategy:
+  #  #  matrix:
+  #  #    dotnet-version: [ '5.0.x' ]
   #  steps:
-      #- uses: actions/checkout@v2
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{needs.bump_version_tag.outputs.new_tag}}
-          release_name: ${{needs.bump_version_tag.outputs.new_tag}}-Master-${{ github.run_id }}-${{ github.run_number }}
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset
-        id: upload-release-asset 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Blue10CLI.zip
-          asset_name: Blue10CLI.zip
-          asset_content_type: application/zip
+  #    - name: Checkout code
+  #      uses: actions/checkout@v2
+  #    - name: Setup .NET SDK ${{ env.dotnet-version }}
+  #      uses: actions/setup-dotnet@v1
+  #      with:
+  #        dotnet-version: ${{ env.dotnet-version }}
+  #    - name: Install dependencies
+  #      run: dotnet restore
+  #    - name: Publish
+  #      run: |
+  #        mkdir publish 
+  #        dotnet publish Blue10CLI/Blue10CLI.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o publish/cli
+  #        dotnet publish  Blue10CLI/Blue10CLIHeadless.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o publish/headless
+  #        cp README.md publish 
+  #        cd publish
+  #        zip -r Blue10CLI *
+  #        mv Blue10CLI.zip ../
+  ##release:
+  ##  name: Release
+  ##  runs-on: ubuntu-latest
+  ##  steps:
+  #    #- uses: actions/checkout@v2
+  #    - name: Create Release
+  #      id: create_release
+  #      uses: actions/create-release@v1
+  #      env:
+  #        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #      with:
+  #        tag_name: ${{needs.bump_version_tag.outputs.new_tag}}
+  #        release_name: ${{needs.bump_version_tag.outputs.new_tag}}-Master-${{ github.run_id }}-${{ github.run_number }}
+  #        draft: false
+  #        prerelease: false
+  #    - name: Upload Release Asset
+  #      id: upload-release-asset 
+  #      uses: actions/upload-release-asset@v1
+  #      env:
+  #        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #      with:
+  #        upload_url: ${{ steps.create_release.outputs.upload_url }}
+  #        asset_path: ./Blue10CLI.zip
+  #        asset_name: Blue10CLI.zip
+  #        asset_content_type: application/zip
 
   increase_version:
-    needs: [build]
+    needs: [bump_version_tag]
     name: Increase Version number
     runs-on: ubuntu-latest
     outputs:
@@ -110,7 +110,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: '0'
-    - name: Increase version
-      run: ${{needs.bump_version_tag.outputs.new_tag}} 
+    #- name: Increase version
+    #  run: ${{needs.bump_version_tag.outputs.new_tag}} 
     - name: Update version
-      run: $(echo ${VERSION} | awk -F. -v OFS=. '{$NF++;print}') > version.txt
+      run: $(echo ${{needs.bump_version_tag.outputs.new_tag}} | awk -F. -v OFS=. '{$NF++;print}') > version.txt
