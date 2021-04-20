@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - UpdateReleaseYaml
+      - Master
 
 jobs:
   bump_version_tag:
