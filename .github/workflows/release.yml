@@ -113,4 +113,6 @@ jobs:
     #- name: Increase version
     #  run: ${{needs.bump_version_tag.outputs.new_tag}} 
     - name: Update version
-      run: awk --field-separator '.' 'BEGIN{OFS=".";} {$NF++;print}' version.txt > version.txt
+      run: | 
+        awk --field-separator '.' 'BEGIN{OFS=".";} {$NF++;print}' version.txt
+        awk --field-separator '.' 'BEGIN{OFS=".";} {$NF++;print}' version.txt > version.txt
