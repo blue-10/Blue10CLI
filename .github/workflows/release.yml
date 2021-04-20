@@ -19,7 +19,7 @@ jobs:
     - name: Read version from file
       id: create_tag
       run: | 
-        NEW_TAG = ca version.txt
+        NEW_TAG = cat version.txt
         echo "::set-output name=new_tag::$NEW_TAG"
 
         # Get version
