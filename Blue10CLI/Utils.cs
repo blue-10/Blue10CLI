@@ -43,11 +43,7 @@ namespace Blue10CLI
     {
         internal static IList<T> CsvRecords<T>(string origin, string separator)
         {
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                NewLine = Environment.NewLine,
-                Delimiter = separator
-            };
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture, delimiter: separator, newLine: Environment.NewLine);
 
             using var reader = new StringReader(origin);
             using var csv = new CsvReader(reader, config);
@@ -105,16 +101,16 @@ namespace Blue10CLI
             var resList = new List<string>();
             var res = xPathNav.Select(xPathQuery);
 
-            foreach (dynamic bla in res)
+            foreach (dynamic? bla in res)
             {
-                resList.Add(bla.OuterXml ?? "");
+                resList.Add((bla is null) ? "" : (bla.OuterXml ?? ""));
             }
             return string.Join('\n', resList);
         }
 
         private static string FilterWithJmesPath(string jsonString, string jmesPath)
         {
-            JmesPath filterer = new();
+            JmesPath filterer = new JmesPath();
             return filterer.Transform(jsonString, jmesPath);
         }
 
@@ -192,11 +188,8 @@ namespace Blue10CLI
 
         private static string ConvertToCsv<T>(T origin, string separator)
         {
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                NewLine = Environment.NewLine,
-                Delimiter = separator
-            };
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture, delimiter: separator, newLine: Environment.NewLine);
+
             var wr = new StringWriter();
             using var csv = new CsvWriter(wr, config);
 
