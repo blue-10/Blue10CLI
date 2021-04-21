@@ -59,7 +59,7 @@ jobs:
           dotnet-version: ${{ env.dotnet-version }}
       - name: Install dependencies
         run: dotnet restore
-      - name: Publish adn zip
+      - name: Publish and zip
         run: |
           mkdir publish 
           dotnet publish Blue10CLI/Blue10CLI.csproj -c Release -r win-x64 --no-restore -p:PublishReadyToRun=false -p:PublishSingleFile=true --self-contained true -o publish/cli

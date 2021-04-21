@@ -253,7 +253,7 @@ Usage:
 
 Options:
   -c, --company-id <company-id> (REQUIRED)                      Company Id under which this vendor will be created
-  -a, --administration-code <administration-code> (REQUIRED)    Unique Identifyer if Vendor in administration
+  -a, --administration-code <administration-code> (REQUIRED)    Unique Identifyer of Vendor in administration
   --country <country> (REQUIRED)                                ISO 3166 two-letter country code of the Vendor's host country
   --currency <currency> (REQUIRED)                              ISO 4217 three-letter currency code to set default currency
                                                                 for vendor
