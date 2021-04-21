@@ -9,8 +9,8 @@ The Blue10 CLI is a windows command line interface implementation of the Blue10 
 
 Before you can use the blue10 CLI check the following items
 
-## 1. Dotnet 5 on windows
-The Blue10 CLI is a windows executable that requires the DotNet 5 runtime. Before you can use the Blue10 CLI please make sure you are using a 64bit version of windows and have the DotNet 5 runtime installed. 
+## 1. Dotnet Core 3.1 on windows
+The Blue10 CLI is a windows executable that requires the DotNet Core 3.1 runtime. Before you can use the Blue10 CLI please make sure you are using a 64bit version of windows and have the DotNet Core 3.1 runtime installed. 
 
 You can download the DotNet runtime at : https://dotnet.microsoft.com/download
 
@@ -29,8 +29,14 @@ dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true --self-contained 
 
 Replace `<OutputDirectory>` with the directory you want the binary to be built. You can ommit the `-o` paramater , then the binary can be found in the `.\bin\Release\net5.0-windows\win-x64\publish` directory
 
+## 3. (Alternative for 1 and 2) Download the build
 
-## 3. Acquire a Blue10 API Key
+In the releases is also the zip `Blue10CLI.zip` in which an build is made for win-x64. There are two versions, the `cli` is a console application and the `headless` is a windows application. For more information on the difference see [Headless and Console modes](#Headless-and-Console-modes:)
+
+Here you can find the latest release: https://github.com/blue-10/Blue10CLI/releases
+
+
+## 4. Acquire a Blue10 API Key
 
 Before you can start useing the Blue10 API through the Blue10 CLI, you need a Blue10 Environment and an API Key.
 If you don't yet have a blue10 environment or api key for your environment, please contact blue10 support at https://support.blue10.com/?lang=en
@@ -100,7 +106,7 @@ The `Blue10CLIHeadless.exe` variant is built as a windows application, this mean
 
 ## The help option.
 
-Run for following command 
+Run following command 
 
 ```
 .\Blue10Cli.exe -h
@@ -128,15 +134,15 @@ Commands:
 
 The help option is an always available option that you can add to any command to see what the command does and how to manipulate it. Simply add `-h`, `-?` or `--help` at the end of a command to view all the sub-commands and options of any command.
 
-This is the *root command* of the blue 10 cli. From here you can see that we have several sub-commands. 
+This is the *root command* of the Blue10 CLI. From here you can see that we have several sub-commands. 
 We have already used the `credentials` sub-command to check if we have a good connection to a blue10 environment. 
 
-The current version of the blue10 cli provides 5 aditional sub-commands: `administration`, `vendor`, `invoice`, `glaccount` and `vatcode`. These can be used to manage different parts of your blue10 environment.
+The current version of the Blue10 CLI provides 5 aditional sub-commands: `administration`, `vendor`, `invoice`, `glaccount` and `vatcode`. These can be used to manage different parts of your Blue10 environment.
 
 
 ## Administration 
 
-Run for following command 
+Run following command 
 
 ```
 .\Blue10Cli.exe administration -h
@@ -153,7 +159,7 @@ Options:
   -?, -h, --help    Show help and usage information
 
 Commands:
-  list    Lists all known Administrations (Companies) in a blue10 environment
+  list    Lists all known Administrations (Companies) in a Blue10 environment
 ```
 
 The `administration` command currently has a single sub-command under it, that is the `list` sub-command. 
@@ -164,7 +170,7 @@ Run the following command:
 .\Blue10CLI.exe administration list
 ```
 
-The response should look something like this
+The response should look something like this:
 ```
 [
   {
@@ -205,11 +211,9 @@ The response should look something like this
 ]
 ```
 
-
-
 ## Vendor command
 
-Run for following command 
+Run following command 
 
 ```
 .\Blue10Cli.exe vendor -h
@@ -252,22 +256,24 @@ Usage:
   Blue10CLI vendor create [options]
 
 Options:
-  -c, --company-id <company-id> (REQUIRED)                      Company Id under which this vendor will be created
-  -a, --administration-code <administration-code> (REQUIRED)    Unique Identifyer of Vendor in administration
-  --country <country> (REQUIRED)                                ISO 3166 two-letter country code of the Vendor's host country
-  --currency <currency> (REQUIRED)                              ISO 4217 three-letter currency code to set default currency
-                                                                for vendor
-  --iban <iban> (REQUIRED)                                      list of IBANs associated with this vendor
-  -l, --ledger <ledger>                                         [default: Documents from this vendor will be routed to this
-                                                                ledger, leave empty to not associate]
-  -p, --payment <payment>                                       [default: Documents from this vendor will be associated with
-                                                                this payment term, leave empty to not associate]
-  -v, --vat <vat>                                               [default: Documents from this vendor will be associated with
-                                                                this VAT code, leave empty to not associate]
-  -f, --format <CSV|JSON|SSV|TSV|XML>                           Output format. [default: JSON]
-  -o, --output <output>                                         Enter path to write output of this command to file. Default
-                                                                output is console only [default: ]
-  -?, -h, --help                                                Show help and usage information
+  -c, --company-id <company-id> (REQUIRED)                    The company/Blue10-administration identifyer under which this vendor will be created
+  -a, --administration-code <administration-code>             Unique identifyer of Vendor used in ERP
+  (REQUIRED)
+  --country <country> (REQUIRED)                              ISO 3166 two-letter country code of the Vendor's host
+                                                              country
+  --currency <currency> (REQUIRED)                            ISO 4217 three-letter currency code to set default
+                                                              currency for vendor
+  --iban <iban> (REQUIRED)                                    list of IBANs associated with this vendor
+  -l, --ledger <ledger>                                       Documents from this vendor will be routed to this
+                                                              ledger, leave empty to not associate [default: ]
+  -p, --payment <payment>                                     Documents from this vendor will be associated with this
+                                                              payment term, leave empty to not associate [default: ]
+  -v, --vat <vat>                                             Documents from this vendor will be associated with this
+                                                              VAT code, leave empty to not associate [default: ]
+  -f, --format <CSV|JSON|SSV|TSV|XML>                         Output format. [default: JSON]
+  -o, --output <output>                                       Enter path to write output of this command to file.
+                                                              Default output is console only [default: ]
+  -?, -h, --help                                              Show help and usage information
 ```
 
 You see that to create a vendor you need several pieces of vendor information. Options marked `(REQUIRED)` need to be enterred for the operation to be successfull. All other attributes are optional.
@@ -275,15 +281,17 @@ You see that to create a vendor you need several pieces of vendor information. O
 For example to create a new Vendor run the following command:
 
 ```bash
-.\Blue10 CLI vendor create -a B10Api -c KPN32 --country NL --currency EUR --iban NL45RABO6143537119 --ledger 00005 --vat 12341234
+.\Blue10 CLI vendor create -c B10Api -a KPN32 --country NL --currency EUR --iban NL45RABO6143537119 --ledger 00005 --vat 12341234
 ```
 
-Will create a vendor named `KPN32` in administration B10Api with the provided attributes
+Will create a vendor named `KPN32` in company/administration B10Api with the provided attributes. 
+
+_**NOTE**: Administration code is the unique identifier of the ERP. This code will also be used as name in current version (v0.0.9) when creating vendor._
 
 
 ## Invoice Command
 
-Run for following command 
+Run following command 
 
 ```
 .\Blue10Cli.exe invoice -h
@@ -309,7 +317,7 @@ Commands:
 ### Peek
 The `peek` command retrieves a sumamry of all open invoices that are ready to be posted.
 
-Run for following command 
+Run following command 
 
 ```
 .\Blue10CLI.exe invoice peek -h
@@ -339,7 +347,7 @@ Options:
 
 The `pull` command retrieves the full invoice information and writes it to file together with the original pdf assigned to that file to a given directory.
 
-Run for following command 
+Run following command:
 
 ```
 .\Blue10CLI.exe invoice pull -h
@@ -363,7 +371,7 @@ Options:
 ```
 
 
-'pulling' the available invoices will create a text file in the chosen format passed through the `-f` command into the chosen *output directory* passed through the `-o` command. The file will be named with the pattern: `<invoiceid>.<format extension>`. In the same output directory  alongside the text file, the CLI will download and save, the original PDF document associated with the invoice and name it with the naming pattern `<invoiceid>.pdf`
+`Pulling` the available invoices will create a text file in the chosen format passed through the `-f` command into the chosen *output directory* passed through the `-o` command. The file will be named with the pattern: `<invoiceid>.<format extension>`. In the same output directory  alongside the text file, the CLI will download and save, the original PDF document associated with the invoice and name it with the naming pattern `<invoiceid>.pdf`
 
 
 **NOTE:** *`invoice pull` is a **read** transaction: After 'pulling' the list of available invoices, the invoices in blue10 remain 'waiting for ERP'. This means that the handshake with the ERP is not complete*
@@ -376,8 +384,7 @@ An example command would look as follows:
 
 The above command pulls all invoices ready to be posted to the directory *InvoicePull*:
 
-The Result would be a 
-
+The result would be as follows:
 
 ```
 C:/dev/
@@ -391,9 +398,9 @@ C:/dev/
 
 ### Sign
 
-The `sign` command signs off a invoice with the given ledger entry number
+The `sign` command signs off a invoice with the given ledger entry number.
 
-Run for following command 
+Run following command:
 
 ```
 .\Blue10CLI.exe invoice sign -h
@@ -428,7 +435,7 @@ An example command would look as follows:
 
 ## GLAccount command
 
-Run for following command 
+Run following command 
 
 ```
 .\Blue10Cli.exe glaccount -h
@@ -470,7 +477,7 @@ Usage:
   Blue10CLI glaccount list [options]
 
 Options:
-  -a, -c, --administration, --company <administration>           The administration under which this GLAccounts exists
+  -a, -c, --administration, --company <administration>           The company/Blue10-administration under which this GLAccounts exists
   (REQUIRED)                                                     [default: ]
   -q, --query <query>                                            A query used to filter out results. NOTE: Dependant on
                                                                  output format. If output is 'json', this is a JMESPath
@@ -495,7 +502,7 @@ Will create a list of GLAccounts from the administration B10Api. GLAccountList.j
 
 ## VatCode command
 
-Run for following command 
+Run following command 
 
 ```
 .\Blue10Cli.exe vatcode -h
@@ -537,7 +544,7 @@ Usage:
   Blue10CLI vatcode list [options]
 
 Options:
-  -a, -c, --administration, --company <administration>           The administration under which this VatCodes exists
+  -a, -c, --administration, --company <administration>           The company/Blue10-administration under which this GLAccounts exists
   (REQUIRED)                                                     [default: ]
   -q, --query <query>                                            A query used to filter out results. NOTE: Dependant on
                                                                  output format. If output is 'json', this is a JMESPath
