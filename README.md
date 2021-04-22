@@ -264,6 +264,8 @@ Options:
   --currency <currency> (REQUIRED)                            ISO 4217 three-letter currency code to set default
                                                               currency for vendor
   --iban <iban> (REQUIRED)                                    list of IBANs associated with this vendor
+  -n, --name <name>                                           Name of the vendor. Default value will be the
+                                                              administration code
   -l, --ledger <ledger>                                       Documents from this vendor will be routed to this
                                                               ledger, leave empty to not associate [default: ]
   -p, --payment <payment>                                     Documents from this vendor will be associated with this
@@ -281,12 +283,12 @@ You see that to create a vendor you need several pieces of vendor information. O
 For example to create a new Vendor run the following command:
 
 ```bash
-.\Blue10 CLI vendor create -c B10Api -a KPN32 --country NL --currency EUR --iban NL45RABO6143537119 --ledger 00005 --vat 12341234
+.\Blue10 CLI vendor create -c B10Api -a KPN31 --country NL --currency EUR --iban NL45RABO6143537119 -n KPN-NL --ledger 00005 --vat 12341234
 ```
 
-Will create a vendor named `KPN32` in company/administration B10Api with the provided attributes. 
+Will create a vendor named `KPN-NL` with the administration code `KPN31` in company/administration B10Api with the provided attributes. 
 
-_**NOTE**: Administration code is the unique identifier of the ERP. This code will also be used as name in current version (v0.0.9) when creating vendor._
+_**NOTE**: Administration code is the unique identifier of the ERP. This code will also be used as name if the name is not given._
 
 
 ## Invoice Command
