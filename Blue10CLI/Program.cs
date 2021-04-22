@@ -84,7 +84,8 @@ namespace Blue10CLI
 
             // Start root command
             var root = serviceProvider.GetService<Root>();
-            await root.InvokeAsync(args);
+            if (root != null)
+                await root.InvokeAsync(args);
         }
     }
 }

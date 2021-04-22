@@ -17,7 +17,7 @@ namespace Blue10CLI.Commands.VendorCommands
 
             Add(new Option<string?>(
                 new[] { "-c", "-a", "--company", "--administration" },
-                () => null, "The administration under which this vendor exists")
+                () => null, "The company/Blue10-administration under which this vendor exists")
             { IsRequired = true });
             Add(new Option<string?>(
                 new[] { "-q", "--query" },
