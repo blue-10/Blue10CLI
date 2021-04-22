@@ -17,7 +17,7 @@ namespace Blue10CLI.commands
             Add(new Option<string?>(
                 new[] { "-c", "-a", "--company", "--administration" },
                 () => null,
-                "The administration under which this GLAccounts exists")
+                "The company/Blue10-administration under which this GLAccounts exists")
             { IsRequired = true });
             Add(new Option<string?>(
                 new[] { "-q", "--query" },

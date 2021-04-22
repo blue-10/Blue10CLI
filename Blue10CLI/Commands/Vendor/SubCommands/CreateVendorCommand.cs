@@ -16,8 +16,8 @@ namespace Blue10CLI.commands
 
             _vendorService = vendorService;
             _logger = logger;
-            Add(new Option<string>(new[] { "-c", "--company-id" }, "Company Id under which this vendor will be created") { IsRequired = true });
-            Add(new Option<string>(new[] { "-a", "--administration-code" }, "Unique Identifyer if Vendor in administration") { IsRequired = true });
+            Add(new Option<string>(new[] { "-c", "--company-id" }, "The company/Blue10-administration identifyer under which this vendor will be created") { IsRequired = true });
+            Add(new Option<string>(new[] { "-a", "--administration-code" }, "Unique identifyer of Vendor used in ERP") { IsRequired = true });
             Add(new Option<string>("--country", "ISO 3166 two-letter country code of the Vendor's host country") { IsRequired = true });
             Add(new Option<string>("--currency", "ISO 4217 three-letter currency code to set default currency for vendor") { IsRequired = true });
             Add(new Option<string[]>("--iban", "list of IBANs associated with this vendor") { IsRequired = true });
