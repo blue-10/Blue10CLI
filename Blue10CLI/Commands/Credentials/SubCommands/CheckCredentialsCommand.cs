@@ -1,4 +1,4 @@
-﻿using Blue10CLI.services;
+﻿using Blue10CLI.Services;
 using Blue10SDK;
 using Blue10SDK.Exceptions;
 using Microsoft.Extensions.Logging;
@@ -9,7 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Xml.XPath;
 
-namespace Blue10CLI.commands.credentials
+namespace Blue10CLI.Commands.CredentialsCommands
 {
     public class CheckCredentialsCommand : Command
     {

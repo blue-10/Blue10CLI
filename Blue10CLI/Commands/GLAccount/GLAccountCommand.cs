@@ -1,6 +1,6 @@
 ﻿using System.CommandLine;
 
-namespace Blue10CLI.commands
+namespace Blue10CLI.Commands.GLAccountCommands
 {
     public class GLAccountCommand : Command
     {
@@ -11,7 +11,6 @@ namespace Blue10CLI.commands
         {
             Add(listGLAccounts);
             Add(syncGLAccounts);
-
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using Blue10CLI.services;
+﻿using Blue10CLI.Services;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 
-namespace Blue10CLI.commands.credentials
+namespace Blue10CLI.Commands.CredentialsCommands
 {
     public class ShowCredentialsCommand : Command
     {

@@ -1,6 +1,6 @@
 ﻿using Blue10SDK.Models;
 
-namespace Blue10CLI.models
+namespace Blue10CLI.Models
 {
     public class BaseResultModel<T> where T : BaseObject
     {

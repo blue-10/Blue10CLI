@@ -1,8 +1,12 @@
-﻿using Blue10CLI.commands;
-using Blue10CLI.commands.credentials;
+﻿using Blue10CLI.Commands.AdministrationCommands;
+using Blue10CLI.Commands.CredentialsCommands;
+using Blue10CLI.Commands.GLAccountCommands;
+using Blue10CLI.Commands.InvoiceCommands;
+using Blue10CLI.Commands.VatCodeCommands;
+using Blue10CLI.Commands.VendorCommands;
 using System.CommandLine;
 
-namespace Blue10CLI
+namespace Blue10CLI.Commands
 {
     public class Root : RootCommand
     {

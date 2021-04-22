@@ -1,4 +1,4 @@
-﻿using Blue10CLI.services;
+﻿using Blue10CLI.Services;
 using Microsoft.Extensions.Logging;
 using System;
 using System.CommandLine;
@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Blue10CLI.commands
+namespace Blue10CLI.Commands.InvoiceCommands
 {
     public class SignInvoiceCommand : Command
     {

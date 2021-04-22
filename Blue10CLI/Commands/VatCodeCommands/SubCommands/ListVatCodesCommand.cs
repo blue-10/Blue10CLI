@@ -1,10 +1,11 @@
-﻿using Blue10CLI.Services.Interfaces;
+﻿using Blue10CLI.Helpers;
+using Blue10CLI.Services.Interfaces;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Blue10CLI.commands
+namespace Blue10CLI.Commands.VatCodeCommands
 {
     public class ListVatCodesCommand : Command
     {

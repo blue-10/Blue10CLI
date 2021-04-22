@@ -1,4 +1,4 @@
-﻿using Blue10CLI.models;
+﻿using Blue10CLI.Models;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK;
 using Blue10SDK.Exceptions;
@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Blue10CLI.services
+namespace Blue10CLI.Services
 {
     public class VatCodeService : IVatCodeService
     {

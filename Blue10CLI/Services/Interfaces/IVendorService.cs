@@ -1,4 +1,4 @@
-﻿using Blue10CLI.models;
+﻿using Blue10CLI.Models;
 using Blue10SDK.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;

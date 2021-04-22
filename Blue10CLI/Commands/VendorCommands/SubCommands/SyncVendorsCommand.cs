@@ -1,4 +1,5 @@
-﻿using Blue10CLI.Services.Interfaces;
+﻿using Blue10CLI.Helpers;
+using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using Newtonsoft.Json;
 using System;
@@ -8,21 +9,21 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Blue10CLI.commands
+namespace Blue10CLI.Commands.VendorCommands
 {
-    public class SyncVatCodesCommand : Command
+    public class SyncVendorsCommand : Command
     {
-        private readonly IVatCodeService _vatCodeService;
+        private readonly IVendorService _vendorService;
 
-        public SyncVatCodesCommand(IVatCodeService vatCodeService) : base("sync",
-            Descriptions.SyncVatCodeDescription)
+        public SyncVendorsCommand(IVendorService vendorService) : base("sync",
+            Descriptions.SyncVendorDescription)
         {
-            _vatCodeService = vatCodeService;
+            _vendorService = vendorService;
 
             Add(new Option<FileInfo?>(
                 new[] { "-i", "--input" },
                 () => null,
-                Descriptions.InputVatCodeDescription)
+                Descriptions.InputVendorDescription)
             { IsRequired = true });
             Add(new Option<EFormatType>(
                 new[] { "--input-format" },
@@ -38,29 +39,29 @@ namespace Blue10CLI.commands
                 () => EFormatType.JSON,
                 Descriptions.FormatDescription));
 
-            Handler = CommandHandler.Create<FileInfo, EFormatType, FileInfo?, EFormatType>(ImportVatCodesHandler);
+            Handler = CommandHandler.Create<FileInfo, EFormatType, FileInfo?, EFormatType>(ImportVendorsHandler);
         }
 
-        private async Task ImportVatCodesHandler(
+        private async Task ImportVendorsHandler(
             FileInfo input,
             EFormatType inputformat,
             FileInfo? output,
             EFormatType outputformat)
         {
             var fSyncFilePath = input.FullName;
-            var fVatCodeList = File.ReadAllText(fSyncFilePath);
+            var fVendorList = File.ReadAllText(fSyncFilePath);
 
-            IList<VatCode> fVatCodes;
+            IList<Vendor> fVendors;
 
             try
             {
-                fVatCodes = inputformat switch
+                fVendors = inputformat switch
                 {
-                    EFormatType.JSON => JsonConvert.DeserializeObject<IList<VatCode>>(fVatCodeList),
-                    EFormatType.CSV => Read.CsvRecords<VatCode>(fVatCodeList, ","),
-                    EFormatType.TSV => Read.CsvRecords<VatCode>(fVatCodeList, "\t"),
-                    EFormatType.SSV => Read.CsvRecords<VatCode>(fVatCodeList, ";"),
-                    EFormatType.XML => Read.XmlRecords<VatCode>(fVatCodeList),
+                    EFormatType.JSON => JsonConvert.DeserializeObject<IList<Vendor>>(fVendorList),
+                    EFormatType.CSV => Read.CsvRecords<Vendor>(fVendorList, ","),
+                    EFormatType.TSV => Read.CsvRecords<Vendor>(fVendorList, "\t"),
+                    EFormatType.SSV => Read.CsvRecords<Vendor>(fVendorList, ";"),
+                    EFormatType.XML => Read.XmlRecords<Vendor>(fVendorList),
                     _ => throw new ArgumentOutOfRangeException(nameof(inputformat), inputformat, null)
                 };
             }
@@ -69,27 +70,27 @@ namespace Blue10CLI.commands
                 || ex is CsvHelper.ReaderException
                 || ex is InvalidOperationException)
             {
-                Console.WriteLine("Invalid input file. Check if format of the file is correct and if Id values of VATCodes are valid");
+                Console.WriteLine("Invalid input file. Check if format of the file is correct and if Id values of vendors are valid");
                 throw;
             }
 
-            var fSuccessList = new List<VatCode>();
-            var fFailedList = new List<VatCode>();
+            var fSuccessList = new List<Vendor>();
+            var fFailedList = new List<Vendor>();
 
             var fCount = 1;
-            var fTotalVATCodes = fVatCodes.Count;
-            foreach (var fVatCode in fVatCodes)
+            var fTotalVendors = fVendors.Count;
+            foreach (var fVendor in fVendors)
             {
-                var fResult = await _vatCodeService.CreateOrUpdate(fVatCode);
+                var fResult = await _vendorService.CreateOrUpdate(fVendor);
                 if (fResult.Object == null)
                 {
-                    fFailedList.Add(fVatCode);
-                    Console.WriteLine($"{fCount}/{fTotalVATCodes}: Failed syncing VATCode '{fVatCode.Name}' - {fResult.ErrorMessage}");
+                    fFailedList.Add(fVendor);
+                    Console.WriteLine($"{fCount}/{fTotalVendors}: Failed syncing vendor '{fVendor.Name}' - {fResult.ErrorMessage}");
                 }
                 else
                 {
                     fSuccessList.Add(fResult.Object);
-                    Console.WriteLine($"{fCount}/{fTotalVATCodes} Successfully synced VATCode '{fVatCode.Name}'");
+                    Console.WriteLine($"{fCount}/{fTotalVendors} Successfully synced vendor '{fVendor.Name}'");
                 }
                 fCount++;
             }
@@ -100,7 +101,7 @@ namespace Blue10CLI.commands
                 outputformat.HandleOutputToFilePath(fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
                 outputformat.HandleOutputToFilePath(fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
             }
-            Console.WriteLine($"{fSuccessList.Count}/{fTotalVATCodes} VATCodes have been successfully imported");
+            Console.WriteLine($"{fSuccessList.Count}/{fTotalVendors} vendors have been successfully imported");
         }
     }
 }

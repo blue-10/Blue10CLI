@@ -1,7 +1,5 @@
-﻿using System;
-using System.Data.Common;
-using Blue10CLI.commands;
-using Blue10SDK.Models;
+﻿using Blue10SDK.Models;
+using System;
 
 namespace Blue10CLI.models
 {
@@ -12,9 +10,9 @@ namespace Blue10CLI.models
         public string Description { get; set; }
         public string Vendor { get; set; }
         public DateTime InvoiceDate { get; set; }
-        
-        
-        public InvoiceSummary(){}
+
+
+        public InvoiceSummary() { }
         public InvoiceSummary(PurchaseInvoice invoice)
         {
             Id = invoice.Id;
@@ -23,6 +21,5 @@ namespace Blue10CLI.models
             Vendor = invoice.VendorCode;
             InvoiceDate = invoice.InvoiceDate;
         }
-
     }
 }

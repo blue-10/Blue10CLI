@@ -1,4 +1,5 @@
-﻿using Blue10CLI.Services.Interfaces;
+﻿using Blue10CLI.Helpers;
+using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using Newtonsoft.Json;
 using System;
@@ -8,7 +9,7 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Blue10CLI.commands
+namespace Blue10CLI.Commands.GLAccountCommands
 {
     public class SyncGLAccountsCommand : Command
     {

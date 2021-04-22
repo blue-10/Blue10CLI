@@ -4,7 +4,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 
-namespace Blue10CLI.commands
+namespace Blue10CLI.Commands.VendorCommands
 {
     public class CreateVendorCommand : Command
     {
