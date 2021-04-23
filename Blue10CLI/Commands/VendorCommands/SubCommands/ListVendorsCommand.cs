@@ -12,7 +12,6 @@ namespace Blue10CLI.Commands.VendorCommands
 
         public ListVendorsCommand(IVendorService vendorService) : base("list", "Lists all known vendors in environment")
         {
-
             _vendorService = vendorService;
 
             Add(new Option<string?>(

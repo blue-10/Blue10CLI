@@ -1,6 +1,7 @@
 ﻿using Blue10CLI.Helpers;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,16 @@ namespace Blue10CLI.Commands.GLAccountCommands
     public class SyncGLAccountsCommand : Command
     {
         private readonly IGLAccountService _glaccountService;
+        private readonly ILogger<SyncGLAccountsCommand> _logger;
 
-        public SyncGLAccountsCommand(IGLAccountService glaccountService) : base("sync",
-            Descriptions.SyncGLAccountDescription)
+        public SyncGLAccountsCommand(
+            IGLAccountService glaccountService,
+            ILogger<SyncGLAccountsCommand> logger) :
+            base("sync",
+                Descriptions.SyncGLAccountDescription)
         {
             _glaccountService = glaccountService;
+            _logger = logger;
 
             Add(new Option<FileInfo?>(
                 new[] { "-i", "--input" },
@@ -70,7 +76,7 @@ namespace Blue10CLI.Commands.GLAccountCommands
                 || ex is CsvHelper.ReaderException
                 || ex is InvalidOperationException)
             {
-                Console.WriteLine("Invalid input file. Check if format of the file is correct and if Id values of GLAccounts are valid");
+                _logger.LogError("Invalid input file. Check if format of the file is correct and if Id values of GLAccounts are valid");
                 throw;
             }
 
@@ -85,7 +91,7 @@ namespace Blue10CLI.Commands.GLAccountCommands
                 if (fResult.Object == null)
                 {
                     fFailedList.Add(fGLAccount);
-                    Console.WriteLine($"{fCount}/{fTotalGLAccounts}: Failed syncing GLAccount '{fGLAccount.Name}' - {fResult.ErrorMessage}");
+                    _logger.LogWarning($"{fCount}/{fTotalGLAccounts}: Failed syncing GLAccount '{fGLAccount.Name}' - {fResult.ErrorMessage}");
                 }
                 else
                 {

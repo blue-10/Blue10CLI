@@ -1,6 +1,7 @@
 ﻿using Blue10CLI.Helpers;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,16 @@ namespace Blue10CLI.Commands.VendorCommands
     public class SyncVendorsCommand : Command
     {
         private readonly IVendorService _vendorService;
+        private readonly ILogger<SyncVendorsCommand> _logger;
 
-        public SyncVendorsCommand(IVendorService vendorService) : base("sync",
-            Descriptions.SyncVendorDescription)
+        public SyncVendorsCommand(
+            IVendorService vendorService,
+            ILogger<SyncVendorsCommand> logger) :
+            base("sync",
+                Descriptions.SyncVendorDescription)
         {
             _vendorService = vendorService;
+            _logger = logger;
 
             Add(new Option<FileInfo?>(
                 new[] { "-i", "--input" },
@@ -85,7 +91,7 @@ namespace Blue10CLI.Commands.VendorCommands
                 if (fResult.Object == null)
                 {
                     fFailedList.Add(fVendor);
-                    Console.WriteLine($"{fCount}/{fTotalVendors}: Failed syncing vendor '{fVendor.Name}' - {fResult.ErrorMessage}");
+                    _logger.LogWarning($"{fCount}/{fTotalVendors}: Failed syncing vendor '{fVendor.Name}' - {fResult.ErrorMessage}");
                 }
                 else
                 {
