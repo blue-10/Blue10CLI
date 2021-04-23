@@ -1,6 +1,6 @@
 using AutoFixture.Xunit2;
-using Blue10CLI.commands;
-using Blue10CLI.models;
+using Blue10CLI.Commands.VendorCommands;
+using Blue10CLI.Models;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using FluentAssertions;
@@ -45,7 +45,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
                 .CreateOrUpdate(Arg.Any<Vendor>())
                 .Returns(fModel);
 
-            var pCommand = new SyncVendorsCommand(pVendorService);
+            var pCommand = new SyncVendorsCommand(pVendorService, null);
 
             // Test
             pCommand.Invoke(pCommandLine, pConsoleCommandLine);

@@ -1,5 +1,5 @@
 using AutoFixture.Xunit2;
-using Blue10CLI.services;
+using Blue10CLI.Services;
 using Blue10SDK;
 using Blue10SDK.Models;
 using FluentAssertions;
