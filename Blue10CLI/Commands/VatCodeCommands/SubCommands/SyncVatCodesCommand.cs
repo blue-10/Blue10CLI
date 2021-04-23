@@ -63,7 +63,7 @@ namespace Blue10CLI.Commands.VatCodeCommands
                     EFormatType.JSON => JsonConvert.DeserializeObject<IList<VatCode>>(fVatCodeList),
                     EFormatType.CSV => Read.CsvRecords<VatCode>(fVatCodeList, ","),
                     EFormatType.TSV => Read.CsvRecords<VatCode>(fVatCodeList, "\t"),
-                    EFormatType.SSV => Read.CsvRecords<VatCode>(fVatCodeList, ";"),
+                    EFormatType.SCSV => Read.CsvRecords<VatCode>(fVatCodeList, ";"),
                     EFormatType.XML => Read.XmlRecords<VatCode>(fVatCodeList),
                     _ => throw new ArgumentOutOfRangeException(nameof(inputformat), inputformat, null)
                 };

@@ -22,7 +22,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
         [Theory]
         [InlineAutoMockData(EFormatType.JSON)]
         [InlineAutoMockData(EFormatType.CSV)]
-        [InlineAutoMockData(EFormatType.SSV)]
+        [InlineAutoMockData(EFormatType.SCSV)]
         [InlineAutoMockData(EFormatType.TSV)]
         [InlineAutoMockData(EFormatType.XML)]
         public void Success_ConsolOutput(

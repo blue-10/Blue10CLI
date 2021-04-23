@@ -66,7 +66,7 @@ namespace Blue10CLI.Commands.GLAccountCommands
                     EFormatType.JSON => JsonConvert.DeserializeObject<IList<GLAccount>>(fGLAccountList),
                     EFormatType.CSV => Read.CsvRecords<GLAccount>(fGLAccountList, ","),
                     EFormatType.TSV => Read.CsvRecords<GLAccount>(fGLAccountList, "\t"),
-                    EFormatType.SSV => Read.CsvRecords<GLAccount>(fGLAccountList, ";"),
+                    EFormatType.SCSV => Read.CsvRecords<GLAccount>(fGLAccountList, ";"),
                     EFormatType.XML => Read.XmlRecords<GLAccount>(fGLAccountList),
                     _ => throw new ArgumentOutOfRangeException(nameof(inputformat), inputformat, null)
                 };

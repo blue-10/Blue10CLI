@@ -66,7 +66,7 @@ namespace Blue10CLI.Commands.VendorCommands
                     EFormatType.JSON => JsonConvert.DeserializeObject<IList<Vendor>>(fVendorList),
                     EFormatType.CSV => Read.CsvRecords<Vendor>(fVendorList, ","),
                     EFormatType.TSV => Read.CsvRecords<Vendor>(fVendorList, "\t"),
-                    EFormatType.SSV => Read.CsvRecords<Vendor>(fVendorList, ";"),
+                    EFormatType.SCSV => Read.CsvRecords<Vendor>(fVendorList, ";"),
                     EFormatType.XML => Read.XmlRecords<Vendor>(fVendorList),
                     _ => throw new ArgumentOutOfRangeException(nameof(inputformat), inputformat, null)
                 };

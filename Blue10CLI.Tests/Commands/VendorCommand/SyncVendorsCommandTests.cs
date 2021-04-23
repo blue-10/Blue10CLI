@@ -27,7 +27,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
         [Theory]
         [InlineAutoMockData("-i TestFiles/listVendors.csv --input-format CSV")]
         [InlineAutoMockData("-i TestFiles/listVendors.json --input-format JSON")]
-        [InlineAutoMockData("-i TestFiles/listVendors.ssv --input-format SSV")]
+        [InlineAutoMockData("-i TestFiles/listVendors.scsv --input-format SCSV")]
         [InlineAutoMockData("-i TestFiles/listVendors.tsv --input-format TSV")]
         [InlineAutoMockData("-i TestFiles/listVendors.xml --input-format XML")]
         public void Success_ReadAndConvertFilis(

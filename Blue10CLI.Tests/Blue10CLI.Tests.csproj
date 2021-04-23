@@ -35,7 +35,7 @@
     <None Update="TestFiles\listVendors.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestFiles\listVendors.ssv">
+    <None Update="TestFiles\listVendors.scsv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestFiles\listVendors.tsv">

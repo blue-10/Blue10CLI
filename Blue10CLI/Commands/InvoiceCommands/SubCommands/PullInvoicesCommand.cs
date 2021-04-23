@@ -45,7 +45,7 @@ namespace Blue10CLI.Commands.InvoiceCommands
                     EFormatType.JSON => ".json",
                     EFormatType.CSV => ".csv",
                     EFormatType.TSV => ".tsv",
-                    EFormatType.SSV => ".ssv",
+                    EFormatType.SCSV => ".scsv",
                     EFormatType.XML => ".xml",
                     _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
                 };

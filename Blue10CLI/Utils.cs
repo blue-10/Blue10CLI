@@ -20,7 +20,7 @@ namespace Blue10CLI
         JSON,
         CSV,
         TSV,
-        SSV,
+        SCSV,
         XML,
     }
 
@@ -71,7 +71,7 @@ namespace Blue10CLI
                 EFormatType.JSON => ConvertToJson(input),
                 EFormatType.CSV => ConvertToCsv(input, ","),
                 EFormatType.TSV => ConvertToCsv(input, "\t"),
-                EFormatType.SSV => ConvertToCsv(input, ";"),
+                EFormatType.SCSV => ConvertToCsv(input, ";"),
                 EFormatType.XML => ConvertToXml(input),
                 _ => throw new ArgumentOutOfRangeException(nameof(format), format, $"{format} is not supported for formatting")
             };
@@ -85,7 +85,7 @@ namespace Blue10CLI
                 EFormatType.XML => FilterWithXPath(inputString, query),
                 EFormatType.CSV => throw new ArgumentOutOfRangeException(nameof(format), format, $"{format} is not supported for filtering with query"),
                 EFormatType.TSV => throw new ArgumentOutOfRangeException(nameof(format), format, $"{format} is not supported for filtering with query"),
-                EFormatType.SSV => throw new ArgumentOutOfRangeException(nameof(format), format, $"{format} is not supported for filtering with query"),
+                EFormatType.SCSV => throw new ArgumentOutOfRangeException(nameof(format), format, $"{format} is not supported for filtering with query"),
                 _ => throw new ArgumentOutOfRangeException(nameof(format), format, $"{format} is not supported for filtering with query")
             };
         }
