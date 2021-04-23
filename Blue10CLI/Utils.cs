@@ -1,7 +1,6 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
 using DevLab.JmesPath;
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -46,7 +45,7 @@ namespace Blue10CLI
         {
             return format switch
             {
-                EFormatType.JSON => JsonConvert.DeserializeObject<IList<T>>(origin),
+                EFormatType.JSON => JsonSerializer.Deserialize<IList<T>>(origin),
                 EFormatType.CSV => CsvRecords<T>(origin, ","),
                 EFormatType.TSV => CsvRecords<T>(origin, "\t"),
                 EFormatType.SCSV => CsvRecords<T>(origin, ";"),
