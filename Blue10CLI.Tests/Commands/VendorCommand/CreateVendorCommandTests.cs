@@ -1,12 +1,12 @@
 using AutoFixture.Xunit2;
-using Blue10CLI.commands;
+using Blue10CLI.Commands.VendorCommands;
+using Blue10CLI.Models;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using FluentAssertions;
 using NSubstitute;
 using Objectivity.AutoFixture.XUnit2.AutoNSubstitute.Attributes;
 using System;
-using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
 using System.CommandLine.Parsing;
@@ -34,20 +34,8 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
         {
             // Setup data
             pVendorService
-                .Create(Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<IEnumerable<string>>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<bool>(),
-                Arg.Any<string>(),
-                Arg.Any<string>())
-                .Returns(pVendor);
+                .CreateOrUpdate(Arg.Any<Vendor>())
+                .Returns(new BaseResultModel<Vendor>(pVendor, null));
 
             var fCommandLine = $"-c IdCompany -a AdministrationCode --country CountryCode --currency CurrencyCode --iban Iban -f {pFormat}";
 
@@ -97,20 +85,15 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
             // Validate
             pConsoleCommandLine.Error.ToString().Should().BeNullOrEmpty();
             pVendorService.Received(1);
-            pVendorService.Received().Create(
-                Arg.Is<string>(x => x.Equals(pVendor.AdministrationCode)),
-                Arg.Any<string>(),
-                Arg.Is<string>(x => x.Equals(pVendor.CountryCode)),
-                Arg.Is<IEnumerable<string>>(x => Enumerable.SequenceEqual(x, pVendor.Iban.ToArray())),
-                Arg.Is<string>(x => x.Equals(pVendor.CurrencyCode)),
-                Arg.Any<string>(),
-                Arg.Is<string>(x => x.Equals(pVendor.DefaultLedgerCode)),
-                Arg.Is<string>(x => x.Equals(pVendor.DefaultVatCode)),
-                Arg.Any<string>(),
-                Arg.Is<string>(x => x.Equals(pVendor.DefaultPaymentTermCode)),
-                Arg.Is<bool>(x => x.Equals(false)),
-                Arg.Is<string>(x => x.Equals(pVendor.AdministrationCode)),
-                Arg.Is<string>(x => x.Equals(pVendor.IdCompany)));
+            pVendorService.Received().CreateOrUpdate(Arg.Is<Vendor>(x => x.IdCompany.Equals(pVendor.IdCompany)));
+            pVendorService.Received().CreateOrUpdate(Arg.Is<Vendor>(x => x.AdministrationCode.Equals(pVendor.AdministrationCode)));
+            pVendorService.Received().CreateOrUpdate(Arg.Is<Vendor>(x => x.CountryCode.Equals(pVendor.CountryCode)));
+            pVendorService.Received().CreateOrUpdate(Arg.Is<Vendor>(x => x.CurrencyCode.Equals(pVendor.CurrencyCode)));
+            pVendorService.Received().CreateOrUpdate(Arg.Is<Vendor>(x => x.Iban.SequenceEqual(pVendor.Iban)));
+            pVendorService.Received().CreateOrUpdate(Arg.Is<Vendor>(x => x.DefaultLedgerCode.Equals(pVendor.DefaultLedgerCode)));
+            pVendorService.Received().CreateOrUpdate(Arg.Is<Vendor>(x => x.DefaultPaymentTermCode.Equals(pVendor.DefaultPaymentTermCode)));
+            pVendorService.Received().CreateOrUpdate(Arg.Is<Vendor>(x => x.DefaultVatCode.Equals(pVendor.DefaultVatCode)));
+            pVendorService.Received().CreateOrUpdate(Arg.Is<Vendor>(x => x.Name.Equals(pVendor.AdministrationCode)));
         }
     }
 }

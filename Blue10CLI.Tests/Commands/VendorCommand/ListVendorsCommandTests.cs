@@ -1,5 +1,5 @@
 using AutoFixture.Xunit2;
-using Blue10CLI.commands;
+using Blue10CLI.Commands.VendorCommands;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using FluentAssertions;
@@ -39,7 +39,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
             var fCommandLine = $"-a IdCompany -f {pFormat}";
 
             // Setup services
-            var pCommand = new ListVendorsCommand(pVendorService);
+            var pCommand = new ListVendorsCommand(pVendorService, null);
 
             // Hook up validation
             Console.SetOut(pConsole);
@@ -72,7 +72,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
 
             // Setup services
             Console.SetOut(pConsole);
-            var pCommand = new ListVendorsCommand(pVendorService);
+            var pCommand = new ListVendorsCommand(pVendorService, null);
 
             // Test
             pCommand.Invoke(fCommandLine, pConsoleCommandLine);
