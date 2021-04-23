@@ -37,7 +37,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
             [Frozen] IVendorService pVendorService)
         {
             // Setup data
-            VendorResultModel fModel = new VendorResultModel(new Vendor(), null);
+            BaseResultModel<Vendor> fModel = new BaseResultModel<Vendor>(new Vendor(), null);
 
             // Setup services
             Console.SetOut(pConsole);
