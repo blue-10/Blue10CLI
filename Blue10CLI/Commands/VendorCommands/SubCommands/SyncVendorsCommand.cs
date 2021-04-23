@@ -1,6 +1,7 @@
 ﻿using Blue10CLI.Helpers;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,16 @@ namespace Blue10CLI.Commands.VendorCommands
     public class SyncVendorsCommand : Command
     {
         private readonly IVendorService _vendorService;
+        private readonly ILogger<SyncVendorsCommand> _logger;
 
-        public SyncVendorsCommand(IVendorService vendorService) : base("sync",
-            Descriptions.SyncVendorDescription)
+        public SyncVendorsCommand(
+            IVendorService vendorService,
+            ILogger<SyncVendorsCommand> logger) :
+            base("sync",
+                Descriptions.SyncVendorDescription)
         {
             _vendorService = vendorService;
+            _logger = logger;
 
             Add(new Option<FileInfo?>(
                 new[] { "-i", "--input" },
@@ -70,7 +76,7 @@ namespace Blue10CLI.Commands.VendorCommands
                 || ex is CsvHelper.ReaderException
                 || ex is InvalidOperationException)
             {
-                Console.WriteLine("Invalid input file. Check if format of the file is correct and if Id values of vendors are valid");
+                _logger.LogError("Invalid input file. Check if format of the file is correct and if Id values of vendors are valid");
                 throw;
             }
 
@@ -85,7 +91,7 @@ namespace Blue10CLI.Commands.VendorCommands
                 if (fResult.Object == null)
                 {
                     fFailedList.Add(fVendor);
-                    Console.WriteLine($"{fCount}/{fTotalVendors}: Failed syncing vendor '{fVendor.Name}' - {fResult.ErrorMessage}");
+                    _logger.LogWarning($"{fCount}/{fTotalVendors}: Failed syncing vendor '{fVendor.Name}' - {fResult.ErrorMessage}");
                 }
                 else
                 {
@@ -95,13 +101,21 @@ namespace Blue10CLI.Commands.VendorCommands
                 fCount++;
             }
 
-            outputformat.HandleOutput(fSuccessList, output).Wait();
-            if (output != null)
-            {
-                outputformat.HandleOutputToFilePath(fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
-                outputformat.HandleOutputToFilePath(fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
-            }
             Console.WriteLine($"{fSuccessList.Count}/{fTotalVendors} vendors have been successfully imported");
+
+            try
+            {
+                await outputformat.HandleOutput(fSuccessList, output);
+                if (output != null)
+                {
+                    await outputformat.HandleOutputToFilePath(fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
+                    await outputformat.HandleOutputToFilePath(fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
+                }
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                _logger.LogError($"{outputformat} is not supported for this action: {e.Message}");
+            }
         }
     }
 }

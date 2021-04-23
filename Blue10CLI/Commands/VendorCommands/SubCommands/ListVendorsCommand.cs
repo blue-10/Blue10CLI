@@ -1,4 +1,6 @@
 ﻿using Blue10CLI.Services.Interfaces;
+using Microsoft.Extensions.Logging;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
@@ -8,12 +10,13 @@ namespace Blue10CLI.Commands.VendorCommands
 {
     public class ListVendorsCommand : Command
     {
-        private IVendorService _vendorService;
+        private readonly IVendorService _vendorService;
+        private readonly ILogger<ListVendorsCommand> _logger;
 
-        public ListVendorsCommand(IVendorService vendorService) : base("list", "Lists all known vendors in environment")
+        public ListVendorsCommand(IVendorService vendorService, ILogger<ListVendorsCommand> logger) : base("list", "Lists all known vendors in environment")
         {
-
             _vendorService = vendorService;
+            _logger = logger;
 
             Add(new Option<string?>(
                 new[] { "-c", "-a", "--company", "--administration" },
@@ -37,7 +40,14 @@ namespace Blue10CLI.Commands.VendorCommands
         private async Task ListVendorsHandler(string administration, string? query, EFormatType format, FileInfo? output)
         {
             var resultObject = await _vendorService.List(administration);
-            await format.HandleOutput(resultObject, output, query);
+            try
+            {
+                await format.HandleOutput(resultObject, output, query);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                _logger.LogError($"{format} is not supported for this action: {e.Message}");
+            }
         }
     }
 }

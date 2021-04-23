@@ -11,8 +11,9 @@ namespace Blue10CLI.Commands.InvoiceCommands
 {
     public class SignInvoiceCommand : Command
     {
-        private InvoiceService _service;
-        private ILogger<PullInvoicesCommand> _logger;
+        private readonly InvoiceService _service;
+        private readonly ILogger<PullInvoicesCommand> _logger;
+
         public SignInvoiceCommand(InvoiceService service, ILogger<PullInvoicesCommand> logger) : base("sign", "Sign-off invoice with a ledger entry number")
         {
             _service = service;
@@ -38,7 +39,16 @@ namespace Blue10CLI.Commands.InvoiceCommands
             }
             var fResult = await _service.SignInvoice(fTargetInvoiceAction, ledgerEntryCode);
             if (fResult != null)
-                await format.HandleOutput(fResult, output);
+            {
+                try
+                {
+                    await format.HandleOutput(fResult, output);
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                    _logger.LogError($"{format} is not supported for this action: {e.Message}");
+                }
+            }
             else
                 _logger.LogError($"Failed to sign-off invoice with id {invoiceId}");
         }

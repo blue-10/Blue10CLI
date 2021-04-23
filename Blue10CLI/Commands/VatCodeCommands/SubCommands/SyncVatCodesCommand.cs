@@ -1,6 +1,7 @@
 ﻿using Blue10CLI.Helpers;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,13 @@ namespace Blue10CLI.Commands.VatCodeCommands
     public class SyncVatCodesCommand : Command
     {
         private readonly IVatCodeService _vatCodeService;
+        private readonly ILogger<SyncVatCodesCommand> _logger;
 
-        public SyncVatCodesCommand(IVatCodeService vatCodeService) : base("sync",
+        public SyncVatCodesCommand(IVatCodeService vatCodeService, ILogger<SyncVatCodesCommand> logger) : base("sync",
             Descriptions.SyncVatCodeDescription)
         {
             _vatCodeService = vatCodeService;
+            _logger = logger;
 
             Add(new Option<FileInfo?>(
                 new[] { "-i", "--input" },
@@ -70,7 +73,7 @@ namespace Blue10CLI.Commands.VatCodeCommands
                 || ex is CsvHelper.ReaderException
                 || ex is InvalidOperationException)
             {
-                Console.WriteLine("Invalid input file. Check if format of the file is correct and if Id values of VATCodes are valid");
+                _logger.LogError("Invalid input file. Check if format of the file is correct and if Id values of VATCodes are valid");
                 throw;
             }
 
@@ -85,7 +88,7 @@ namespace Blue10CLI.Commands.VatCodeCommands
                 if (fResult.Object == null)
                 {
                     fFailedList.Add(fVatCode);
-                    Console.WriteLine($"{fCount}/{fTotalVATCodes}: Failed syncing VATCode '{fVatCode.Name}' - {fResult.ErrorMessage}");
+                    _logger.LogWarning($"{fCount}/{fTotalVATCodes}: Failed syncing VATCode '{fVatCode.Name}' - {fResult.ErrorMessage}");
                 }
                 else
                 {
@@ -95,13 +98,21 @@ namespace Blue10CLI.Commands.VatCodeCommands
                 fCount++;
             }
 
-            outputformat.HandleOutput(fSuccessList, output).Wait();
-            if (output != null)
-            {
-                outputformat.HandleOutputToFilePath(fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
-                outputformat.HandleOutputToFilePath(fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
-            }
             Console.WriteLine($"{fSuccessList.Count}/{fTotalVATCodes} VATCodes have been successfully imported");
+
+            try
+            {
+                await outputformat.HandleOutput(fSuccessList, output);
+                if (output != null)
+                {
+                    outputformat.HandleOutputToFilePath(fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
+                    outputformat.HandleOutputToFilePath(fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
+                }
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                _logger.LogError($"{outputformat} is not supported for this action: {e.Message}");
+            }
         }
     }
 }

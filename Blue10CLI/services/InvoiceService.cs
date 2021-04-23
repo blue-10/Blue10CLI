@@ -4,7 +4,6 @@ using Blue10SDK.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Blue10CLI.Services
@@ -38,8 +37,6 @@ namespace Blue10CLI.Services
             var res = await GetInvoicesToBePosted();
             return res.Select(x => new InvoiceSummary(x)).ToList();
         }
-
-        public static HttpClient _http = new HttpClient();
 
         public async Task<(PurchaseInvoice, byte[])> PullInvoice(DocumentAction action)
         {

@@ -64,8 +64,6 @@ namespace Blue10CLI
 
     public static class Output
     {
-
-
         public static string Format<T>(this EFormatType format, T input) where T : IEnumerable
         {
             return format switch
@@ -75,7 +73,7 @@ namespace Blue10CLI
                 EFormatType.TSV => ConvertToCsv(input, "\t"),
                 EFormatType.SSV => ConvertToCsv(input, ";"),
                 EFormatType.XML => ConvertToXml(input),
-                _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
+                _ => throw new ArgumentOutOfRangeException(nameof(format), format, $"{format} is not supported for formatting")
             };
         }
 
@@ -85,10 +83,10 @@ namespace Blue10CLI
             {
                 EFormatType.JSON => FilterWithJmesPath(inputString, query),
                 EFormatType.XML => FilterWithXPath(inputString, query),
-                EFormatType.CSV => throw new ArgumentOutOfRangeException(nameof(format), format, null),
-                EFormatType.TSV => throw new ArgumentOutOfRangeException(nameof(format), format, null),
-                EFormatType.SSV => throw new ArgumentOutOfRangeException(nameof(format), format, null),
-                _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
+                EFormatType.CSV => throw new ArgumentOutOfRangeException(nameof(format), format, $"{format} is not supported for filtering with query"),
+                EFormatType.TSV => throw new ArgumentOutOfRangeException(nameof(format), format, $"{format} is not supported for filtering with query"),
+                EFormatType.SSV => throw new ArgumentOutOfRangeException(nameof(format), format, $"{format} is not supported for filtering with query"),
+                _ => throw new ArgumentOutOfRangeException(nameof(format), format, $"{format} is not supported for filtering with query")
             };
         }
 
@@ -118,7 +116,7 @@ namespace Blue10CLI
         public static string ConvertToJson<T>(T subject, string jmesPath = "[]") =>
             JsonSerializer.Serialize(subject, new JsonSerializerOptions { WriteIndented = true });
 
-        public static async Task HandleOutput<T>(this EFormatType format, T input, FileInfo? file, string? query = null) // Null exception
+        public static async Task HandleOutput<T>(this EFormatType format, T input, FileInfo? file, string? query = null)
         {
             string? resultString;
             if (input is IList inputEnumerable)
@@ -142,7 +140,6 @@ namespace Blue10CLI
             }
         }
 
-
         public static async Task HandleOutputToFilePath<T>(this EFormatType format, T input, string filepath, string? query = null)
         {
             string? resultString;
@@ -163,7 +160,6 @@ namespace Blue10CLI
             Console.WriteLine(resultString);
             await File.WriteAllTextAsync(filepath, resultString);
         }
-
 
         public class StringWriterWithEncoding : StringWriter
         {
@@ -199,8 +195,5 @@ namespace Blue10CLI
                 csv.WriteRecords(new[] { origin });
             return wr.ToString();
         }
-
-
-
     }
 }

@@ -19,7 +19,7 @@ namespace Blue10CLI.Services
         }
 
         public async Task<IList<GLAccount>> List(string pCompanyId) =>
-            await _blue10.GetGLAccountsAsync(pCompanyId); // try catch?
+            await _blue10.GetGLAccountsAsync(pCompanyId);
 
         public async Task<BaseResultModel<GLAccount>> CreateOrUpdate(GLAccount pGlAccount)
         {

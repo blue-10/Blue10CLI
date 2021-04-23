@@ -9,21 +9,6 @@ namespace Blue10CLI.Services.Interfaces
     {
         Task<IList<Vendor>> List(string companyId);
 
-        Task<Vendor?> Create(
-            string pName,
-            string pVatNumber,
-            string pCountryCode,
-            IEnumerable<string> pIban,
-            string pCurrencyCode,
-            string pVendorCustomerCode,
-            string pDefaultLedgerCode,
-            string pDefaultVatCode,
-            string pDefaultVatScenarioCode,
-            string pDefaultPaymentTermCode,
-            bool pBlocked,
-            string pAdministrationCode,
-            string pIdCompany);
-
         Task<BaseResultModel<Vendor>> CreateOrUpdate(Vendor pVendor);
     }
 }
