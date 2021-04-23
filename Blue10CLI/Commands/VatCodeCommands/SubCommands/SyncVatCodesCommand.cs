@@ -58,22 +58,19 @@ namespace Blue10CLI.Commands.VatCodeCommands
 
             try
             {
-                fVatCodes = inputformat switch
-                {
-                    EFormatType.JSON => JsonConvert.DeserializeObject<IList<VatCode>>(fVatCodeList),
-                    EFormatType.CSV => Read.CsvRecords<VatCode>(fVatCodeList, ","),
-                    EFormatType.TSV => Read.CsvRecords<VatCode>(fVatCodeList, "\t"),
-                    EFormatType.SCSV => Read.CsvRecords<VatCode>(fVatCodeList, ";"),
-                    EFormatType.XML => Read.XmlRecords<VatCode>(fVatCodeList),
-                    _ => throw new ArgumentOutOfRangeException(nameof(inputformat), inputformat, null)
-                };
+                fVatCodes = inputformat.ReadAs<VatCode>(fVatCodeList);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                _logger.LogError($"{outputformat} is not supported for this action: {e.Message}");
+                throw;
             }
             catch (Exception ex) when (
                 ex is JsonSerializationException
                 || ex is CsvHelper.ReaderException
                 || ex is InvalidOperationException)
             {
-                _logger.LogError("Invalid input file. Check if format of the file is correct and if Id values of VATCodes are valid");
+                _logger.LogError("Invalid input file. Check if format of the file is correct and if Id values of GLAccounts are valid");
                 throw;
             }
 

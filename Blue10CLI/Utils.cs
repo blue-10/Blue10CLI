@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
 using DevLab.JmesPath;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,6 +42,19 @@ namespace Blue10CLI
 
     internal static class Read
     {
+        internal static IList<T> ReadAs<T>(this EFormatType format, string origin)
+        {
+            return format switch
+            {
+                EFormatType.JSON => JsonConvert.DeserializeObject<IList<T>>(origin),
+                EFormatType.CSV => CsvRecords<T>(origin, ","),
+                EFormatType.TSV => CsvRecords<T>(origin, "\t"),
+                EFormatType.SCSV => CsvRecords<T>(origin, ";"),
+                EFormatType.XML => XmlRecords<T>(origin),
+                _ => throw new ArgumentOutOfRangeException(nameof(format), format, $"{format} is not supported for reading")
+            };
+        }
+
         internal static IList<T> CsvRecords<T>(string origin, string separator)
         {
             var config = new CsvConfiguration(CultureInfo.InvariantCulture, delimiter: separator, newLine: Environment.NewLine);

@@ -61,24 +61,22 @@ namespace Blue10CLI.Commands.VendorCommands
 
             try
             {
-                fVendors = inputformat switch
-                {
-                    EFormatType.JSON => JsonConvert.DeserializeObject<IList<Vendor>>(fVendorList),
-                    EFormatType.CSV => Read.CsvRecords<Vendor>(fVendorList, ","),
-                    EFormatType.TSV => Read.CsvRecords<Vendor>(fVendorList, "\t"),
-                    EFormatType.SCSV => Read.CsvRecords<Vendor>(fVendorList, ";"),
-                    EFormatType.XML => Read.XmlRecords<Vendor>(fVendorList),
-                    _ => throw new ArgumentOutOfRangeException(nameof(inputformat), inputformat, null)
-                };
+                fVendors = inputformat.ReadAs<Vendor>(fVendorList);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                _logger.LogError($"{outputformat} is not supported for this action: {e.Message}");
+                throw;
             }
             catch (Exception ex) when (
                 ex is JsonSerializationException
                 || ex is CsvHelper.ReaderException
                 || ex is InvalidOperationException)
             {
-                _logger.LogError("Invalid input file. Check if format of the file is correct and if Id values of vendors are valid");
+                _logger.LogError("Invalid input file. Check if format of the file is correct and if Id values of GLAccounts are valid");
                 throw;
             }
+
 
             var fSuccessList = new List<Vendor>();
             var fFailedList = new List<Vendor>();

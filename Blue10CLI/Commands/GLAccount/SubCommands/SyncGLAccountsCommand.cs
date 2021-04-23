@@ -61,15 +61,12 @@ namespace Blue10CLI.Commands.GLAccountCommands
 
             try
             {
-                fGLAccounts = inputformat switch
-                {
-                    EFormatType.JSON => JsonConvert.DeserializeObject<IList<GLAccount>>(fGLAccountList),
-                    EFormatType.CSV => Read.CsvRecords<GLAccount>(fGLAccountList, ","),
-                    EFormatType.TSV => Read.CsvRecords<GLAccount>(fGLAccountList, "\t"),
-                    EFormatType.SCSV => Read.CsvRecords<GLAccount>(fGLAccountList, ";"),
-                    EFormatType.XML => Read.XmlRecords<GLAccount>(fGLAccountList),
-                    _ => throw new ArgumentOutOfRangeException(nameof(inputformat), inputformat, null)
-                };
+                fGLAccounts = inputformat.ReadAs<GLAccount>(fGLAccountList);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                _logger.LogError($"{outputformat} is not supported for this action: {e.Message}");
+                throw;
             }
             catch (Exception ex) when (
                 ex is JsonSerializationException
