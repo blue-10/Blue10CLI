@@ -76,7 +76,7 @@ namespace Blue10CLI.Commands.VendorCommands
                 || ex is CsvHelper.ReaderException
                 || ex is InvalidOperationException)
             {
-                Console.WriteLine("Invalid input file. Check if format of the file is correct and if Id values of vendors are valid");
+                _logger.LogError("Invalid input file. Check if format of the file is correct and if Id values of vendors are valid");
                 throw;
             }
 
@@ -101,13 +101,21 @@ namespace Blue10CLI.Commands.VendorCommands
                 fCount++;
             }
 
-            outputformat.HandleOutput(fSuccessList, output).Wait();
-            if (output != null)
-            {
-                outputformat.HandleOutputToFilePath(fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
-                outputformat.HandleOutputToFilePath(fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
-            }
             Console.WriteLine($"{fSuccessList.Count}/{fTotalVendors} vendors have been successfully imported");
+
+            try
+            {
+                await outputformat.HandleOutput(fSuccessList, output);
+                if (output != null)
+                {
+                    await outputformat.HandleOutputToFilePath(fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
+                    await outputformat.HandleOutputToFilePath(fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
+                }
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                _logger.LogError($"{outputformat} is not supported for this action: {e.Message}");
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Blue10CLI.Helpers;
 using Blue10CLI.Services.Interfaces;
+using Microsoft.Extensions.Logging;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
@@ -9,11 +11,13 @@ namespace Blue10CLI.Commands.VatCodeCommands
 {
     public class ListVatCodesCommand : Command
     {
-        private IVatCodeService _vatCodeService;
+        private readonly IVatCodeService _vatCodeService;
+        private readonly ILogger<ListVatCodesCommand> _logger;
 
-        public ListVatCodesCommand(IVatCodeService vatCodeService) : base("list", "Lists all known VatCodes in administration")
+        public ListVatCodesCommand(IVatCodeService vatCodeService, ILogger<ListVatCodesCommand> logger) : base("list", "Lists all known VatCodes in administration")
         {
             _vatCodeService = vatCodeService;
+            _logger = logger;
 
             Add(new Option<string?>(
                 new[] { "-c", "-a", "--company", "--administration" },
@@ -39,7 +43,14 @@ namespace Blue10CLI.Commands.VatCodeCommands
         private async Task ListVatCodesHandler(string administration, string? query, EFormatType format, FileInfo? output)
         {
             var resultObject = await _vatCodeService.List(administration);
-            await format.HandleOutput(resultObject, output, query);
+            try
+            {
+                await format.HandleOutput(resultObject, output, query);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                _logger.LogError($"{format} is not supported for this action: {e.Message}");
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Blue10CLI.Services;
 using Microsoft.Extensions.Logging;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
@@ -31,10 +32,15 @@ namespace Blue10CLI.Commands.AdministrationCommands
             {
                 await format.HandleOutput(resultObject, output, query);
             }
+            catch (ArgumentOutOfRangeException e)
+            {
+                _logger.LogError($"{format} is not supported for this action: {e.Message}");
+            }
             catch (XPathException xpe)
             {
                 _logger.LogError("Filter '{0}' is not a valid XPATH", query, xpe.Message);
             }
+
         }
     }
 }

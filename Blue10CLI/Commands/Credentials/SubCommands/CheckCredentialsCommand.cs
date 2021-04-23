@@ -1,4 +1,4 @@
-﻿using Blue10CLI.Services;
+﻿using Blue10CLI.Services.Interfaces;
 using Blue10SDK;
 using Blue10SDK.Exceptions;
 using Microsoft.Extensions.Logging;
@@ -13,14 +13,14 @@ namespace Blue10CLI.Commands.CredentialsCommands
 {
     public class CheckCredentialsCommand : Command
     {
-        private readonly CredentialsService _creds;
+        private readonly ICredentialsService _credentialService;
         private readonly IBlue10AsyncClient _blue10;
         private readonly ILogger<CheckCredentialsCommand> _logger;
 
-        public CheckCredentialsCommand(CredentialsService creds, IBlue10AsyncClient blue10, ILogger<CheckCredentialsCommand> logger) : base("check",
+        public CheckCredentialsCommand(ICredentialsService credentialService, IBlue10AsyncClient blue10, ILogger<CheckCredentialsCommand> logger) : base("check",
             "checks if you can connect to blue10 ")
         {
-            _creds = creds;
+            _credentialService = credentialService;
             _blue10 = blue10;
             _logger = logger;
 
@@ -33,7 +33,7 @@ namespace Blue10CLI.Commands.CredentialsCommands
 
         private async Task CheckConnection(string query, EFormatType format, FileInfo? output)
         {
-            var apiKey = _creds.GetApiKey();
+            var apiKey = _credentialService.GetApiKey();
             try
             {
                 //Check ApiKey
@@ -54,6 +54,10 @@ namespace Blue10CLI.Commands.CredentialsCommands
             catch (Blue10ApiException apie)
             {
                 _logger.LogError(apie.Message);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                _logger.LogError($"{format} is not supported for this action: {e.Message}");
             }
             catch (XPathException xpe)
             {

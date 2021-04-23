@@ -10,8 +10,8 @@ namespace Blue10CLI.Commands.InvoiceCommands
 {
     public class PullInvoicesCommand : Command
     {
-        private InvoiceService _service;
-        private ILogger<PullInvoicesCommand> _logger;
+        private readonly InvoiceService _service;
+        private readonly ILogger<PullInvoicesCommand> _logger;
 
         private const string DEFAULT_DIRECTORY = "./invoices/";
 
@@ -50,7 +50,15 @@ namespace Blue10CLI.Commands.InvoiceCommands
                     _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
                 };
 
-                await format.HandleOutput(fPurchaseInvoice, new FileInfo(fFilePath + fExtension), query);
+                try
+                {
+                    await format.HandleOutput(fPurchaseInvoice, new FileInfo(fFilePath + fExtension), query);
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                    _logger.LogError($"{format} is not supported for this action: {e.Message}");
+                }
+
                 File.WriteAllBytes(fFilePath + ".pdf", fOriginalFileData);
             }
         }

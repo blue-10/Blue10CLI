@@ -1,5 +1,7 @@
 ﻿using Blue10CLI.Helpers;
 using Blue10CLI.Services.Interfaces;
+using Microsoft.Extensions.Logging;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
@@ -9,11 +11,13 @@ namespace Blue10CLI.Commands.GLAccountCommands
 {
     public class ListGLAccountsCommand : Command
     {
-        private IGLAccountService _glaccountService;
+        private readonly IGLAccountService _glaccountService;
+        private readonly ILogger<ListGLAccountsCommand> _logger;
 
-        public ListGLAccountsCommand(IGLAccountService glaccountService) : base("list", "Lists all known GLAccounts in administration")
+        public ListGLAccountsCommand(IGLAccountService glaccountService, ILogger<ListGLAccountsCommand> logger) : base("list", "Lists all known GLAccounts in administration")
         {
             _glaccountService = glaccountService;
+            _logger = logger;
 
             Add(new Option<string?>(
                 new[] { "-c", "-a", "--company", "--administration" },
@@ -39,7 +43,14 @@ namespace Blue10CLI.Commands.GLAccountCommands
         private async Task ListGLAccountsHandler(string administration, string? query, EFormatType format, FileInfo? output)
         {
             var resultObject = await _glaccountService.List(administration);
-            await format.HandleOutput(resultObject, output, query);
+            try
+            {
+                await format.HandleOutput(resultObject, output, query);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                _logger.LogError($"{format} is not supported for this action: {e.Message}");
+            }
         }
     }
 }

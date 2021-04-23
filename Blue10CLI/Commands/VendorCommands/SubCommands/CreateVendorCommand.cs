@@ -76,7 +76,14 @@ namespace Blue10CLI.Commands.VendorCommands
                 return;
             }
 
-            format.HandleOutput(fResult.Object, output).Wait();
+            try
+            {
+                await format.HandleOutput(fResult.Object, output);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                _logger.LogError($"{format} is not supported for this action: {e.Message}");
+            }
         }
     }
 }
