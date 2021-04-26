@@ -1,6 +1,8 @@
 using AutoFixture.Xunit2;
 using Blue10CLI.Commands.VendorCommands;
+using Blue10CLI.Enums;
 using Blue10CLI.Models;
+using Blue10CLI.Services;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using FluentAssertions;
@@ -10,7 +12,6 @@ using System;
 using System.CommandLine;
 using System.CommandLine.IO;
 using System.CommandLine.Parsing;
-using System.IO;
 using System.Linq;
 using Xunit;
 
@@ -22,13 +23,13 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
         [Theory]
         [InlineAutoMockData(EFormatType.JSON)]
         [InlineAutoMockData(EFormatType.CSV)]
-        [InlineAutoMockData(EFormatType.SSV)]
+        [InlineAutoMockData(EFormatType.SCSV)]
         [InlineAutoMockData(EFormatType.TSV)]
         [InlineAutoMockData(EFormatType.XML)]
         public void Success_ConsolOutput(
             EFormatType pFormat,
             TestConsole pConsoleCommandLine,
-            StringWriter pConsole,
+            InOutService pInOutService,
             [Frozen] IVendorService pVendorService,
             [Frozen] Vendor pVendor)
         {
@@ -40,12 +41,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
             var fCommandLine = $"-c IdCompany -a AdministrationCode --country CountryCode --currency CurrencyCode --iban Iban -f {pFormat}";
 
             // Setup services
-            var pCommand = new CreateVendorCommand(pVendorService, null);
-
-            // Hook up validation
-            Console.SetOut(pConsole);
-
-            var fExpection = pFormat.Format(new[] { pVendor });
+            var pCommand = new CreateVendorCommand(pVendorService, pInOutService, null);
 
             // Test
             pCommand.Invoke(fCommandLine, pConsoleCommandLine);
@@ -53,7 +49,6 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
             // Validate
             pConsoleCommandLine.Error.ToString().Should().BeNullOrEmpty();
             pVendorService.Received(1);
-            pConsole.ToString().Should().Contain(fExpection);
         }
 
         [Theory]
@@ -62,6 +57,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
         public void Success_ArgumentBinding(
             string pCommandLineTemplate,
             TestConsole pConsoleCommandLine,
+            InOutService pInOutService,
             [Frozen] IVendorService pVendorService,
             [Frozen] Vendor pVendor)
         {
@@ -77,7 +73,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
                 pVendor.DefaultVatCode);
 
             // Setup services
-            var pCommand = new CreateVendorCommand(pVendorService, null);
+            var pCommand = new CreateVendorCommand(pVendorService, pInOutService, null);
 
             // Test
             pCommand.Invoke(fCommandLine, pConsoleCommandLine);

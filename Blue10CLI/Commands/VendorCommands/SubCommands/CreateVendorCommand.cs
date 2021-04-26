@@ -1,4 +1,5 @@
-﻿using Blue10CLI.Services.Interfaces;
+﻿using Blue10CLI.Enums;
+using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,11 +13,17 @@ namespace Blue10CLI.Commands.VendorCommands
     public class CreateVendorCommand : Command
     {
         private readonly IVendorService _vendorService;
+        private readonly IInOutService _utilities;
         private readonly ILogger<CreateVendorCommand> _logger;
 
-        public CreateVendorCommand(IVendorService vendorService, ILogger<CreateVendorCommand> logger) : base("create", "Creates new vendor in the system")
+        public CreateVendorCommand(
+            IVendorService vendorService,
+            IInOutService utilities,
+            ILogger<CreateVendorCommand> logger) :
+            base("create", "Creates new vendor in the system")
         {
             _vendorService = vendorService;
+            _utilities = utilities;
             _logger = logger;
 
             Add(new Option<string>(new[] { "-c", "--company-id" }, "The company/Blue10-administration identifyer under which this vendor will be created") { IsRequired = true });
@@ -76,14 +83,7 @@ namespace Blue10CLI.Commands.VendorCommands
                 return;
             }
 
-            try
-            {
-                await format.HandleOutput(fResult.Object, output);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                _logger.LogError($"{format} is not supported for this action: {e.Message}");
-            }
+            await _utilities.HandleOutput(format, fResult.Object, output);
         }
     }
 }

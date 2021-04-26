@@ -1,4 +1,5 @@
-﻿using Blue10CLI.Services.Interfaces;
+﻿using Blue10CLI.Enums;
+using Blue10CLI.Services.Interfaces;
 using Blue10SDK;
 using Blue10SDK.Exceptions;
 using Microsoft.Extensions.Logging;
@@ -7,7 +8,6 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
-using System.Xml.XPath;
 
 namespace Blue10CLI.Commands.CredentialsCommands
 {
@@ -15,13 +15,19 @@ namespace Blue10CLI.Commands.CredentialsCommands
     {
         private readonly ICredentialsService _credentialService;
         private readonly IBlue10AsyncClient _blue10;
+        private readonly IInOutService _utilities;
         private readonly ILogger<CheckCredentialsCommand> _logger;
 
-        public CheckCredentialsCommand(ICredentialsService credentialService, IBlue10AsyncClient blue10, ILogger<CheckCredentialsCommand> logger) : base("check",
-            "checks if you can connect to blue10 ")
+        public CheckCredentialsCommand(
+            ICredentialsService credentialService,
+            IBlue10AsyncClient blue10,
+            IInOutService utilities,
+            ILogger<CheckCredentialsCommand> logger) :
+            base("check", "checks if you can connect to blue10 ")
         {
             _credentialService = credentialService;
             _blue10 = blue10;
+            _utilities = utilities;
             _logger = logger;
 
             Add(new Option<string?>(new[] { "-q", "--query" }, () => null, "A query used to filter out results. NOTE: Dependant on output format. If output is 'json', this is a JMESPath query to filter results. https://jmespath.org/. If output is 'xml', this is an XPATH string. https://www.w3schools.com/xml/xpath_intro.asp"));
@@ -45,7 +51,7 @@ namespace Blue10CLI.Commands.CredentialsCommands
                 }
                 //Get Me test
                 var me = await _blue10.GetMeAsync();//.GetAwaiter().GetResult();
-                await format.HandleOutput(me, output, query);
+                await _utilities.HandleOutput(format, me, output, query);
             }
             catch (Blue10ApiException apie) when (apie.Message.Contains("authentication required"))
             {
@@ -54,14 +60,6 @@ namespace Blue10CLI.Commands.CredentialsCommands
             catch (Blue10ApiException apie)
             {
                 _logger.LogError(apie.Message);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                _logger.LogError($"{format} is not supported for this action: {e.Message}");
-            }
-            catch (XPathException xpe)
-            {
-                _logger.LogError("Filter '{0}' is not a valid XPATH", query, xpe.Message);
             }
             catch (Exception e)
             {

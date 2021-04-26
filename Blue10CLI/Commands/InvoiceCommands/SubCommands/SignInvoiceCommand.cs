@@ -1,4 +1,6 @@
-﻿using Blue10CLI.Services;
+﻿using Blue10CLI.Enums;
+using Blue10CLI.Services;
+using Blue10CLI.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.CommandLine;
@@ -12,11 +14,17 @@ namespace Blue10CLI.Commands.InvoiceCommands
     public class SignInvoiceCommand : Command
     {
         private readonly InvoiceService _service;
+        private readonly IInOutService _utilities;
         private readonly ILogger<PullInvoicesCommand> _logger;
 
-        public SignInvoiceCommand(InvoiceService service, ILogger<PullInvoicesCommand> logger) : base("sign", "Sign-off invoice with a ledger entry number")
+        public SignInvoiceCommand(
+            InvoiceService service,
+            IInOutService utilities,
+            ILogger<PullInvoicesCommand> logger) :
+            base("sign", "Sign-off invoice with a ledger entry number")
         {
             _service = service;
+            _utilities = utilities;
             _logger = logger;
 
             Add(new Option<Guid>(new[] { "-i", "--invoice-id" }, "The Id of the invoice to be signed off") { IsRequired = true });
@@ -37,18 +45,11 @@ namespace Blue10CLI.Commands.InvoiceCommands
                 _logger.LogError($"Invoice with id {invoiceId} does not exist, is not ready to be posted or has already been signed off");
                 return;
             }
+
             var fResult = await _service.SignInvoice(fTargetInvoiceAction, ledgerEntryCode);
+
             if (fResult != null)
-            {
-                try
-                {
-                    await format.HandleOutput(fResult, output);
-                }
-                catch (ArgumentOutOfRangeException e)
-                {
-                    _logger.LogError($"{format} is not supported for this action: {e.Message}");
-                }
-            }
+                await _utilities.HandleOutput(format, fResult, output);
             else
                 _logger.LogError($"Failed to sign-off invoice with id {invoiceId}");
         }
