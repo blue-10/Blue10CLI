@@ -197,23 +197,16 @@ namespace Blue10CLI.Services
 
         private string Filter(EFormatType format, string inputString, string query)
         {
-            try
+            return format switch
             {
-                return format switch
-                {
-                    EFormatType.JSON => FilterWithJmesPath(inputString, query),
-                    EFormatType.XML => FilterWithXPath(inputString, query),
-                    EFormatType.CSV => throw LogAndThrow(format, $"{format} is not supported for filtering with query"),
-                    EFormatType.TSV => throw LogAndThrow(format, $"{format} is not supported for filtering with query"),
-                    EFormatType.SCSV => throw LogAndThrow(format, $"{format} is not supported for filtering with query"),
-                    _ => throw LogAndThrow(format, $"{format} is not supported for filtering with query")
-                };
-            }
-            catch (XPathException xpe)
-            {
-                _logger.LogError("Filter '{0}' is not a valid XPATH", query, xpe.Message);
-                throw;
-            }
+                EFormatType.JSON => FilterWithJmesPath(inputString, query),
+                EFormatType.XML => FilterWithXPath(inputString, query),
+                EFormatType.CSV => throw LogAndThrow(format, $"{format} is not supported for filtering with query"),
+                EFormatType.TSV => throw LogAndThrow(format, $"{format} is not supported for filtering with query"),
+                EFormatType.SCSV => throw LogAndThrow(format, $"{format} is not supported for filtering with query"),
+                _ => throw LogAndThrow(format, $"{format} is not supported for filtering with query")
+            };
+
         }
 
         private string FilterWithXPath(string xmlString, string xPathQuery)
@@ -223,13 +216,21 @@ namespace Blue10CLI.Services
             var xPathNav = xPathDocument.CreateNavigator();
 
             var resList = new List<string>();
-            var res = xPathNav.Select(xPathQuery);
-
-            foreach (dynamic? bla in res)
+            try
             {
-                resList.Add(bla is null ? "" : bla.OuterXml ?? "");
+                var res = xPathNav.Select(xPathQuery);
+
+                foreach (dynamic? bla in res)
+                {
+                    resList.Add(bla is null ? "" : bla.OuterXml ?? "");
+                }
+                return string.Join('\n', resList);
             }
-            return string.Join('\n', resList);
+            catch (XPathException xpe)
+            {
+                _logger.LogError("Filter '{0}' is not a valid XPATH", xPathQuery, xpe.Message);
+                throw;
+            }
         }
 
         private string FilterWithJmesPath(string jsonString, string jmesPath)
