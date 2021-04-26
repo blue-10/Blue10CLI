@@ -2,7 +2,6 @@
 using Blue10CLI.Services;
 using Blue10CLI.Services.Interfaces;
 using Microsoft.Extensions.Logging;
-using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
@@ -50,14 +49,7 @@ namespace Blue10CLI.Commands.InvoiceCommands
 
                 var fExtension = _utilities.GetExtension(format);
 
-                try
-                {
-                    await _utilities.HandleOutput(format, fPurchaseInvoice, new FileInfo(fFilePath + fExtension), query);
-                }
-                catch (ArgumentOutOfRangeException e)
-                {
-                    _logger.LogError($"{format} is not supported for this action: {e.Message}");
-                }
+                await _utilities.HandleOutput(format, fPurchaseInvoice, new FileInfo(fFilePath + fExtension), query);
 
                 File.WriteAllBytes(fFilePath + ".pdf", fOriginalFileData);
             }

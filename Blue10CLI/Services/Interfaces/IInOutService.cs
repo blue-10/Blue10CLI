@@ -8,7 +8,7 @@ namespace Blue10CLI.Services.Interfaces
     public interface IInOutService
     {
         #region Input/Reader
-        IList<T> ReadAs<T>(EFormatType format, string origin);
+        IList<T>? ReadAs<T>(EFormatType format, string origin);
 
         string GetExtension(EFormatType format);
 

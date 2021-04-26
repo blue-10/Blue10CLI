@@ -8,7 +8,6 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
-using System.Xml.XPath;
 
 namespace Blue10CLI.Commands.CredentialsCommands
 {
@@ -61,14 +60,6 @@ namespace Blue10CLI.Commands.CredentialsCommands
             catch (Blue10ApiException apie)
             {
                 _logger.LogError(apie.Message);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                _logger.LogError($"{format} is not supported for this action: {e.Message}");
-            }
-            catch (XPathException xpe)
-            {
-                _logger.LogError("Filter '{0}' is not a valid XPATH", query, xpe.Message);
             }
             catch (Exception e)
             {

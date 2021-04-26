@@ -3,7 +3,6 @@ using Blue10CLI.Helpers;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -47,25 +46,9 @@ namespace Blue10CLI.Commands.GLAccountCommands
             var fSyncFilePath = input.FullName;
             var fGLAccountList = File.ReadAllText(fSyncFilePath);
 
-            IList<GLAccount> fGLAccounts;
-
-            try
-            {
-                fGLAccounts = _utilities.ReadAs<GLAccount>(inputformat, fGLAccountList);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                _logger.LogError($"{outputformat} is not supported for this action: {e.Message}");
-                throw;
-            }
-            catch (Exception ex) when (
-                ex is JsonSerializationException
-                || ex is CsvHelper.ReaderException
-                || ex is InvalidOperationException)
-            {
-                _logger.LogError("Invalid input file. Check if format of the file is correct and if Id values of GLAccounts are valid");
-                throw;
-            }
+            var fGLAccounts = _utilities.ReadAs<GLAccount>(inputformat, fGLAccountList);
+            if (fGLAccounts is null)
+                return;
 
             var fSuccessList = new List<GLAccount>();
             var fFailedList = new List<GLAccount>();
@@ -90,18 +73,11 @@ namespace Blue10CLI.Commands.GLAccountCommands
 
             Console.WriteLine($"{fSuccessList.Count}/{fTotalGLAccounts} GLAccounts have been successfully imported");
 
-            try
+            await _utilities.HandleOutput(outputformat, fSuccessList, output);
+            if (output != null)
             {
-                await _utilities.HandleOutput(outputformat, fSuccessList, output);
-                if (output != null)
-                {
-                    await _utilities.HandleOutputToFilePath(outputformat, fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
-                    await _utilities.HandleOutputToFilePath(outputformat, fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
-                }
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                _logger.LogError($"{outputformat} is not supported for this action: {e.Message}");
+                await _utilities.HandleOutputToFilePath(outputformat, fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
+                await _utilities.HandleOutputToFilePath(outputformat, fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
             }
         }
     }

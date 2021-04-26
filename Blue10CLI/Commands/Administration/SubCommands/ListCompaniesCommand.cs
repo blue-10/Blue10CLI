@@ -2,12 +2,10 @@
 using Blue10CLI.Services;
 using Blue10CLI.Services.Interfaces;
 using Microsoft.Extensions.Logging;
-using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
-using System.Xml.XPath;
 
 namespace Blue10CLI.Commands.AdministrationCommands
 {
@@ -36,19 +34,7 @@ namespace Blue10CLI.Commands.AdministrationCommands
         private async Task ListAdministrationsHandler(string query, EFormatType format, FileInfo? output)
         {
             var resultObject = await _service.ListCompanies();
-            try
-            {
-                await _utilities.HandleOutput(format, resultObject, output, query);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                _logger.LogError($"{format} is not supported for this action: {e.Message}");
-            }
-            catch (XPathException xpe)
-            {
-                _logger.LogError("Filter '{0}' is not a valid XPATH", query, xpe.Message);
-            }
-
+            await _utilities.HandleOutput(format, resultObject, output, query);
         }
     }
 }

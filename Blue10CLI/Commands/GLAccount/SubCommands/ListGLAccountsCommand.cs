@@ -2,7 +2,6 @@
 using Blue10CLI.Helpers;
 using Blue10CLI.Services.Interfaces;
 using Microsoft.Extensions.Logging;
-using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
@@ -37,14 +36,7 @@ namespace Blue10CLI.Commands.GLAccountCommands
         private async Task ListGLAccountsHandler(string administration, string? query, EFormatType format, FileInfo? output)
         {
             var resultObject = await _glaccountService.List(administration);
-            try
-            {
-                await _utilities.HandleOutput(format, resultObject, output, query);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                _logger.LogError($"{format} is not supported for this action: {e.Message}");
-            }
+            await _utilities.HandleOutput(format, resultObject, output, query);
         }
     }
 }

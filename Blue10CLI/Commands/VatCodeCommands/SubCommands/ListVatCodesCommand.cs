@@ -37,14 +37,7 @@ namespace Blue10CLI.Commands.VatCodeCommands
         private async Task ListVatCodesHandler(string administration, string? query, EFormatType format, FileInfo? output)
         {
             var resultObject = await _vatCodeService.List(administration);
-            try
-            {
-                await _utilities.HandleOutput(format, resultObject, output, query);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                _logger.LogError($"{format} is not supported for this action: {e.Message}");
-            }
+            await _utilities.HandleOutput(format, resultObject, output, query);
         }
     }
 }

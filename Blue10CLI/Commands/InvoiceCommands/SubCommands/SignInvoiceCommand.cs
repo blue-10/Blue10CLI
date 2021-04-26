@@ -45,18 +45,11 @@ namespace Blue10CLI.Commands.InvoiceCommands
                 _logger.LogError($"Invoice with id {invoiceId} does not exist, is not ready to be posted or has already been signed off");
                 return;
             }
+
             var fResult = await _service.SignInvoice(fTargetInvoiceAction, ledgerEntryCode);
+
             if (fResult != null)
-            {
-                try
-                {
-                    await _utilities.HandleOutput(format, fResult, output);
-                }
-                catch (ArgumentOutOfRangeException e)
-                {
-                    _logger.LogError($"{format} is not supported for this action: {e.Message}");
-                }
-            }
+                await _utilities.HandleOutput(format, fResult, output);
             else
                 _logger.LogError($"Failed to sign-off invoice with id {invoiceId}");
         }
