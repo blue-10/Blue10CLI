@@ -1,4 +1,5 @@
-﻿using Blue10CLI.Helpers;
+﻿using Blue10CLI.Enums;
+using Blue10CLI.Helpers;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using Microsoft.Extensions.Logging;
@@ -15,35 +16,24 @@ namespace Blue10CLI.Commands.GLAccountCommands
     public class SyncGLAccountsCommand : Command
     {
         private readonly IGLAccountService _glaccountService;
+        private readonly IInOutService _utilities;
         private readonly ILogger<SyncGLAccountsCommand> _logger;
 
         public SyncGLAccountsCommand(
             IGLAccountService glaccountService,
+            IInOutService utilities,
             ILogger<SyncGLAccountsCommand> logger) :
             base("sync",
                 Descriptions.SyncGLAccountDescription)
         {
             _glaccountService = glaccountService;
+            _utilities = utilities;
             _logger = logger;
 
-            Add(new Option<FileInfo?>(
-                new[] { "-i", "--input" },
-                () => null,
-                Descriptions.InputGLAccountDescription)
-            { IsRequired = true });
-            Add(new Option<EFormatType>(
-                new[] { "--input-format" },
-                () => EFormatType.JSON,
-                Descriptions.InputFormatDescription)
-            { IsRequired = true });
-            Add(new Option<FileInfo?>(
-                new[] { "-o", "--output" },
-                () => null,
-                Descriptions.OutputDescription));
-            Add(new Option<EFormatType>(
-                new[] { "-f", "--format", "--output-format" },
-                () => EFormatType.JSON,
-                Descriptions.FormatDescription));
+            Add(new Option<FileInfo?>(new[] { "-i", "--input" }, () => null, Descriptions.InputGLAccountDescription) { IsRequired = true });
+            Add(new Option<EFormatType>(new[] { "--input-format" }, () => EFormatType.JSON, Descriptions.InputFormatDescription) { IsRequired = true });
+            Add(new Option<FileInfo?>(new[] { "-o", "--output" }, () => null, Descriptions.OutputDescription));
+            Add(new Option<EFormatType>(new[] { "-f", "--format", "--output-format" }, () => EFormatType.JSON, Descriptions.FormatDescription));
 
             Handler = CommandHandler.Create<FileInfo, EFormatType, FileInfo?, EFormatType>(ImportGLAccountsHandler);
         }
@@ -61,7 +51,7 @@ namespace Blue10CLI.Commands.GLAccountCommands
 
             try
             {
-                fGLAccounts = inputformat.ReadAs<GLAccount>(fGLAccountList);
+                fGLAccounts = _utilities.ReadAs<GLAccount>(inputformat, fGLAccountList);
             }
             catch (ArgumentOutOfRangeException e)
             {
@@ -102,11 +92,11 @@ namespace Blue10CLI.Commands.GLAccountCommands
 
             try
             {
-                await outputformat.HandleOutput(fSuccessList, output);
+                await _utilities.HandleOutput(outputformat, fSuccessList, output);
                 if (output != null)
                 {
-                    outputformat.HandleOutputToFilePath(fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
-                    outputformat.HandleOutputToFilePath(fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}").Wait();
+                    await _utilities.HandleOutputToFilePath(outputformat, fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
+                    await _utilities.HandleOutputToFilePath(outputformat, fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
                 }
             }
             catch (ArgumentOutOfRangeException e)

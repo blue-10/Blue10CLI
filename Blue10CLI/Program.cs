@@ -33,6 +33,8 @@ namespace Blue10CLI
                     cofiguration.Url = appConfiguration.GetSettings().BaseUrl;
                 })
 
+                .AddSingleton<IInOutService, InOutService>()
+
                 //Business Services
                 .AddSingleton<InvoiceService>()
                 .AddSingleton<InvoiceCommand>()

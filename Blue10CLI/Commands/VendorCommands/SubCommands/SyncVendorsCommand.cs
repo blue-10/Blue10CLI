@@ -1,4 +1,5 @@
-﻿using Blue10CLI.Helpers;
+﻿using Blue10CLI.Enums;
+using Blue10CLI.Helpers;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using Microsoft.Extensions.Logging;
@@ -15,35 +16,24 @@ namespace Blue10CLI.Commands.VendorCommands
     public class SyncVendorsCommand : Command
     {
         private readonly IVendorService _vendorService;
+        private readonly IInOutService _utilities;
         private readonly ILogger<SyncVendorsCommand> _logger;
 
         public SyncVendorsCommand(
             IVendorService vendorService,
+            IInOutService utilities,
             ILogger<SyncVendorsCommand> logger) :
             base("sync",
                 Descriptions.SyncVendorDescription)
         {
             _vendorService = vendorService;
+            _utilities = utilities;
             _logger = logger;
 
-            Add(new Option<FileInfo?>(
-                new[] { "-i", "--input" },
-                () => null,
-                Descriptions.InputVendorDescription)
-            { IsRequired = true });
-            Add(new Option<EFormatType>(
-                new[] { "--input-format" },
-                () => EFormatType.JSON,
-                Descriptions.InputFormatDescription)
-            { IsRequired = true });
-            Add(new Option<FileInfo?>(
-                new[] { "-o", "--output" },
-                () => null,
-                Descriptions.OutputDescription));
-            Add(new Option<EFormatType>(
-                new[] { "-f", "--format", "--output-format" },
-                () => EFormatType.JSON,
-                Descriptions.FormatDescription));
+            Add(new Option<FileInfo?>(new[] { "-i", "--input" }, () => null, Descriptions.InputVendorDescription) { IsRequired = true });
+            Add(new Option<EFormatType>(new[] { "--input-format" }, () => EFormatType.JSON, Descriptions.InputFormatDescription) { IsRequired = true });
+            Add(new Option<FileInfo?>(new[] { "-o", "--output" }, () => null, Descriptions.OutputDescription));
+            Add(new Option<EFormatType>(new[] { "-f", "--format", "--output-format" }, () => EFormatType.JSON, Descriptions.FormatDescription));
 
             Handler = CommandHandler.Create<FileInfo, EFormatType, FileInfo?, EFormatType>(ImportVendorsHandler);
         }
@@ -61,7 +51,7 @@ namespace Blue10CLI.Commands.VendorCommands
 
             try
             {
-                fVendors = inputformat.ReadAs<Vendor>(fVendorList);
+                fVendors = _utilities.ReadAs<Vendor>(inputformat, fVendorList);
             }
             catch (ArgumentOutOfRangeException e)
             {
@@ -103,11 +93,11 @@ namespace Blue10CLI.Commands.VendorCommands
 
             try
             {
-                await outputformat.HandleOutput(fSuccessList, output);
+                await _utilities.HandleOutput(outputformat, fSuccessList, output);
                 if (output != null)
                 {
-                    await outputformat.HandleOutputToFilePath(fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
-                    await outputformat.HandleOutputToFilePath(fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
+                    await _utilities.HandleOutputToFilePath(outputformat, fFailedList, $"{output?.Directory?.FullName}/failed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
+                    await _utilities.HandleOutputToFilePath(outputformat, fSuccessList, $"{output?.Directory?.FullName}/succeed_{output?.Name ?? "NO_FILE_PATH_PROVIDED"}");
                 }
             }
             catch (ArgumentOutOfRangeException e)

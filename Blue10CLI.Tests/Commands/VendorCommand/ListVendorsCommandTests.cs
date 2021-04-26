@@ -1,16 +1,16 @@
 using AutoFixture.Xunit2;
 using Blue10CLI.Commands.VendorCommands;
+using Blue10CLI.Enums;
+using Blue10CLI.Services;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using FluentAssertions;
 using NSubstitute;
 using Objectivity.AutoFixture.XUnit2.AutoNSubstitute.Attributes;
-using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
 using System.CommandLine.Parsing;
-using System.IO;
 using Xunit;
 
 namespace Blue10CLI.Tests.Commands.VendorCommand
@@ -27,7 +27,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
         public void Success_ConsolOutput(
             EFormatType pFormat,
             TestConsole pConsoleCommandLine,
-            StringWriter pConsole,
+            InOutService pInOutService,
             [Frozen] IVendorService pVendorService,
             [Frozen] IList<Vendor> pVendors)
         {
@@ -39,11 +39,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
             var fCommandLine = $"-a IdCompany -f {pFormat}";
 
             // Setup services
-            var pCommand = new ListVendorsCommand(pVendorService, null);
-
-            // Hook up validation
-            Console.SetOut(pConsole);
-            var fExpection = pFormat.Format(pVendors);
+            var pCommand = new ListVendorsCommand(pVendorService, pInOutService, null);
 
             // Test
             pCommand.Invoke(fCommandLine, pConsoleCommandLine);
@@ -51,7 +47,6 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
             // Validate
             pConsoleCommandLine.Error.ToString().Should().BeNullOrEmpty();
             pVendorService.Received(1);
-            pConsole.ToString().Should().Contain(fExpection);
         }
 
         [Theory]
@@ -62,7 +57,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
         public void Success_ArgumentBinding(
             string pCommandLineTemplate,
             TestConsole pConsoleCommandLine,
-            StringWriter pConsole,
+            InOutService pInOutService,
             [Frozen] IVendorService pVendorService,
             [Frozen] string pIdCompany)
         {
@@ -71,8 +66,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
                 pIdCompany);
 
             // Setup services
-            Console.SetOut(pConsole);
-            var pCommand = new ListVendorsCommand(pVendorService, null);
+            var pCommand = new ListVendorsCommand(pVendorService, pInOutService, null);
 
             // Test
             pCommand.Invoke(fCommandLine, pConsoleCommandLine);

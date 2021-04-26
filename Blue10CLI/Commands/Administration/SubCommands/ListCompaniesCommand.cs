@@ -1,4 +1,6 @@
-﻿using Blue10CLI.Services;
+﻿using Blue10CLI.Enums;
+using Blue10CLI.Services;
+using Blue10CLI.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.CommandLine;
@@ -12,11 +14,17 @@ namespace Blue10CLI.Commands.AdministrationCommands
     public class ListCompaniesCommand : Command
     {
         private readonly CompanyService _service;
+        private readonly IInOutService _utilities;
         private readonly ILogger<ListCompaniesCommand> _logger;
 
-        public ListCompaniesCommand(CompanyService service, ILogger<ListCompaniesCommand> logger) : base("list", "Lists all known Administrations (Companies) in a Blue10 environment")
+        public ListCompaniesCommand(
+            CompanyService service,
+            IInOutService utilities,
+            ILogger<ListCompaniesCommand> logger) :
+            base("list", "Lists all known Administrations (Companies) in a Blue10 environment")
         {
             _service = service;
+            _utilities = utilities;
             _logger = logger;
 
             Add(new Option<string?>(new[] { "-q", "--query" }, () => null, "A query used to filter out results. NOTE: Dependant on output format. If output is 'json', this is a JMESPath query to filter results. https://jmespath.org/. If output is 'xml', this is an XPATH string. https://www.w3schools.com/xml/xpath_intro.asp"));
@@ -30,7 +38,7 @@ namespace Blue10CLI.Commands.AdministrationCommands
             var resultObject = await _service.ListCompanies();
             try
             {
-                await format.HandleOutput(resultObject, output, query);
+                await _utilities.HandleOutput(format, resultObject, output, query);
             }
             catch (ArgumentOutOfRangeException e)
             {

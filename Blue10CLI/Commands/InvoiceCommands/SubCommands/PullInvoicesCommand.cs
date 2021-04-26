@@ -1,4 +1,6 @@
-﻿using Blue10CLI.Services;
+﻿using Blue10CLI.Enums;
+using Blue10CLI.Services;
+using Blue10CLI.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.CommandLine;
@@ -11,13 +13,19 @@ namespace Blue10CLI.Commands.InvoiceCommands
     public class PullInvoicesCommand : Command
     {
         private readonly InvoiceService _service;
+        private readonly IInOutService _utilities;
         private readonly ILogger<PullInvoicesCommand> _logger;
 
         private const string DEFAULT_DIRECTORY = "./invoices/";
 
-        public PullInvoicesCommand(InvoiceService service, ILogger<PullInvoicesCommand> logger) : base("pull", "Pull all invoices to be posted")
+        public PullInvoicesCommand(
+            InvoiceService service,
+            IInOutService utilities,
+            ILogger<PullInvoicesCommand> logger) :
+            base("pull", "Pull all invoices to be posted")
         {
             _service = service;
+            _utilities = utilities;
             _logger = logger;
 
             Add(new Option<string?>(new[] { "-q", "--query" }, () => null, "A query used to filter out results. NOTE: Dependant on output format. If output is 'json', this is a JMESPath query to filter results. https://jmespath.org/. If output is 'xml', this is an XPATH string. https://www.w3schools.com/xml/xpath_intro.asp"));
@@ -40,19 +48,11 @@ namespace Blue10CLI.Commands.InvoiceCommands
 
                 var fFilePath = Path.Combine(output.FullName, fPurchaseInvoice.Id.ToString());
 
-                var fExtension = format switch
-                {
-                    EFormatType.JSON => ".json",
-                    EFormatType.CSV => ".csv",
-                    EFormatType.TSV => ".tsv",
-                    EFormatType.SCSV => ".scsv",
-                    EFormatType.XML => ".xml",
-                    _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
-                };
+                var fExtension = _utilities.GetExtension(format);
 
                 try
                 {
-                    await format.HandleOutput(fPurchaseInvoice, new FileInfo(fFilePath + fExtension), query);
+                    await _utilities.HandleOutput(format, fPurchaseInvoice, new FileInfo(fFilePath + fExtension), query);
                 }
                 catch (ArgumentOutOfRangeException e)
                 {
