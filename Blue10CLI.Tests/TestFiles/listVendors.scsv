@@ -1,4 +1,4 @@
-Name;VatNumber;CountryCode;CurrencyCode;VendorCustomerCode;DefaultLedgerCode;DefaultVatCode;DefaultVatScenarioCode;DefaultPaymentTermCode;Blocked;Id;AdministrationCode;IdCompany;LastUpdateDate
-KPN;;NL;EUR;;;;;;False;0611e62c-ea19-4ec4-924b-acd200bfe25d;B10Api;B10Api;02/17/2021 11:38:37
-MKB Brandstof;NL1814948030B01;NL;EUR;;;;;;False;23099de6-19bc-4aed-b6eb-a6d700be8cea;10030;B10Api;11/19/2019 07:43:37
-19383639237923087342;;NL;EUR;;;;;;False;42b1db44-90b4-490e-8ba2-ad0200e54f20;19383639237923087342;B10Api;04/06/2021 13:54:53
+Name;VatNumber;CountryCode;Iban;CurrencyCode;VendorCustomerCode;DefaultLedgerCode;DefaultVatCode;DefaultVatScenarioCode;DefaultPaymentTermCode;Blocked;Id;AdministrationCode;IdCompany;LastUpdateDate
+KPN;;NL;[NL96ABNA2753394563|NL23ABNA2137951150];EUR;;;;;;False;0611e62c-ea19-4ec4-924b-acd200bfe25d;B10Api;B10Api;02/17/2021 11:38:37
+MKB Brandstof;NL1814948030B01;NL;;EUR;;;;;;False;23099de6-19bc-4aed-b6eb-a6d700be8cea;10030;B10Api;11/19/2019 07:43:37
+19383639237923087342;;NL;NL96ABNA2753394563;EUR;;;;;;False;42b1db44-90b4-490e-8ba2-ad0200e54f20;19383639237923087342;B10Api;04/06/2021 13:54:53
