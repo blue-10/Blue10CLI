@@ -42,10 +42,10 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
       - name: Test
-        run: dotnet test --no-restore --verbosity normal --no-build 
+        run: dotnet test --no-build --verbosity normal 
 
   build:
-    needs: [bump_version_tag, Test]
+    needs: [bump_version_tag, test]
     name: Build and release
     runs-on: ubuntu-latest
     env:
