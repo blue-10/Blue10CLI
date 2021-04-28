@@ -24,7 +24,7 @@ namespace Blue10CLI.Commands.VendorCommands
             _utilities = utilities;
             _logger = logger;
 
-            Add(new Option<string?>(new[] { "-c", "-a", "--company", "--administration" }, () => null, "The company/Blue10-administration under which this vendor exists") { IsRequired = true });
+            Add(new Option<string?>(new[] { "-c", "--company-id" }, () => null, "The company identifier under which the vendor exists") { IsRequired = true });
             Add(new Option<string?>(new[] { "-q", "--query" }, () => null, "A query used to filter out results. NOTE: Dependant on output format. If output is 'json', this is a JMESPath query to filter results. https://jmespath.org/. If output is 'xml', this is an XPATH string. https://www.w3schools.com/xml/xpath_intro.asp"));
             Add(new Option<EFormatType>(new[] { "-f", "--format" }, () => EFormatType.JSON, "Output format."));
             Add(new Option<FileInfo?>(new[] { "-o", "--output" }, () => null, "Enter path to write output of this command to file. Default output is console only"));
@@ -32,9 +32,9 @@ namespace Blue10CLI.Commands.VendorCommands
             Handler = CommandHandler.Create<string, string, EFormatType, FileInfo?>(ListVendorsHandler);
         }
 
-        private async Task ListVendorsHandler(string administration, string? query, EFormatType format, FileInfo? output)
+        private async Task ListVendorsHandler(string companyid, string? query, EFormatType format, FileInfo? output)
         {
-            var resultObject = await _vendorService.List(administration);
+            var resultObject = await _vendorService.List(companyid);
             await _utilities.HandleOutput(format, resultObject, output, query);
         }
     }
