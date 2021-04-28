@@ -19,7 +19,7 @@ You can download the DotNet runtime at : https://dotnet.microsoft.com/download
 If you don't have a binary build yet, you could build the latest version of the Blue10 CLI.
 To build the Blue10 SDK from source you require teh DotNet SDK, which can be downloaded from https://dotnet.microsoft.com/download
 
-After you have downloaded the DotNet SDK, clone the source locally, using `git clone` or download  the source from github and unzip it in a local directory.
+After you have downloaded the DotNet SDK, clone the source locally, using `git clone` or download the source from github and unzip it in a local directory.
 
 After you have the source locally, open a windows terminal and navigate to the directory holding `Blue10CLI.csproj` and run the command:
 
@@ -27,7 +27,7 @@ After you have the source locally, open a windows terminal and navigate to the d
 dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -o <OutputDirectory>
 ```
 
-Replace `<OutputDirectory>` with the directory you want the binary to be built. You can ommit the `-o` paramater , then the binary can be found in the `.\bin\Release\net5.0-windows\win-x64\publish` directory
+Replace `<OutputDirectory>` with the directory you want the binary to be built. You can ommit the `-o` paramater , then the binary can be found in the `.\bin\Release\netcoreapp3.1-windows\win-x64\publish` directory
 
 ## 3. (Alternative for 1 and 2) Download the build
 
@@ -35,13 +35,10 @@ In the releases is also the zip `Blue10CLI.zip` in which an build is made for wi
 
 Here you can find the latest release: https://github.com/blue-10/Blue10CLI/releases
 
-
 ## 4. Acquire a Blue10 API Key
 
-Before you can start useing the Blue10 API through the Blue10 CLI, you need a Blue10 Environment and an API Key.
+Before you can start using the Blue10 API through the Blue10 CLI, you need a Blue10 Environment and an API Key.
 If you don't yet have a blue10 environment or api key for your environment, please contact blue10 support at https://support.blue10.com/?lang=en
-
-
 
 # Setting up the CLI
 
@@ -53,14 +50,14 @@ Once you have acquired the binaries to the Blue10 CLI or have built them from so
 
 If this is your first time running the CLI you will be prompted to enter your API key:
 
-
 ```
 PS C:\Home\Blue10CLI\bin\Debug\net5.0-windows\win-x64\publish> .\Blue10CLI.exe
 Missing Blue10 API key, please insert here:
 
 ```
 
-Enter the API key you have provided and press enter 
+Enter the API key you have provided and press enter.
+
 ```
 PS C:\dev\Blue10CLI\Blue10CLI\bin\Debug\net5.0-windows\win-x64\publish> .\Blue10CLI.exe
 Missing Blue10 API key, please insert here:
@@ -68,9 +65,9 @@ Missing Blue10 API key, please insert here:
 ````
 
 This will enter your API key in the AppConfiguration.json file. 
-_Note that if the file doesn't exist it will be created_
+_Note that if the file doesn't exist it will be created automatically._
 
-To check if the api that you have entered is valid run the following command:
+To check if the API key that you have entered is valid run the following command:
 
 `.\Blue10CLI.exe credentials check`
 
@@ -85,10 +82,10 @@ And you should see something along the lines of:
 ```
 
 Otherise contact Blue10 support and request a new API key and update your api key with the following command:
+
 ```
 .\Blue10CLI.exe credentials set
 ```
-
 
 # Using the CLI
 
@@ -98,11 +95,9 @@ The Blue10CLI provides two variants of the CLI:
 - `Blue10CLI.exe`
 - `Blue10CLIHeadless.exe`
 
-They are two compilations of the same source, but the difference being that `Blue10CLI.exe` is built as a console application. This means that all self-documenting commands can be called manually through the command line and studied before implementing the headless variant. Developers can use the `Blue10CLI.exe` to test out and debug different commands.01de
+They are two compilations of the same source, but the difference being that `Blue10CLI.exe` is built as a console application. This means that all self-documenting commands can be called manually through the command line and studied before implementing the headless variant. Developers can use the `Blue10CLI.exe` to test out and debug different commands.
 
 The `Blue10CLIHeadless.exe` variant is built as a windows application, this means that it can still be called through the system input or command line, but it will not open a terminal (or head) by itself. Developers should use `Blue10CLIHeadless.exe` when using a Blue10 as part of a script or external application to avoid console flicker.
-
-
 
 ## The help option.
 
@@ -129,48 +124,53 @@ Commands:
   glaccount         creates lists and manages GLAccounts in the environments
   vatcode           creates lists and manages VatCodes in the environments
   credentials       Show and set API credentials
-  administration    Manage administration(companies)
+  company           Manage companies
 ```
 
 The help option is an always available option that you can add to any command to see what the command does and how to manipulate it. Simply add `-h`, `-?` or `--help` at the end of a command to view all the sub-commands and options of any command.
 
-This is the *root command* of the Blue10 CLI. From here you can see that we have several sub-commands. 
+The above command is the *root command* of the Blue10 CLI. From here you can see that we have several sub-commands. 
 We have already used the `credentials` sub-command to check if we have a good connection to a blue10 environment. 
 
-The current version of the Blue10 CLI provides 5 aditional sub-commands: `administration`, `vendor`, `invoice`, `glaccount` and `vatcode`. These can be used to manage different parts of your Blue10 environment.
+The current version of the Blue10 CLI provides 5 aditional sub-commands: `company`, `vendor`, `invoice`, `glaccount` and `vatcode`. These can be used to manage different parts of your Blue10 environment.
 
 
-## Administration 
+## Company 
+
+_**NOTE:** From version v0.0.10 this is change to `company`, the older version named it `administration`_
 
 Run following command 
 
 ```
-.\Blue10Cli.exe administration -h
+.\Blue10Cli.exe company -h
 ```
+
 You should see something like this:
+
 ```
-administration:
-  Manage administration(companies)
+company:
+  Manage companies
 
 Usage:
-  Blue10CLI administration [options] [command]
+  Blue10CLI company [options] [command]
 
 Options:
   -?, -h, --help    Show help and usage information
 
 Commands:
-  list    Lists all known Administrations (Companies) in a Blue10 environment
+  list    Lists all known Companies in your Blue10 environment
 ```
 
-The `administration` command currently has a single sub-command under it, that is the `list` sub-command. 
+The `company` command currently has a single sub-command under it, that is the `list` sub-command. 
 
 Run the following command:
 
 ```
-.\Blue10CLI.exe administration list
+.\Blue10CLI.exe copmany list
 ```
 
 The response should look something like this:
+
 ```
 [
   {
@@ -218,6 +218,7 @@ Run following command
 ```
 .\Blue10Cli.exe vendor -h
 ```
+
 You should see something like this:
 
 ```
@@ -237,7 +238,6 @@ Commands:
             Updating existing vendors requires Id. Creating new vendors requires empty Id.
 ```
 
-
 Using the vendor command you can create or list all vendors in a current environment.
 
 To see how to create a new vendor run the following command:
@@ -256,7 +256,8 @@ Usage:
   Blue10CLI vendor create [options]
 
 Options:
-  -c, --company-id <company-id> (REQUIRED)                    The company/Blue10-administration identifyer under which this vendor will be created
+  -c, --company-id <company-id> (REQUIRED)                    The company identifyer under which this vendor will be
+                                                              created
   -a, --administration-code <administration-code>             Unique identifyer of Vendor used in ERP
   (REQUIRED)
   --country <country> (REQUIRED)                              ISO 3166 two-letter country code of the Vendor's host
@@ -265,14 +266,14 @@ Options:
                                                               currency for vendor
   --iban <iban> (REQUIRED)                                    list of IBANs associated with this vendor
   -n, --name <name>                                           Name of the vendor. Default value will be the
-                                                              administration code
+                                                              administration-code
   -l, --ledger <ledger>                                       Documents from this vendor will be routed to this
                                                               ledger, leave empty to not associate [default: ]
   -p, --payment <payment>                                     Documents from this vendor will be associated with this
                                                               payment term, leave empty to not associate [default: ]
   -v, --vat <vat>                                             Documents from this vendor will be associated with this
                                                               VAT code, leave empty to not associate [default: ]
-  -f, --format <CSV|JSON|SSV|TSV|XML>                         Output format. [default: JSON]
+  -f, --format <CSV|JSON|SCSV|TSV|XML>                        Output format. [default: JSON]
   -o, --output <output>                                       Enter path to write output of this command to file.
                                                               Default output is console only [default: ]
   -?, -h, --help                                              Show help and usage information
@@ -286,10 +287,9 @@ For example to create a new Vendor run the following command:
 .\Blue10 CLI vendor create -c B10Api -a KPN31 --country NL --currency EUR --iban NL45RABO6143537119 -n KPN-NL --ledger 00005 --vat 12341234
 ```
 
-Will create a vendor named `KPN-NL` with the administration code `KPN31` in company/administration B10Api with the provided attributes. 
+Will create a vendor named `KPN-NL` with the AdministrationCode `KPN31` in company B10Api with the provided attributes. 
 
-_**NOTE**: Administration code is the unique identifier of the ERP. This code will also be used as name if the name is not given._
-
+_**NOTE**: AdministrationCode is the unique identifier of the ERP. This code will also be used as name if the name is not given._
 
 ## Invoice Command
 
@@ -317,6 +317,7 @@ Commands:
 ```
 
 ### Peek
+
 The `peek` command retrieves a sumamry of all open invoices that are ready to be posted.
 
 Run following command 
@@ -373,13 +374,12 @@ Options:
 ```
 
 
-`Pulling` the available invoices will create a text file in the chosen format passed through the `-f` command into the chosen *output directory* passed through the `-o` command. The file will be named with the pattern: `<invoiceid>.<format extension>`. In the same output directory  alongside the text file, the CLI will download and save, the original PDF document associated with the invoice and name it with the naming pattern `<invoiceid>.pdf`
-
+`Pulling` the available invoices will create a file in the chosen format passed through the `-f` command into the chosen *output directory* passed through the `-o` command. The file will be named with the pattern: `<invoiceid>.<format extension>`. In the same output directory  alongside the text file, the CLI will download and save, the original PDF document associated with the invoice and name it with the naming pattern `<invoiceid>.pdf`
 
 **NOTE:** *`invoice pull` is a **read** transaction: After 'pulling' the list of available invoices, the invoices in blue10 remain 'waiting for ERP'. This means that the handshake with the ERP is not complete*
 
-
 An example command would look as follows:
+
 ```
 .\Blue10CLI.exe invoice pull -o InvoicePull -f JSON 
 ```
@@ -426,14 +426,12 @@ Options:
 ```
 
 An example command would look as follows:
+
 ```
 .\Blue10CLI.exe invoice sign -i 12345a6b-78c9-01de-fg23-hi4j567k89lm -c 10000 -f JSON -o SignResult.json
 ```
 
-
 **NOTE:** *`invoice sign` is an **update** transaction: After 'signing' an invoice, the document in is no longer 'waiting for ERP' and is assigned a Ledger Entry number passed through by the `-c` option. This completes the invoice posting handshake*
-
-
 
 ## GLAccount command
 
@@ -442,6 +440,7 @@ Run following command
 ```
 .\Blue10Cli.exe glaccount -h
 ```
+
 You should see something like this:
 
 ```
@@ -455,13 +454,12 @@ Options:
   -?, -h, --help    Show help and usage information
 
 Commands:
-  list    Lists all known GLAccounts in administration
+  list    Lists all known GLAccounts in a company
   sync    Sync GLAccounts from a file to the Blue10 environment. AdministrationCode and CompanyId is required for each
           GLAccount. Updating existing GLAccounts requires Id. Creating new GLAccounts requires empty Id.
 ```
 
-
-Using the GlAccount command you can list all accounts in a current environment or sync teh GLAccounts from a file.
+Using the GlAccount command you can list all accounts in a current environment or sync the GLAccounts from a file.
 
 To see how to get a list of GLAccounts run the following command:
 
@@ -473,34 +471,32 @@ You should see something like this:
 
 ```
 list:
-  Lists all known GLAccounts in administration
+  Lists all known GLAccounts in a company
 
 Usage:
   Blue10CLI glaccount list [options]
 
 Options:
-  -a, -c, --administration, --company <administration>           The company/Blue10-administration under which this GLAccounts exists
-  (REQUIRED)                                                     [default: ]
-  -q, --query <query>                                            A query used to filter out results. NOTE: Dependant on
-                                                                 output format. If output is 'json', this is a JMESPath
-                                                                 query to filter results. https://jmespath.org/. If output
-                                                                 is 'xml', this is an XPATH string.
-                                                                 https://www.w3schools.com/xml/xpath_intro.asp [default: ]
-  -f, --format <CSV|JSON|SSV|TSV|XML>                            Format of the output file. (JSON, XML...) [default: JSON]
-  -o, --output <output>                                          Enter path to write output of this command to file. Default
-                                                                 output is console only. [default: ]
-  -?, -h, --help                                                 Show help and usage information
+  -c, --company-id <company-id> (REQUIRED)    The company identifier under which the GLAccounts exists [default: ]
+  -q, --query <query>                         Aquery used to filter out results. NOTE: Dependant on output format. If
+                                              output is 'json', this is a JMESPath query to filter results.
+                                              https://jmespath.org/. If output is 'xml', this is an XPATH string.
+                                              https://www.w3schools.com/xml/xpath_intro.asp [default: ]
+  -f, --format <CSV|JSON|SCSV|TSV|XML>        Format of the output file. (JSON, XML...) [default: JSON]
+  -o, --output <output>                       Enter path to write output of this command to file. Default output is
+                                              console only. [default: ]
+  -?, -h, --help                              Show help and usage information
 ```
 
-You see that to list a set of GLAcocounts you need to include an administration. Administration is marked `(REQUIRED)` and is needed for the operation to be successfull. All other attributes are optional.
+You see that to list a set of GLAcocounts you need to include an company. Company is marked `(REQUIRED)` and is needed for the operation to be successfull. All other attributes are optional.
 
-For example to get a list of GLAccounts from an specific administration, run the following command: 
+For example to get a list of GLAccounts from an specific company, run the following command: 
 
 ```bash
-.\Blue10CLI.exe glaccount list -a B10Api -o GLAccountList.json -f JSON
+.\Blue10CLI.exe glaccount list -c B10Api -o GLAccountList.json -f JSON
 ```
 
-Will create a list of GLAccounts from the administration B10Api. GLAccountList.json file be created with the results. (This you can use for the `sync` subcommand)
+Will create a list of GLAccounts from the company B10Api. GLAccountList.json file be created with the results. (This you can use for the `sync` subcommand)
 
 ## VatCode command
 
@@ -509,6 +505,7 @@ Run following command
 ```
 .\Blue10Cli.exe vatcode -h
 ```
+
 You should see something like this:
 
 ```
@@ -522,11 +519,10 @@ Options:
   -?, -h, --help    Show help and usage information
 
 Commands:
-  list    Lists all known VatCodes in administration
+  list    Lists all known VatCodes in company
   sync    Sync VatCodes from a file to the Blue10 environment. AdministrationCode and CompanyId is required for each VatCode.
           Updating existing VatCodes requires Id. Creating new VatCodes requires empty Id.
 ```
-
 
 Using the VatCode command you can list all accounts in a current environment or sync teh VatCode from a file.
 
@@ -540,34 +536,32 @@ You should see something like this:
 
 ```
 list:
-  Lists all known VatCodes in administration
+  Lists all known VatCodes in a company
 
 Usage:
   Blue10CLI vatcode list [options]
 
 Options:
-  -a, -c, --administration, --company <administration>           The company/Blue10-administration under which this GLAccounts exists
-  (REQUIRED)                                                     [default: ]
-  -q, --query <query>                                            A query used to filter out results. NOTE: Dependant on
-                                                                 output format. If output is 'json', this is a JMESPath
-                                                                 query to filter results. https://jmespath.org/. If output
-                                                                 is 'xml', this is an XPATH string.
-                                                                 https://www.w3schools.com/xml/xpath_intro.asp [default: ]
-  -f, --format <CSV|JSON|SSV|TSV|XML>                            Format of the output file. (JSON, XML...) [default: JSON]
-  -o, --output <output>                                          Enter path to write output of this command to file. Default
-                                                                 output is console only. [default: ]
-  -?, -h, --help                                                 Show help and usage information
+  -c, --company-id <company-id> (REQUIRED)    The company identifier under which the VatCodes exists [default: ]
+  -q, --query <query>                         Aquery used to filter out results. NOTE: Dependant on output format. If
+                                              output is 'json', this is a JMESPath query to filter results.
+                                              https://jmespath.org/. If output is 'xml', this is an XPATH string.
+                                              https://www.w3schools.com/xml/xpath_intro.asp [default: ]
+  -f, --format <CSV|JSON|SCSV|TSV|XML>        Format of the output file. (JSON, XML...) [default: JSON]
+  -o, --output <output>                       Enter path to write output of this command to file. Default output is
+                                              console only. [default: ]
+  -?, -h, --help                              Show help and usage information
 ```
 
-You see that to list a set of VatCodes you need to include an administration. Administration is marked `(REQUIRED)` and is needed for the operation to be successfull. All other attributes are optional.
+You see that to list a set of VatCodes you need to include an company. Company is marked `(REQUIRED)` and is needed for the operation to be successfull. All other attributes are optional.
 
-For example to get a list of VatCodes from an specific administration, run the following command: 
+For example to get a list of VatCodes from an specific company, run the following command: 
 
 ```bash
-.\Blue10CLI.exe vatcode list -a B10Api -o VatCodelist.json -f JSON
+.\Blue10CLI.exe vatcode list -c B10Api -o VatCodelist.json -f JSON
 ```
 
-Will create a list of VatCodes from the administration B10Api. VatCodelist.json file be created with the results. (This you can use for the `sync` subcommand)
+Will create a list of VatCodes from the company B10Api. VatCodelist.json file be created with the results. (This you can use for the `sync` subcommand)
 
 # Advanced
 
@@ -579,12 +573,13 @@ With this option you can pass an alternate format. The supported formats are:
 - json
 - xml
 - csv
-- ssv
+- scsv
 - tsv
 
 For example, the command:
+
 ```
-.\Blue10CLI.exe administration list -f xml
+.\Blue10CLI.exe company list -f xml
 ```
 
 Returns this result:
@@ -629,15 +624,15 @@ Returns this result:
   </Company>
 </ArrayOfCompany>
 ```
-
 
 ## Write output to file
 
-The Blue10 CLI writes output to console, but you can also use the '-o' option to tell the CLI to write it's output to a fiven output file 
+The Blue10 CLI writes output to console, but you can also use the '-o' option to tell the CLI to write it's output to a given output file.
 
 For example, the command:
+
 ```
-.\Blue10CLI.exe administration list -f xml - o Administrations.xml
+.\Blue10CLI.exe company list -f xml - o Companies.xml
 ```
 
 Returns this result:
@@ -683,17 +678,19 @@ Returns this result:
 </ArrayOfCompany>
 ```
 
-And will write the results to `Administrations.xml` as a file
-This can be done with all supported formats
-
+And will write the results to `Companies.xml` as a file.
+This can be done with all supported formats.
 
 ## The Query option
 
 If you use the xml or json output format, you can add a `-q` option to filter the results with a query.
 
-If you use the `xml` format, you can use valid *xpath* strings to filter the results of the xml output
-.\Blue10CLI.exe administration list -f xml - o Administrations.xml -q 
+If you use the `xml` format, you can use valid *xpath* strings to filter the results of the xml output.
 
-If you use the `json` format you can use valid *jmespath* queries to filter the results of the json output
+```
+.\Blue10CLI.exe company list -f xml - o Companies.xml -q <xpath query>
+```
 
-In both cases the results will be written to file if the `-o` option is used
+If you use the `json` format you can use valid *jmespath* queries to filter the results of the json output.
+
+In both cases the results will be written to file if the `-o` option is used.
