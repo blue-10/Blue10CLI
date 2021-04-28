@@ -36,7 +36,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
                 .List(Arg.Any<string>())
                 .Returns(pVendors);
 
-            var fCommandLine = $"-a IdCompany -f {pFormat}";
+            var fCommandLine = $"-c IdCompany -f {pFormat}";
 
             // Setup services
             var pCommand = new ListVendorsCommand(pVendorService, pInOutService, null);
@@ -51,9 +51,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
 
         [Theory]
         [InlineAutoMockData("-c {0}")]
-        [InlineAutoMockData("-a {0}")]
-        [InlineAutoMockData("--company {0}")]
-        [InlineAutoMockData("--administration {0}")]
+        [InlineAutoMockData("--company-id {0}")]
         public void Success_ArgumentBinding(
             string pCommandLineTemplate,
             TestConsole pConsoleCommandLine,

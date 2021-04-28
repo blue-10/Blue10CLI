@@ -1,4 +1,4 @@
-﻿using Blue10CLI.Commands.AdministrationCommands;
+﻿using Blue10CLI.Commands.CompanyCommands;
 using Blue10CLI.Commands.CredentialsCommands;
 using Blue10CLI.Commands.GLAccountCommands;
 using Blue10CLI.Commands.InvoiceCommands;
@@ -15,7 +15,7 @@ namespace Blue10CLI.Commands
             InvoiceCommand invoice,
             GLAccountCommand glaccount,
             VatCodeCommand vatcode,
-            AdministrationCommand administratration,
+            CompanyCommand company,
             CredentialsCommand credentials)
         {
             Add(vendor);
@@ -23,7 +23,7 @@ namespace Blue10CLI.Commands
             Add(glaccount);
             Add(vatcode);
             Add(credentials);
-            Add(administratration);
+            Add(company);
             Add(new Option<bool>("--debug", "Run command in debug mode to view detailed logs"));
         }
     }

@@ -1,5 +1,5 @@
 ﻿using Blue10CLI.Commands;
-using Blue10CLI.Commands.AdministrationCommands;
+using Blue10CLI.Commands.CompanyCommands;
 using Blue10CLI.Commands.CredentialsCommands;
 using Blue10CLI.Commands.GLAccountCommands;
 using Blue10CLI.Commands.InvoiceCommands;
@@ -59,7 +59,7 @@ namespace Blue10CLI
                     .AddSingleton<SyncVatCodesCommand>()
 
                 .AddSingleton<CompanyService>()
-                .AddSingleton<AdministrationCommand>()
+                .AddSingleton<CompanyCommand>()
                     .AddSingleton<ListCompaniesCommand>()
 
                 .AddSingleton<CredentialsService>()
