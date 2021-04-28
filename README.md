@@ -291,6 +291,14 @@ Will create a vendor named `KPN-NL` with the AdministrationCode `KPN31` in compa
 
 _**NOTE**: AdministrationCode is the unique identifier of the ERP. This code will also be used as name if the name is not given._
 
+The IBANs has a special display in the CSV, SCSV or TSV format. We are working with a list/array of IBANs and to seperate them we use `|`. An Csv example would be:
+
+```
+...,[NL96ABNA2753394563|NL23ABNA2137951150],...
+```
+
+The list starts with a '[' sign and ends with a ']' sign. In here we see two IBAN numbers; `NL96ABNA2753394563` and `NL23ABNA2137951150`, seperated by the `|` sign.
+
 ## Invoice Command
 
 Run following command 
