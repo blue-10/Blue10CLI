@@ -2,6 +2,7 @@
 using Blue10CLI.Services.Interfaces;
 using CsvHelper;
 using CsvHelper.Configuration;
+using CsvHelper.TypeConversion;
 using DevLab.JmesPath;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -88,11 +90,13 @@ namespace Blue10CLI.Services
             };
 
             using var reader = new StringReader(origin);
-            using (var csv = new CsvReader(reader, config))
+            using (var csvReader = new CsvReader(reader, config))
             {
-                while (csv.Read())
+                csvReader.Context.TypeConverterCache.AddConverter<List<string>>(new ListConverter());
+
+                while (csvReader.Read())
                 {
-                    var record = csv.GetRecord<T>();
+                    var record = csvReader.GetRecord<T>();
                     if (!recordIsBad)
                     {
                         successfullRecords.Add(record);
@@ -263,22 +267,24 @@ namespace Blue10CLI.Services
 
         }
 
-        private string ConvertToCsv<T>(T origin, string separator)
+        private string ConvertToCsv<T>(T objects, string separator)
         {
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 Delimiter = separator,
-                NewLine = Environment.NewLine
+                NewLine = Environment.NewLine,
             };
 
-            var wr = new StringWriter();
-            using var csv = new CsvWriter(wr, config);
+            using var writer = new StringWriter();
+            using var csvWriter = new CsvWriter(writer, config);
 
-            if (origin is IEnumerable enumerable)
-                csv.WriteRecords(enumerable);
+            csvWriter.Context.TypeConverterCache.AddConverter<List<string>>(new ListConverter());
+
+            if (objects is IEnumerable enumerable)
+                csvWriter.WriteRecords(enumerable);
             else
-                csv.WriteRecords(new[] { origin });
-            return wr.ToString();
+                csvWriter.WriteRecords(new[] { objects });
+            return writer.ToString();
         }
 
         #endregion
@@ -288,6 +294,36 @@ namespace Blue10CLI.Services
         {
             _logger.LogError(message);
             return new ArgumentOutOfRangeException(nameof(format), format, message);
+        }
+
+        public class ListConverter : ITypeConverter
+        {
+            public object? ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData)
+            {
+                if (!string.IsNullOrEmpty(text))
+                {
+                    var list = text.Replace("[", "").Replace("]", "").Split("|").ToList();
+
+                    if (list.Count > 0)
+                    {
+                        return list;
+                    }
+
+                }
+
+                return null;
+            }
+
+            public string ConvertToString(object value, IWriterRow row, MemberMapData memberMapData)
+            {
+                if (value is List<string>)
+                {
+                    var list = string.Join("|", value as List<string>);
+                    return $"[{list}]";
+                }
+
+                return string.Empty;
+            }
         }
         #endregion
     }
