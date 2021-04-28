@@ -1,16 +1,16 @@
 using AutoFixture.Xunit2;
-using Blue10CLI.commands;
+using Blue10CLI.Commands.VendorCommands;
+using Blue10CLI.Enums;
+using Blue10CLI.Services;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using FluentAssertions;
 using NSubstitute;
 using Objectivity.AutoFixture.XUnit2.AutoNSubstitute.Attributes;
-using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
 using System.CommandLine.Parsing;
-using System.IO;
 using Xunit;
 
 namespace Blue10CLI.Tests.Commands.VendorCommand
@@ -21,13 +21,13 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
         [Theory]
         [InlineAutoMockData(EFormatType.JSON)]
         [InlineAutoMockData(EFormatType.CSV)]
-        [InlineAutoMockData(EFormatType.SSV)]
+        [InlineAutoMockData(EFormatType.SCSV)]
         [InlineAutoMockData(EFormatType.TSV)]
         [InlineAutoMockData(EFormatType.XML)]
         public void Success_ConsolOutput(
             EFormatType pFormat,
             TestConsole pConsoleCommandLine,
-            StringWriter pConsole,
+            InOutService pInOutService,
             [Frozen] IVendorService pVendorService,
             [Frozen] IList<Vendor> pVendors)
         {
@@ -36,14 +36,10 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
                 .List(Arg.Any<string>())
                 .Returns(pVendors);
 
-            var fCommandLine = $"-a IdCompany -f {pFormat}";
+            var fCommandLine = $"-c IdCompany -f {pFormat}";
 
             // Setup services
-            var pCommand = new ListVendorsCommand(pVendorService);
-
-            // Hook up validation
-            Console.SetOut(pConsole);
-            var fExpection = pFormat.Format(pVendors);
+            var pCommand = new ListVendorsCommand(pVendorService, pInOutService, null);
 
             // Test
             pCommand.Invoke(fCommandLine, pConsoleCommandLine);
@@ -51,18 +47,15 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
             // Validate
             pConsoleCommandLine.Error.ToString().Should().BeNullOrEmpty();
             pVendorService.Received(1);
-            pConsole.ToString().Should().Contain(fExpection);
         }
 
         [Theory]
         [InlineAutoMockData("-c {0}")]
-        [InlineAutoMockData("-a {0}")]
-        [InlineAutoMockData("--company {0}")]
-        [InlineAutoMockData("--administration {0}")]
+        [InlineAutoMockData("--company-id {0}")]
         public void Success_ArgumentBinding(
             string pCommandLineTemplate,
             TestConsole pConsoleCommandLine,
-            StringWriter pConsole,
+            InOutService pInOutService,
             [Frozen] IVendorService pVendorService,
             [Frozen] string pIdCompany)
         {
@@ -71,8 +64,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
                 pIdCompany);
 
             // Setup services
-            Console.SetOut(pConsole);
-            var pCommand = new ListVendorsCommand(pVendorService);
+            var pCommand = new ListVendorsCommand(pVendorService, pInOutService, null);
 
             // Test
             pCommand.Invoke(fCommandLine, pConsoleCommandLine);

@@ -1,25 +1,19 @@
 ﻿using Blue10CLI.models;
 using Blue10SDK;
 using Blue10SDK.Models;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Blue10CLI.services
+namespace Blue10CLI.Services
 {
     public class InvoiceService
     {
-
-        private readonly ILogger<VendorService> _logger;
         private readonly IBlue10AsyncClient _blue10;
 
-
-        public InvoiceService(ILogger<VendorService> logger, IBlue10AsyncClient blue10)
+        public InvoiceService(IBlue10AsyncClient blue10)
         {
-            _logger = logger;
             _blue10 = blue10;
         }
 
@@ -43,8 +37,6 @@ namespace Blue10CLI.services
             var res = await GetInvoicesToBePosted();
             return res.Select(x => new InvoiceSummary(x)).ToList();
         }
-
-        public static HttpClient _http = new HttpClient();
 
         public async Task<(PurchaseInvoice, byte[])> PullInvoice(DocumentAction action)
         {

@@ -1,24 +1,23 @@
-﻿using Blue10CLI.services;
+﻿using Blue10CLI.Services.Interfaces;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 
-namespace Blue10CLI.commands.credentials
+namespace Blue10CLI.Commands.CredentialsCommands
 {
     public class ShowCredentialsCommand : Command
     {
-        private readonly CredentialsService _creds;
+        private readonly ICredentialsService _credentialService;
 
-        public ShowCredentialsCommand(CredentialsService creds) : base("show", "Shows current api key")
+        public ShowCredentialsCommand(ICredentialsService credentialService) : base("show", "Shows current api key")
         {
-            _creds = creds;
+            _credentialService = credentialService;
             Handler = CommandHandler.Create(ShowKey);
-
         }
 
         private void ShowKey()
         {
-            Console.WriteLine(_creds.GetApiKey());
+            Console.WriteLine(_credentialService.GetApiKey());
         }
     }
 }

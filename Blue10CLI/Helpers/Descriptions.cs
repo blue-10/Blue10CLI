@@ -1,4 +1,4 @@
-﻿namespace Blue10CLI
+﻿namespace Blue10CLI.Helpers
 {
     public static class Descriptions
     {

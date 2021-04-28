@@ -10,68 +10,68 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Blue10CLI.Commands.GLAccountCommands
+namespace Blue10CLI.Commands.VendorCommands
 {
-    public class SyncGLAccountsCommand : Command
+    public class SyncVendorsCommand : Command
     {
-        private readonly IGLAccountService _glaccountService;
+        private readonly IVendorService _vendorService;
         private readonly IInOutService _utilities;
-        private readonly ILogger<SyncGLAccountsCommand> _logger;
+        private readonly ILogger<SyncVendorsCommand> _logger;
 
-        public SyncGLAccountsCommand(
-            IGLAccountService glaccountService,
+        public SyncVendorsCommand(
+            IVendorService vendorService,
             IInOutService utilities,
-            ILogger<SyncGLAccountsCommand> logger) :
+            ILogger<SyncVendorsCommand> logger) :
             base("sync",
-                Descriptions.SyncGLAccountDescription)
+                Descriptions.SyncVendorDescription)
         {
-            _glaccountService = glaccountService;
+            _vendorService = vendorService;
             _utilities = utilities;
             _logger = logger;
 
-            Add(new Option<FileInfo?>(new[] { "-i", "--input" }, () => null, Descriptions.InputGLAccountDescription) { IsRequired = true });
+            Add(new Option<FileInfo?>(new[] { "-i", "--input" }, () => null, Descriptions.InputVendorDescription) { IsRequired = true });
             Add(new Option<EFormatType>(new[] { "--input-format" }, () => EFormatType.JSON, Descriptions.InputFormatDescription) { IsRequired = true });
             Add(new Option<FileInfo?>(new[] { "-o", "--output" }, () => null, Descriptions.OutputDescription));
             Add(new Option<EFormatType>(new[] { "-f", "--format", "--output-format" }, () => EFormatType.JSON, Descriptions.FormatDescription));
 
-            Handler = CommandHandler.Create<FileInfo, EFormatType, FileInfo?, EFormatType>(ImportGLAccountsHandler);
+            Handler = CommandHandler.Create<FileInfo, EFormatType, FileInfo?, EFormatType>(ImportVendorsHandler);
         }
 
-        private async Task ImportGLAccountsHandler(
+        private async Task ImportVendorsHandler(
             FileInfo input,
             EFormatType inputformat,
             FileInfo? output,
             EFormatType outputformat)
         {
             var fSyncFilePath = input.FullName;
-            var fGLAccountList = File.ReadAllText(fSyncFilePath);
+            var fVendorList = File.ReadAllText(fSyncFilePath);
 
-            var fGLAccounts = _utilities.ReadAs<GLAccount>(inputformat, fGLAccountList);
-            if (fGLAccounts is null)
+            var fVendors = _utilities.ReadAs<Vendor>(inputformat, fVendorList);
+            if (fVendors is null)
                 return;
 
-            var fSuccessList = new List<GLAccount>();
-            var fFailedList = new List<GLAccount>();
+            var fSuccessList = new List<Vendor>();
+            var fFailedList = new List<Vendor>();
 
             var fCount = 1;
-            var fTotalGLAccounts = fGLAccounts.Count;
-            foreach (var fGLAccount in fGLAccounts)
+            var fTotalVendors = fVendors.Count;
+            foreach (var fVendor in fVendors)
             {
-                var fResult = await _glaccountService.CreateOrUpdate(fGLAccount);
+                var fResult = await _vendorService.CreateOrUpdate(fVendor);
                 if (fResult.Object == null)
                 {
-                    fFailedList.Add(fGLAccount);
-                    _logger.LogWarning($"{fCount}/{fTotalGLAccounts}: Failed syncing GLAccount '{fGLAccount.Name}' - {fResult.ErrorMessage}");
+                    fFailedList.Add(fVendor);
+                    _logger.LogWarning($"{fCount}/{fTotalVendors}: Failed syncing vendor '{fVendor.Name}' - {fResult.ErrorMessage}");
                 }
                 else
                 {
                     fSuccessList.Add(fResult.Object);
-                    Console.WriteLine($"{fCount}/{fTotalGLAccounts} Successfully synced GLAccount '{fGLAccount.Name}'");
+                    Console.WriteLine($"{fCount}/{fTotalVendors} Successfully synced vendor '{fVendor.Name}'");
                 }
                 fCount++;
             }
 
-            Console.WriteLine($"{fSuccessList.Count}/{fTotalGLAccounts} GLAccounts have been successfully imported");
+            Console.WriteLine($"{fSuccessList.Count}/{fTotalVendors} vendors have been successfully imported");
 
             await _utilities.HandleOutput(outputformat, fSuccessList, output);
             if (output != null)

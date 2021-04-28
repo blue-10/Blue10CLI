@@ -1,28 +1,25 @@
-﻿using Blue10CLI.models;
+﻿using Blue10CLI.Models;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK;
 using Blue10SDK.Exceptions;
 using Blue10SDK.Models;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Blue10CLI.services
+namespace Blue10CLI.Services
 {
     public class GLAccountService : IGLAccountService
     {
-        private readonly ILogger<GLAccountService> _logger;
         private readonly IBlue10AsyncClient _blue10;
 
-        public GLAccountService(ILogger<GLAccountService> logger, IBlue10AsyncClient blue10)
+        public GLAccountService(IBlue10AsyncClient blue10)
         {
-            _logger = logger;
             _blue10 = blue10;
         }
 
         public async Task<IList<GLAccount>> List(string pCompanyId) =>
-            await _blue10.GetGLAccountsAsync(pCompanyId); // try catch?
+            await _blue10.GetGLAccountsAsync(pCompanyId);
 
         public async Task<BaseResultModel<GLAccount>> CreateOrUpdate(GLAccount pGlAccount)
         {

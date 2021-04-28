@@ -15,8 +15,8 @@
 
 
   <ItemGroup>
-	<PackageReference Include="Blue10SDK" Version="0.1.8" />
-    <PackageReference Include="CsvHelper" Version="22.0.0" />
+	<PackageReference Include="Blue10SDK" Version="0.1.9" />
+    <PackageReference Include="CsvHelper" Version="27.0.1" />
     <PackageReference Include="FluentValidation" Version="9.4.0" />
     <PackageReference Include="IbanNet.FluentValidation" Version="4.3.0" />
     <PackageReference Include="JmesPath.Net" Version="1.0.153" />

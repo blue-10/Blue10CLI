@@ -13,53 +13,53 @@ using Xunit;
 
 namespace Blue10CLI.Tests.Services
 {
-    public class VendorServiceTests
+    public class VatCodeServiceTests
     {
         [Theory]
         [AutoMockData]
         public async Task CreateOrUpdate_Update_Success(
-            Vendor pVendorInput,
-            Vendor pVendorResult,
+            VatCode pVatCodeInput,
+            VatCode pVatCodeResult,
             [Frozen] IBlue10AsyncClient pBlue10AsyncCLient,
-            VendorService pVendorService)
+            VatCodeService pVatCodeService)
         {
             // Setup services
-            pBlue10AsyncCLient.EditVendorAsync(Arg.Any<Vendor>()).Returns(pVendorResult);
+            pBlue10AsyncCLient.EditVatCodeAsync(Arg.Any<VatCode>()).Returns(pVatCodeResult);
 
             // Test
-            var fResult = await pVendorService.CreateOrUpdate(pVendorInput);
+            var fResult = await pVatCodeService.CreateOrUpdate(pVatCodeInput);
 
             // Validate
             pBlue10AsyncCLient.Received(1);
-            await pBlue10AsyncCLient.Received().EditVendorAsync(Arg.Is<Vendor>(x => x.Equals(pVendorInput)));
-            fResult.Should().BeOfType<BaseResultModel<Vendor>>();
+            await pBlue10AsyncCLient.Received().EditVatCodeAsync(Arg.Is<VatCode>(x => x.Equals(pVatCodeInput)));
+            fResult.Should().BeOfType<BaseResultModel<VatCode>>();
             fResult.ErrorMessage.Should().BeNull();
-            fResult.Object.Should().Be(pVendorResult);
+            fResult.Object.Should().Be(pVatCodeResult);
         }
 
         [Theory]
         [AutoMockData]
         public async Task CreateOrUpdate_Create_Success(
-            Vendor pVendorInput,
-            Vendor pVendorResult,
+            VatCode pVatCodeInput,
+            VatCode pVatCodeResult,
             [Frozen] IBlue10AsyncClient pBlue10AsyncCLient,
-            VendorService pVendorService)
+            VatCodeService pVatCodeService)
         {
             // Setup data
-            pVendorInput.Id = Guid.Empty;
+            pVatCodeInput.Id = Guid.Empty;
 
             // Setup services
-            pBlue10AsyncCLient.AddVendorAsync(Arg.Any<Vendor>()).Returns(pVendorResult);
+            pBlue10AsyncCLient.AddVatCodeAsync(Arg.Any<VatCode>()).Returns(pVatCodeResult);
 
             // Test
-            var fResult = await pVendorService.CreateOrUpdate(pVendorInput);
+            var fResult = await pVatCodeService.CreateOrUpdate(pVatCodeInput);
 
             // Validate
             pBlue10AsyncCLient.Received(1);
-            await pBlue10AsyncCLient.Received().AddVendorAsync(Arg.Is<Vendor>(x => x.Equals(pVendorInput)));
-            fResult.Should().BeOfType<BaseResultModel<Vendor>>();
+            await pBlue10AsyncCLient.Received().AddVatCodeAsync(Arg.Is<VatCode>(x => x.Equals(pVatCodeInput)));
+            fResult.Should().BeOfType<BaseResultModel<VatCode>>();
             fResult.ErrorMessage.Should().BeNull();
-            fResult.Object.Should().Be(pVendorResult);
+            fResult.Object.Should().Be(pVatCodeResult);
         }
 
         [Theory]
@@ -74,14 +74,14 @@ namespace Blue10CLI.Tests.Services
             bool pAdministrationCode,
             bool pIdCompany,
             bool pName,
-            Vendor pVendorInput,
+            VatCode pVatCodeInput,
             [Frozen] IBlue10AsyncClient pBlue10AsyncCLient,
-            VendorService pVendorService)
+            VatCodeService pVatCodeService)
         {
             // Setup data
-            if (pAdministrationCode) pVendorInput.AdministrationCode = string.Empty;
-            if (pIdCompany) pVendorInput.IdCompany = string.Empty;
-            if (pName) pVendorInput.Name = string.Empty;
+            if (pAdministrationCode) pVatCodeInput.AdministrationCode = string.Empty;
+            if (pIdCompany) pVatCodeInput.IdCompany = string.Empty;
+            if (pName) pVatCodeInput.Name = string.Empty;
 
             // Setup validatione
             var fErrors = new List<string>();
@@ -91,11 +91,11 @@ namespace Blue10CLI.Tests.Services
             var fExpected = string.Join(", ", fErrors);
 
             // Test
-            var fResult = await pVendorService.CreateOrUpdate(pVendorInput);
+            var fResult = await pVatCodeService.CreateOrUpdate(pVatCodeInput);
 
             // Validate
             pBlue10AsyncCLient.DidNotReceive();
-            fResult.Should().BeOfType<BaseResultModel<Vendor>>();
+            fResult.Should().BeOfType<BaseResultModel<VatCode>>();
             fResult.Object.Should().BeNull();
             fResult.ErrorMessage.Should().Be(fExpected);
         }

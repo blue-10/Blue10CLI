@@ -1,7 +1,7 @@
 ﻿using Blue10CLI.Services.Interfaces;
 using System.CommandLine;
 
-namespace Blue10CLI.commands
+namespace Blue10CLI.Commands.VendorCommands
 {
     public class ShowVendorCommand : Command
     {

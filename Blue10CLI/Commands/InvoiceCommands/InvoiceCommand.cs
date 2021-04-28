@@ -1,6 +1,6 @@
 ﻿using System.CommandLine;
 
-namespace Blue10CLI.commands
+namespace Blue10CLI.Commands.InvoiceCommands
 {
     public class InvoiceCommand : Command
     {
@@ -15,6 +15,4 @@ namespace Blue10CLI.commands
             Add(signinvoice);
         }
     }
-
-   
 }

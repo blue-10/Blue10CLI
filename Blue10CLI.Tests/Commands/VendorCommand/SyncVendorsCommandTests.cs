@@ -1,6 +1,7 @@
 using AutoFixture.Xunit2;
-using Blue10CLI.commands;
-using Blue10CLI.models;
+using Blue10CLI.Commands.VendorCommands;
+using Blue10CLI.Models;
+using Blue10CLI.Services;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Models;
 using FluentAssertions;
@@ -11,7 +12,6 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
 using System.CommandLine.Parsing;
-using System.IO;
 using Xunit;
 
 namespace Blue10CLI.Tests.Commands.VendorCommand
@@ -27,25 +27,24 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
         [Theory]
         [InlineAutoMockData("-i TestFiles/listVendors.csv --input-format CSV")]
         [InlineAutoMockData("-i TestFiles/listVendors.json --input-format JSON")]
-        [InlineAutoMockData("-i TestFiles/listVendors.ssv --input-format SSV")]
+        [InlineAutoMockData("-i TestFiles/listVendors.scsv --input-format SCSV")]
         [InlineAutoMockData("-i TestFiles/listVendors.tsv --input-format TSV")]
         [InlineAutoMockData("-i TestFiles/listVendors.xml --input-format XML")]
-        public void Success_ReadAndConvertFilis(
+        public void Success_ReadAndConvertFiles(
             string pCommandLine,
             TestConsole pConsoleCommandLine,
-            StringWriter pConsole,
+            InOutService pInOutService,
             [Frozen] IVendorService pVendorService)
         {
             // Setup data
-            VendorResultModel fModel = new VendorResultModel(new Vendor(), null);
+            BaseResultModel<Vendor> fModel = new BaseResultModel<Vendor>(new Vendor(), null);
 
             // Setup services
-            Console.SetOut(pConsole);
             pVendorService
                 .CreateOrUpdate(Arg.Any<Vendor>())
                 .Returns(fModel);
 
-            var pCommand = new SyncVendorsCommand(pVendorService);
+            var pCommand = new SyncVendorsCommand(pVendorService, pInOutService, null);
 
             // Test
             pCommand.Invoke(pCommandLine, pConsoleCommandLine);

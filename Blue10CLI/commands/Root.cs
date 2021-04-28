@@ -1,8 +1,12 @@
-﻿using Blue10CLI.commands;
-using Blue10CLI.commands.credentials;
+﻿using Blue10CLI.Commands.CompanyCommands;
+using Blue10CLI.Commands.CredentialsCommands;
+using Blue10CLI.Commands.GLAccountCommands;
+using Blue10CLI.Commands.InvoiceCommands;
+using Blue10CLI.Commands.VatCodeCommands;
+using Blue10CLI.Commands.VendorCommands;
 using System.CommandLine;
 
-namespace Blue10CLI
+namespace Blue10CLI.Commands
 {
     public class Root : RootCommand
     {
@@ -11,7 +15,7 @@ namespace Blue10CLI
             InvoiceCommand invoice,
             GLAccountCommand glaccount,
             VatCodeCommand vatcode,
-            AdministrationCommand administratration,
+            CompanyCommand company,
             CredentialsCommand credentials)
         {
             Add(vendor);
@@ -19,7 +23,7 @@ namespace Blue10CLI
             Add(glaccount);
             Add(vatcode);
             Add(credentials);
-            Add(administratration);
+            Add(company);
             Add(new Option<bool>("--debug", "Run command in debug mode to view detailed logs"));
         }
     }

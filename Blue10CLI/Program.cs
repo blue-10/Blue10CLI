@@ -1,12 +1,15 @@
-﻿using Blue10CLI.commands;
-using Blue10CLI.commands.credentials;
-using Blue10CLI.Helpers;
-using Blue10CLI.services;
+﻿using Blue10CLI.Commands;
+using Blue10CLI.Commands.CompanyCommands;
+using Blue10CLI.Commands.CredentialsCommands;
+using Blue10CLI.Commands.GLAccountCommands;
+using Blue10CLI.Commands.InvoiceCommands;
+using Blue10CLI.Commands.VatCodeCommands;
+using Blue10CLI.Commands.VendorCommands;
+using Blue10CLI.Services;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 using System.CommandLine;
 using System.Threading.Tasks;
 
@@ -16,18 +19,21 @@ namespace Blue10CLI
     {
         static async Task Main(params string[] args)
         {
-            // StartUp
-            AppConfiguration.GetSettings();
-            var fApiKey = CredentialsService.EnsureApiKey();
-            if (string.IsNullOrWhiteSpace(fApiKey))
-            {
-                Console.WriteLine("No Blue10 API Key found. Execution ended");
-                return;
-            }
-
             // Setup serrvices
             var serviceProvider = new ServiceCollection()
-                .AddBlue10(fApiKey, AppConfiguration.Values.BaseUrl)
+                .AddSingleton<IAppConfigurationService, AppConfigurationService>()
+                .AddSingleton<ICredentialsService, CredentialsService>()
+
+                .AddBlue10((serviceProvider, cofiguration) =>
+                {
+                    var appConfiguration = serviceProvider.GetRequiredService<IAppConfigurationService>();
+                    var fApiKey = serviceProvider.GetRequiredService<CredentialsService>().GetApiKey();
+
+                    cofiguration.ApiKey = fApiKey;
+                    cofiguration.Url = appConfiguration.GetSettings().BaseUrl;
+                })
+
+                .AddSingleton<IInOutService, InOutService>()
 
                 //Business Services
                 .AddSingleton<InvoiceService>()
@@ -39,10 +45,8 @@ namespace Blue10CLI
                 .AddSingleton<IVendorService, VendorService>()
                 .AddSingleton<VendorCommand>()
                     .AddSingleton<CreateVendorCommand>()
-                    .AddSingleton<ShowVendorCommand>()
                     .AddSingleton<ListVendorsCommand>()
                     .AddSingleton<SyncVendorsCommand>()
-                    .AddSingleton<DeleteVendorCommand>()
 
                 .AddSingleton<IGLAccountService, GLAccountService>()
                 .AddSingleton<GLAccountCommand>()
@@ -55,7 +59,7 @@ namespace Blue10CLI
                     .AddSingleton<SyncVatCodesCommand>()
 
                 .AddSingleton<CompanyService>()
-                .AddSingleton<AdministrationCommand>()
+                .AddSingleton<CompanyCommand>()
                     .AddSingleton<ListCompaniesCommand>()
 
                 .AddSingleton<CredentialsService>()
@@ -77,12 +81,26 @@ namespace Blue10CLI
                 .BuildServiceProvider();
 
             var logger = serviceProvider.GetService<ILoggerFactory>()
-                .CreateLogger<Program>();
+               .CreateLogger<Program>();
+
+            // Import Settings
+            serviceProvider.GetRequiredService<IAppConfigurationService>()
+                .ImportSettings();
+
+            // Check ApiKey credentials
+            var fApiKey = serviceProvider.GetRequiredService<CredentialsService>().EnsureApiKey();
+            if (string.IsNullOrWhiteSpace(fApiKey))
+            {
+                logger.LogWarning("No Blue10 API Key found. Execution ended");
+                return;
+            }
 
             // Start root command
             var root = serviceProvider.GetService<Root>();
             if (root != null)
                 await root.InvokeAsync(args);
+            else
+                logger.LogWarning("No root found. Execution ended");
         }
     }
 }

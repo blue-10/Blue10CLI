@@ -1,4 +1,4 @@
-﻿using Blue10CLI.models;
+﻿using Blue10CLI.Models;
 using Blue10CLI.Services.Interfaces;
 using Blue10SDK;
 using Blue10SDK.Exceptions;
@@ -6,10 +6,9 @@ using Blue10SDK.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace Blue10CLI.services
+namespace Blue10CLI.Services
 {
     public class VendorService : IVendorService
     {
@@ -23,48 +22,7 @@ namespace Blue10CLI.services
         }
 
         public async Task<IList<Vendor>> List(string companyId) =>
-            await _blue10.GetVendorsAsync(companyId); // try catch?
-
-        public async Task<Vendor?> Create(
-            string pName,
-            string pVatNumber,
-            string pCountryCode,
-            IEnumerable<string> pIban,
-            string pCurrencyCode,
-            string pVendorCustomerCode,
-            string pDefaultLedgerCode,
-            string pDefaultVatCode,
-            string pDefaultVatScenarioCode,
-            string pDefaultPaymentTermCode,
-            bool pBlocked,
-            string pAdministrationCode,
-            string pIdCompany)
-        {
-
-            var fCreateVendor = new Vendor
-            {
-                Name = pName,
-                VatNumber = pVatNumber,
-                CountryCode = pCountryCode,
-                Iban = pIban.ToList(),
-                CurrencyCode = pCurrencyCode,
-                VendorCustomerCode = pVendorCustomerCode,
-                DefaultLedgerCode = pDefaultLedgerCode,
-                DefaultVatCode = pDefaultVatCode,
-                DefaultVatScenarioCode = pDefaultVatScenarioCode,
-                DefaultPaymentTermCode = pDefaultPaymentTermCode,
-                Blocked = pBlocked,
-
-                Id = Guid.NewGuid(),
-                AdministrationCode = pAdministrationCode,
-                IdCompany = pIdCompany
-            };
-
-            var fVendorResultModel = await TryVendorTask(_blue10.AddVendorAsync(fCreateVendor));
-            if (!string.IsNullOrEmpty(fVendorResultModel.ErrorMessage))
-                _logger.LogError(fVendorResultModel.ErrorMessage);
-            return fVendorResultModel.Object;
-        }
+            await _blue10.GetVendorsAsync(companyId);
 
         public async Task<BaseResultModel<Vendor>> CreateOrUpdate(
             Vendor pVendor)

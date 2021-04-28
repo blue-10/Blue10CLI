@@ -1,24 +1,22 @@
-﻿using System;
+﻿using Blue10CLI.Services.Interfaces;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using Blue10CLI.services;
 
-namespace Blue10CLI.commands.credentials
+namespace Blue10CLI.Commands.CredentialsCommands
 {
     public class SetCredentialsCommand : Command
     {
-        private readonly CredentialsService _creds;
+        private readonly ICredentialsService _credentialService;
 
-        public SetCredentialsCommand(CredentialsService creds) : base("set", "Sets new Api Key and overrides the old one")
+        public SetCredentialsCommand(ICredentialsService credentialService) : base("set", "Sets new Api Key and overrides the old one")
         {
-            _creds = creds;
+            _credentialService = credentialService;
             Handler = CommandHandler.Create<string>(SetApiKey);
         }
 
         private void SetApiKey(string obj)
-        {            
-            Console.WriteLine("Please insert your Blue10 API Key insert here:");
-            _creds.SetApiKey(CredentialsService.ReadPassword());
+        {
+            _credentialService.SetApiKey(_credentialService.ReadPassword());
         }
     }
 }

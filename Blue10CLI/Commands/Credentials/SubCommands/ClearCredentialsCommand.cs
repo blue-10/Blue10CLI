@@ -1,24 +1,24 @@
-﻿using System;
+﻿using Blue10CLI.Services.Interfaces;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using Blue10CLI.services;
 
-namespace Blue10CLI.commands.credentials
+namespace Blue10CLI.Commands.CredentialsCommands
 {
     public class ClearCredentialsCommand : Command
     {
-        private readonly CredentialsService _creds;
+        private readonly ICredentialsService _credentialService;
 
-        public ClearCredentialsCommand(CredentialsService creds) : base("clear", "Clears current saved api key")
+        public ClearCredentialsCommand(ICredentialsService credentialService) : base("clear", "Clears current saved api key")
         {
-            _creds = creds;
-            
+            _credentialService = credentialService;
+
             Handler = CommandHandler.Create(action: ClearApiKey);
         }
-        
+
         private void ClearApiKey()
         {
-            _creds.RemoveCredentials();
+            _credentialService.RemoveCredentials();
             Console.WriteLine("API key Cleared");
         }
     }

@@ -1,30 +1,23 @@
-﻿using Blue10CLI.Helpers;
+﻿using Blue10CLI.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Blue10CLI.services
+namespace Blue10CLI.Services
 {
-    public class CredentialsService
+    public class CredentialsService : ICredentialsService
     {
-        private readonly ILogger<CredentialsService> _log;
+        private readonly IAppConfigurationService _appConfiguration;
+        private readonly ILogger<CredentialsService> _logger;
 
-
-        internal enum EStorageSolution
+        public CredentialsService(IAppConfigurationService appConfiguration, ILogger<CredentialsService> logger)
         {
-            AppConfiguration,
-            WindowsCredentialsManagement
-        }
-
-        internal static EStorageSolution StorageSolution = EStorageSolution.AppConfiguration;
-
-        public CredentialsService(ILogger<CredentialsService> log)
-        {
-            _log = log;
+            _appConfiguration = appConfiguration;
+            _logger = logger;
         }
 
         public string? GetApiKey()
         {
-            var fApiKey = AppConfiguration.Values.ApiKey;
+            var fApiKey = _appConfiguration.GetSettings().ApiKey;
 
             if (string.IsNullOrWhiteSpace(fApiKey))
                 return null;
@@ -34,36 +27,45 @@ namespace Blue10CLI.services
 
         public bool SetApiKey(string apiKey)
         {
-            AppConfiguration.Values.ApiKey = apiKey;
-            return AppConfiguration.SaveSettings();
+            var fSettings = _appConfiguration.GetSettings();
+            fSettings.ApiKey = apiKey;
+            _appConfiguration.SetSettings(fSettings);
+            return _appConfiguration.SaveSettings();
         }
 
         public bool RemoveCredentials()
         {
-            AppConfiguration.Values.ApiKey = null;
-            return AppConfiguration.SaveSettings();
+            var fSettings = _appConfiguration.GetSettings();
+            fSettings.ApiKey = null;
+            _appConfiguration.SetSettings(fSettings);
+            return _appConfiguration.SaveSettings();
         }
 
-
-        internal static string? EnsureApiKey()
+        public string? EnsureApiKey()
         {
-            if (!string.IsNullOrEmpty(AppConfiguration.Values.ApiKey))
-                return AppConfiguration.Values.ApiKey;
+            var fSettings = _appConfiguration.GetSettings();
+            if (!string.IsNullOrEmpty(fSettings.ApiKey))
+                return fSettings.ApiKey;
 
-            Console.WriteLine("Missing Blue10 API key, please insert here:");
+            _logger.LogWarning("Missing Blue10 API key.");
+
             var fApiKey = ReadPassword();
 
-            AppConfiguration.Values.ApiKey = fApiKey;
-            if (!AppConfiguration.SaveSettings())
-                Console.WriteLine("Something went wrong saving API Key to AppConfiguration.json");
+            fSettings.ApiKey = fApiKey;
+            _appConfiguration.SetSettings(fSettings);
+
+            if (!_appConfiguration.SaveSettings())
+                _logger.LogError("Something went wrong saving API Key to AppConfiguration.json");
 
             Console.WriteLine("API Key has been saved to AppConfiguration.json");
 
             return fApiKey;
         }
 
-        public static string ReadPassword()
+        public string ReadPassword()
         {
+            Console.WriteLine("Missing Blue10 API key, please insert here:");
+
             string password = "";
             ConsoleKeyInfo info = Console.ReadKey(true);
             while (info.Key != ConsoleKey.Enter)
