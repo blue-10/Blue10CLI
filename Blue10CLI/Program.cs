@@ -6,7 +6,9 @@ using Blue10CLI.Commands.InvoiceCommands;
 using Blue10CLI.Commands.VatCodeCommands;
 using Blue10CLI.Commands.VendorCommands;
 using Blue10CLI.Services;
+using Blue10CLI.Services.Converters;
 using Blue10CLI.Services.Interfaces;
+using Blue10CLI.Services.Interfaces.Converters;
 using Blue10SDK.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -34,6 +36,9 @@ namespace Blue10CLI
                 })
 
                 .AddSingleton<IInOutService, InOutService>()
+
+                // Converters
+                .AddSingleton<ICsvConverterService, CsvConverterService>()
 
                 //Business Services
                 .AddSingleton<InvoiceService>()

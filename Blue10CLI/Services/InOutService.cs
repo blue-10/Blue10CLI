@@ -1,16 +1,13 @@
 ﻿using Blue10CLI.Enums;
 using Blue10CLI.Services.Interfaces;
-using CsvHelper;
-using CsvHelper.Configuration;
-using CsvHelper.TypeConversion;
+using Blue10CLI.Services.Interfaces.Converters;
+using Blue10SDK.Models;
 using DevLab.JmesPath;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -21,15 +18,17 @@ namespace Blue10CLI.Services
 {
     public class InOutService : IInOutService
     {
-        public ILogger<InOutService> _logger { get; }
+        private readonly ICsvConverterService _csvConverter;
+        private readonly ILogger<InOutService> _logger;
 
-        public InOutService(ILogger<InOutService> logger)
+        public InOutService(ICsvConverterService csvConverter, ILogger<InOutService> logger)
         {
+            _csvConverter = csvConverter;
             _logger = logger;
         }
 
         #region Input/Reader
-        public IList<T>? ReadAs<T>(EFormatType format, string origin)
+        public IList<T>? ReadAs<T>(EFormatType format, string origin) where T : BaseObject, new()
         {
             IList<T>? objectList;
             try
@@ -37,9 +36,9 @@ namespace Blue10CLI.Services
                 objectList = format switch
                 {
                     EFormatType.JSON => JsonSerializer.Deserialize<IList<T>>(origin),
-                    EFormatType.CSV => CsvRecords<T>(origin, ","),
-                    EFormatType.TSV => CsvRecords<T>(origin, "\t"),
-                    EFormatType.SCSV => CsvRecords<T>(origin, ";"),
+                    EFormatType.CSV => _csvConverter.GetRecords<T>(origin, ","),
+                    EFormatType.TSV => _csvConverter.GetRecords<T>(origin, "\t"),
+                    EFormatType.SCSV => _csvConverter.GetRecords<T>(origin, ";"),
                     EFormatType.XML => XmlRecords<T>(origin),
                     _ => throw LogAndThrow(format, $"{format} is not supported for reading")
                 };
@@ -66,64 +65,6 @@ namespace Blue10CLI.Services
                 EFormatType.XML => ".xml",
                 _ => throw new ArgumentOutOfRangeException(nameof(format), format, $"{format} is not supported for getting extension")
             };
-        }
-
-        private IList<T>? CsvRecords<T>(string origin, string separator)
-        {
-            var recordIsBad = false;
-            var successfullRecords = new List<T>();
-            var recordErrors = string.Empty;
-            var errorCount = 0;
-
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                Delimiter = separator,
-                NewLine = Environment.NewLine,
-                ReadingExceptionOccurred = context =>
-                {
-                    recordIsBad = true;
-                    var recordError = ConvertCSVErrorMessage(context.Exception.Message, context.Exception.InnerException?.Message ?? string.Empty);
-                    recordErrors += Environment.NewLine + recordError;
-                    errorCount++;
-                    return false;
-                }
-            };
-
-            using var reader = new StringReader(origin);
-            using (var csvReader = new CsvReader(reader, config))
-            {
-                csvReader.Context.TypeConverterCache.AddConverter<List<string>>(new ListConverter());
-
-                while (csvReader.Read())
-                {
-                    var record = csvReader.GetRecord<T>();
-                    if (!recordIsBad)
-                    {
-                        successfullRecords.Add(record);
-                    }
-
-                    recordIsBad = false;
-                }
-            }
-
-            if (errorCount > 0)
-            {
-                _logger.LogError($"{errorCount} errors occurd while reading file, make sure to select the right format. {recordErrors}");
-                return null;
-            }
-
-            return successfullRecords;
-        }
-
-        private string ConvertCSVErrorMessage(string ErrorMessage, string Exception)
-        {
-            var ErrorMessageValues = ErrorMessage.Split(Environment.NewLine);
-
-            var RowNumber = ErrorMessageValues[9].Split(':')[1].Trim();
-
-            var Content = ErrorMessageValues[13];
-
-            return $"Error at row {RowNumber} with the content \"{Content}\"{Environment.NewLine}- {Exception}";
         }
 
         private IList<T>? XmlRecords<T>(string input)
@@ -191,9 +132,9 @@ namespace Blue10CLI.Services
             return format switch
             {
                 EFormatType.JSON => ConvertToJson(input),
-                EFormatType.CSV => ConvertToCsv(input, ","),
-                EFormatType.TSV => ConvertToCsv(input, "\t"),
-                EFormatType.SCSV => ConvertToCsv(input, ";"),
+                EFormatType.CSV => _csvConverter.ConvertToCsv(input, ","),
+                EFormatType.TSV => _csvConverter.ConvertToCsv(input, "\t"),
+                EFormatType.SCSV => _csvConverter.ConvertToCsv(input, ";"),
                 EFormatType.XML => ConvertToXml(input),
                 _ => throw LogAndThrow(format, $"{format} is not supported for formatting")
             };
@@ -267,26 +208,6 @@ namespace Blue10CLI.Services
 
         }
 
-        private string ConvertToCsv<T>(T objects, string separator)
-        {
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                Delimiter = separator,
-                NewLine = Environment.NewLine,
-            };
-
-            using var writer = new StringWriter();
-            using var csvWriter = new CsvWriter(writer, config);
-
-            csvWriter.Context.TypeConverterCache.AddConverter<List<string>>(new ListConverter());
-
-            if (objects is IEnumerable enumerable)
-                csvWriter.WriteRecords(enumerable);
-            else
-                csvWriter.WriteRecords(new[] { objects });
-            return writer.ToString();
-        }
-
         #endregion
 
         #region Utilities
@@ -296,35 +217,6 @@ namespace Blue10CLI.Services
             return new ArgumentOutOfRangeException(nameof(format), format, message);
         }
 
-        public class ListConverter : ITypeConverter
-        {
-            public object? ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData)
-            {
-                if (!string.IsNullOrEmpty(text))
-                {
-                    var list = text.Replace("[", "").Replace("]", "").Split("|").ToList();
-
-                    if (list.Count > 0)
-                    {
-                        return list;
-                    }
-
-                }
-
-                return null;
-            }
-
-            public string ConvertToString(object value, IWriterRow row, MemberMapData memberMapData)
-            {
-                if (value is List<string>)
-                {
-                    var list = string.Join("|", value as List<string>);
-                    return $"[{list}]";
-                }
-
-                return string.Empty;
-            }
-        }
         #endregion
     }
 

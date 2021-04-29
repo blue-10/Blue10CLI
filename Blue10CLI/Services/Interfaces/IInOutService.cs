@@ -1,4 +1,5 @@
 ﻿using Blue10CLI.Enums;
+using Blue10SDK.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Blue10CLI.Services.Interfaces
     public interface IInOutService
     {
         #region Input/Reader
-        IList<T>? ReadAs<T>(EFormatType format, string origin);
+        IList<T>? ReadAs<T>(EFormatType format, string origin) where T : BaseObject, new();
 
         string GetExtension(EFormatType format);
 
