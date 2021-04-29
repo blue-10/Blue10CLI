@@ -25,10 +25,7 @@ namespace Blue10CLI.Tests.Commands.VendorCommand
             Guid.Parse("42b1db44-90b4-490e-8ba2-ad0200e54f20")};
 
         [Theory]
-        [InlineAutoMockData("-i TestFiles/listVendors.csv --input-format CSV")]
         [InlineAutoMockData("-i TestFiles/listVendors.json --input-format JSON")]
-        [InlineAutoMockData("-i TestFiles/listVendors.scsv --input-format SCSV")]
-        [InlineAutoMockData("-i TestFiles/listVendors.tsv --input-format TSV")]
         [InlineAutoMockData("-i TestFiles/listVendors.xml --input-format XML")]
         public void Success_ReadAndConvertFiles(
             string pCommandLine,
