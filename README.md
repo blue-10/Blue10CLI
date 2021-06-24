@@ -166,7 +166,7 @@ The `company` command currently has a single sub-command under it, that is the `
 Run the following command:
 
 ```
-.\Blue10CLI.exe copmany list
+.\Blue10CLI.exe company list
 ```
 
 The response should look something like this:
