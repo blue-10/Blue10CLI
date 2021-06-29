@@ -16,9 +16,9 @@ namespace Blue10CLI.Services.Interfaces
 
         #region Ouput/Writer
 
-        Task HandleOutput<T>(EFormatType format, T input, FileInfo? file, string? query = null);
+        Task<bool> HandleOutput<T>(EFormatType format, T input, FileInfo? file, string? query = null);
 
-        Task HandleOutputToFilePath<T>(EFormatType format, T input, string filepath, string? query = null);
+        Task<bool> HandleOutputToFilePath<T>(EFormatType format, T input, string filepath, string? query = null);
 
         #endregion
     }

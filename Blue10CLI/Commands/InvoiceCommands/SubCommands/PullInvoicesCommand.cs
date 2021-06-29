@@ -49,9 +49,10 @@ namespace Blue10CLI.Commands.InvoiceCommands
 
                 var fExtension = _utilities.GetExtension(format);
 
-                await _utilities.HandleOutput(format, fPurchaseInvoice, new FileInfo(fFilePath + fExtension), query);
+                var fHasResult = await _utilities.HandleOutput(format, fPurchaseInvoice, new FileInfo(fFilePath + fExtension), query);
 
-                File.WriteAllBytes(fFilePath + ".pdf", fOriginalFileData);
+                if (fHasResult)
+                    File.WriteAllBytes(fFilePath + ".pdf", fOriginalFileData);
             }
         }
     }
