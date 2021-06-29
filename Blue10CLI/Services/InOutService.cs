@@ -141,49 +141,48 @@ namespace Blue10CLI.Services
 
         #region Output/Writer
 
-        public async Task HandleOutput<T>(EFormatType format, T input, FileInfo? file, string? query = null)
+        public async Task<bool> HandleOutput<T>(EFormatType format, T input, FileInfo? file, string? query = null)
         {
             string? resultString;
             if (input is IList inputEnumerable)
-            {
                 resultString = Format(format, inputEnumerable);
-            }
             else
-            {
                 resultString = Format(format, new[] { input });
-            }
 
             if (!string.IsNullOrWhiteSpace(query))
-            {
                 resultString = Filter(format, resultString, query!);
+
+            if (!string.IsNullOrWhiteSpace(resultString))
+            {
+                Console.WriteLine(resultString);
+                if (file != null)
+                    await File.WriteAllTextAsync(file.FullName, resultString);
+
+                return true;
             }
 
-            Console.WriteLine(resultString);
-            if (file != null)
-            {
-                await File.WriteAllTextAsync(file.FullName, resultString);
-            }
+            return false;
         }
 
-        public async Task HandleOutputToFilePath<T>(EFormatType format, T input, string filepath, string? query = null)
+        public async Task<bool> HandleOutputToFilePath<T>(EFormatType format, T input, string filepath, string? query = null)
         {
             string? resultString;
             if (input is IList inputEnumerable)
-            {
                 resultString = Format(format, inputEnumerable);
-            }
             else
-            {
                 resultString = Format(format, new[] { input });
-            }
 
             if (!string.IsNullOrWhiteSpace(query))
-            {
                 resultString = Filter(format, resultString, query!);
+
+            if (!string.IsNullOrWhiteSpace(resultString))
+            {
+                Console.WriteLine(resultString);
+                await File.WriteAllTextAsync(filepath, resultString);
+                return true;
             }
 
-            Console.WriteLine(resultString);
-            await File.WriteAllTextAsync(filepath, resultString);
+            return false;
         }
 
         private string Format<T>(EFormatType format, T input) where T : IEnumerable
