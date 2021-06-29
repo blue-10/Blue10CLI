@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Xml.XPath;
 
@@ -214,20 +215,24 @@ namespace Blue10CLI.Services
 
         private string FilterWithXPath(string xmlString, string xPathQuery)
         {
-            using var xmlReader = new StringReader(xmlString);
-            var xPathDocument = new XPathDocument(xmlReader);
-            var xPathNav = xPathDocument.CreateNavigator();
+            var fXmlDocument = XDocument.Parse(xmlString);
+            var fElementsForRemoval = new List<XElement>();
 
-            var resList = new List<string>();
+            if (fXmlDocument.XPathSelectElement(xPathQuery) is null)
+                return string.Empty;
+
             try
             {
-                var res = xPathNav.Select(xPathQuery);
-
-                foreach (dynamic? bla in res)
+                foreach (var element in fXmlDocument.Descendants())
                 {
-                    resList.Add(bla is null ? "" : bla.OuterXml ?? "");
+                    if (!element.DescendantNodesAndSelf().Any(e => e.XPathSelectElement(xPathQuery) != null))
+                        fElementsForRemoval.Add(element);
                 }
-                return string.Join('\n', resList);
+
+                foreach (var fXmlElement in fElementsForRemoval)
+                    fXmlElement.Remove();
+
+                return fXmlDocument.Declaration.ToString() + '\n' + fXmlDocument.Document.ToString();
             }
             catch (XPathException xpe)
             {
