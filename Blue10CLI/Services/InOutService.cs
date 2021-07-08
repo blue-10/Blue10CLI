@@ -218,17 +218,18 @@ namespace Blue10CLI.Services
             var fXmlDocument = XDocument.Parse(xmlString);
             var fElementsForRemoval = new List<XElement>();
 
-            if (fXmlDocument.XPathSelectElement(xPathQuery) is null)
+            var fMatchedElements = fXmlDocument.XPathSelectElements(xPathQuery);
+            if (!fMatchedElements.Any())
                 return string.Empty;
 
             try
             {
-                foreach (var element in fXmlDocument.Descendants())
-                {
-                    if (!element.DescendantNodesAndSelf().Any(e => e.XPathSelectElement(xPathQuery) != null))
-                        fElementsForRemoval.Add(element);
-                }
+                // First search all non matching elements
+                foreach (var fElement in fXmlDocument.Root.Elements())
+                    if (!fElement.DescendantsAndSelf().Any(x => fMatchedElements.Contains(x)))
+                        fElementsForRemoval.Add(fElement);
 
+                // Then remove non matching elements
                 foreach (var fXmlElement in fElementsForRemoval)
                     fXmlElement.Remove();
 

@@ -702,3 +702,20 @@ If you use the `xml` format, you can use valid *xpath* strings to filter the res
 If you use the `json` format you can use valid *jmespath* queries to filter the results of the json output.
 
 In both cases the results will be written to file if the `-o` option is used.
+
+### XPath example
+
+Pull invoices from specific company. (Replace *TheIdCompany*)
+```
+.\Blue10CLI.exe invoice pull -f xml -q "/ArrayOfPurchaseInvoice/PurchaseInvoice[IdCompany='TheIdCompany']"
+```
+
+Get vatcode list with specific AdministrationCode. (Replace *TheIdCompany* and *TheAdministrationCode*)
+```
+.\Blue10CLI.exe vatcode list -c TheIdCompany -f xml -q "/ArrayOfVatCode/VatCode[AdministrationCode='TheAdministrationCode']"
+```
+
+Get vendor  list with specific CurrencyCode. (Replace *TheIdCompany* and *TheCurrencyCode*)
+```
+.\Blue10CLI.exe vendor list -c TheIdCompany -f xml -q "/ArrayOfVatCode/VatCode[CurrencyCode='TheCurrencyCode']"
+```
