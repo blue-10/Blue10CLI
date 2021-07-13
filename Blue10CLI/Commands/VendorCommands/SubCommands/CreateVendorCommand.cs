@@ -7,6 +7,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Blue10CLI.Commands.VendorCommands
 {
@@ -41,41 +42,48 @@ namespace Blue10CLI.Commands.VendorCommands
             Add(new Option<EFormatType>(new[] { "-f", "--format" }, () => EFormatType.JSON, "Output format."));
             Add(new Option<FileInfo?>(new[] { "-o", "--output" }, () => null, "Enter path to write output of this command to file. Default output is console only"));
 
-            Handler = CommandHandler.Create<string, string, string, string, string[], string?, string, string, string, EFormatType, FileInfo?>(CreateVendorHandler);
+            Handler = CommandHandler.Create<CreateVendorInput>(CreateVendorHandler);
         }
 
-        private async void CreateVendorHandler(
-            string companyid,
-            string administrationcode,
-            string country,
-            string currency,
-            string[] iban,
-            string? name,
-            string ledger,
-            string payment,
-            string vat,
-            EFormatType format,
-            FileInfo? output)
+        private class CreateVendorInput
+        {
+            public string CompanyId { get; set; } = string.Empty;
+            public string AdministrationCode { get; set; } = string.Empty;
+            public string Country { get; set; } = string.Empty;
+            public string Currency { get; set; } = string.Empty;
+            public string[] Iban { get; set; } = new string[0];
+            public string? Name { get; set; }
+            public string Ledger { get; set; } = string.Empty;
+            public string Payment { get; set; } = string.Empty;
+            public string Vat { get; set; } = string.Empty;
+            public EFormatType Format { get; set; }
+            public FileInfo? Output { get; set; }
+        }
+
+        private async Task CreateVendorHandler(
+            CreateVendorInput pComplexType)
         {
             var fCreateVendor = new Vendor
             {
-                Name = name ?? administrationcode,
+                Name = pComplexType.Name ?? pComplexType.AdministrationCode,
                 VatNumber = string.Empty,
-                CountryCode = country,
-                Iban = iban.ToList(),
-                CurrencyCode = currency,
+                CountryCode = pComplexType.Country,
+                Iban = pComplexType.Iban.ToList(),
+                CurrencyCode = pComplexType.Currency,
                 VendorCustomerCode = string.Empty,
-                DefaultLedgerCode = ledger,
-                DefaultVatCode = vat,
+                DefaultLedgerCode = pComplexType.Ledger,
+                DefaultVatCode = pComplexType.Vat,
                 DefaultVatScenarioCode = string.Empty,
-                DefaultPaymentTermCode = payment,
+                DefaultPaymentTermCode = pComplexType.Payment,
                 Blocked = false,
                 Id = Guid.Empty,
-                AdministrationCode = administrationcode,
-                IdCompany = companyid
+                AdministrationCode = pComplexType.AdministrationCode,
+                IdCompany = pComplexType.CompanyId
             };
 
             var fResult = await _vendorService.CreateOrUpdate(fCreateVendor);
+
+            //var fResult = await _vendorService.CreateOrUpdate(fCreateVendor);
 
             if (fResult.Object is null)
             {
@@ -83,7 +91,7 @@ namespace Blue10CLI.Commands.VendorCommands
                 return;
             }
 
-            await _utilities.HandleOutput(format, fResult.Object, output);
+            await _utilities.HandleOutput(pComplexType.Format, fResult.Object, pComplexType.Output);
         }
     }
 }

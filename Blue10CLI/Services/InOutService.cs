@@ -87,6 +87,13 @@ namespace Blue10CLI.Services
                     recordErrors += Environment.NewLine + recordError;
                     errorCount++;
                     return false;
+                },
+                BadDataFound = context =>
+                {
+                    recordIsBad = true;
+                    var recordError = $"Bad data at row {context.Context.Parser.Row}: field {context.Field}";
+                    recordErrors += Environment.NewLine + recordError;
+                    errorCount++;
                 }
             };
 
@@ -98,6 +105,7 @@ namespace Blue10CLI.Services
                 while (csvReader.Read())
                 {
                     var record = csvReader.GetRecord<T>();
+
                     if (!recordIsBad)
                     {
                         successfullRecords.Add(record);
