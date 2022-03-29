@@ -19,5 +19,13 @@
         // VATCode.Sync
         public const string SyncVatCodeDescription = "Sync VatCodes from a file to the Blue10 environment. AdministrationCode and CompanyId is required for each VatCode. Updating existing VatCodes requires Id. Creating new VatCodes requires empty Id.";
         public const string InputVatCodeDescription = "Path to the input file. File should have the same structure as the result of the 'vatcode list' command.";
+        
+        // CostUnit.Sync
+        public const string SyncCostUnitDescription = "Sync CostUnits from a file to the Blue10 environment. AdministrationCode and CompanyId is required for each Cost Unit. Updating existing GLAccounts requires Id. Creating new Cost Unit requires empty Id.";
+        public const string InputCostUnitDescription = "Path to the input file. File should have the same structure as the result of the 'costunit list' command.";
+        
+        // CostCenter.Sync
+        public const string SyncCostCenterDescription = "Sync CostCenters from a file to the Blue10 environment. AdministrationCode and CompanyId is required for each Cost Center. Updating existing GLAccounts requires Id. Creating new Cost Center requires empty Id.";
+        public const string InputCostCenterDescription = "Path to the input file. File should have the same structure as the result of the 'costcenter list' command.";
     }
 }

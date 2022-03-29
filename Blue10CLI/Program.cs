@@ -12,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.CommandLine;
 using System.Threading.Tasks;
+using Blue10CLI.Commands.CostCenterCommands;
+using Blue10CLI.Commands.CostUnitCommands;
 
 namespace Blue10CLI
 {
@@ -36,6 +38,18 @@ namespace Blue10CLI
                 .AddSingleton<IInOutService, InOutService>()
 
                 //Business Services
+                .AddSingleton<ICostUnitService, CostUnitService>()
+                .AddSingleton<CostUnitCommand>()
+                    .AddSingleton<ListCostUnitsCommand>()
+                    .AddSingleton<SyncCostUnitsCommand>()
+                
+                
+                .AddSingleton<ICostCenterService, CostCenterService>()
+                .AddSingleton<CostCenterCommand>()
+                    .AddSingleton<ListCostCentersCommand>()
+                    .AddSingleton<SyncCostCentersCommand>()
+                
+                
                 .AddSingleton<InvoiceService>()
                 .AddSingleton<InvoiceCommand>()
                     .AddSingleton<PeekInvoiceCommand>()
