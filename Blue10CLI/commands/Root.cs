@@ -5,6 +5,8 @@ using Blue10CLI.Commands.InvoiceCommands;
 using Blue10CLI.Commands.VatCodeCommands;
 using Blue10CLI.Commands.VendorCommands;
 using System.CommandLine;
+using Blue10CLI.Commands.CostCenterCommands;
+using Blue10CLI.Commands.CostUnitCommands;
 
 namespace Blue10CLI.Commands
 {
@@ -16,7 +18,10 @@ namespace Blue10CLI.Commands
             GLAccountCommand glaccount,
             VatCodeCommand vatcode,
             CompanyCommand company,
-            CredentialsCommand credentials)
+            CredentialsCommand credentials,
+            CostCenterCommand costcenter,
+            CostUnitCommand costunit
+            )
         {
             Add(vendor);
             Add(invoice);
@@ -24,6 +29,8 @@ namespace Blue10CLI.Commands
             Add(vatcode);
             Add(credentials);
             Add(company);
+            Add(costcenter);
+            Add(costunit);
             Add(new Option<bool>("--debug", "Run command in debug mode to view detailed logs"));
         }
     }
