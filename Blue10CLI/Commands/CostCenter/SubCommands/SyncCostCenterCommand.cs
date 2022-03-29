@@ -23,7 +23,7 @@ namespace Blue10CLI.Commands.CostCenterCommands
             IInOutService utilities,
             ILogger<SyncCostCentersCommand> logger) :
             base("sync",
-                Descriptions.SyncGLAccountDescription)
+                Descriptions.SyncCostCenterDescription)
         {
             _CostCenterService = CostCenterService;
             _utilities = utilities;

@@ -39,8 +39,8 @@ namespace Blue10CLI.Services
         {
             try
             {
-                var fGlAccount = await pTask;
-                return new BaseResultModel<CostUnit>(fGlAccount, null);
+                var fCostUnit = await pTask;
+                return new BaseResultModel<CostUnit>(fCostUnit, null);
             }
             catch (Blue10ApiException b10apie)
             {

@@ -7,7 +7,7 @@ namespace Blue10CLI.Commands.CostCenterCommands
         public CostCenterCommand(
             ListCostCentersCommand listCostCenters,
             SyncCostCentersCommand syncCostCenters
-            ) : base("CostCenter", "creates lists and manages Cost Units in the environments")
+            ) : base("CostCenter", "creates lists and manages Cost Centers in the environments")
         {
             Add(listCostCenters);
             Add(syncCostCenters);
